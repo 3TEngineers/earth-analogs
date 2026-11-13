@@ -9,7 +9,7 @@ Single source of truth for what is done, in progress and next. Update it in the 
 | Date | Decision | Why |
 |---|---|---|
 | 2026-11-13 | Challenge: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* | Most room for original thinking; every team uses AI, so the concept matters more than raw computation. |
-| 2026-11-13 | Repo is **public**, `main` is protected (PR required, no force push, applies to admins too) | GitHub's free plan only allows branch protection on public repos. Trade-off accepted: the repo, including this file, is visible to other teams. |
+| 2026-11-14 | Repo back to **private** until submission; a local pre-push hook (`.githooks/pre-push`) blocks pushes to `main` | Keeping the idea away from other teams matters more than GitHub's branch protection, which the free plan only offers on public repos. Make the repo public when submitting. |
 
 ## Current direction (not final)
 
@@ -35,6 +35,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 ## Next
 
 - Agree on the approach and the team split; fill in owners in `CLAUDE.md`.
+- Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
 - Verify the key datasets in `docs/DATA_SOURCES.md` are downloadable and note their real sizes.
 - Fix the data contract between `pipeline/` and `app/` (file names and columns) so the app can start with mock data.
