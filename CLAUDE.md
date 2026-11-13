@@ -18,9 +18,9 @@ Shared context for every Claude session on this repo. Three teammates work in pa
 
 1. **Start every session** by reading `docs/STATUS.md` and pulling `main`.
 2. **Record progress as you go.** When a piece of work is finished, update `docs/STATUS.md` (what was done, what's next, any decision made and why) in the same PR. If it isn't in STATUS.md, the other two don't know it happened.
-3. **Branches:** `main` is protected — direct pushes and force pushes are rejected for everyone, admins included. Branch from an up-to-date `main` as `feat/<short-name>`, `fix/<short-name>` or `docs/<short-name>`.
+3. **Branches:** never push to `main` directly and never force push. The repo is private on GitHub's free plan, so GitHub does **not** enforce this — a local hook does. Run `git config core.hooksPath .githooks` once after cloning; it then rejects any push to `main`. Branch from an up-to-date `main` as `feat/<short-name>`, `fix/<short-name>` or `docs/<short-name>`.
 4. **Small PRs, merged often.** Open a PR into `main` as soon as something works. No approval is required (so nobody gets blocked overnight), but ask a teammate for a quick look when they're around, then squash-merge.
-5. **The repo is public.** Don't put anything here you wouldn't want other teams to read: no credentials, no personal data.
+5. **The repo is private** until submission, so other teams can't copy the idea. Still no credentials or personal data in commits.
 6. **No stacked PRs.** Always branch from `main`, never from another open PR's branch — if the first PR merges first, the second one merges into a dead branch and its code never reaches `main`.
 7. **Stay in your area.** Each teammate owns a folder (see "Ownership" below). Editing someone else's area is fine when needed, but say so in the PR.
 8. **Commit messages:** Conventional Commits, English, e.g. `feat(pipeline): add slope roughness for Earth grid`.
