@@ -41,6 +41,28 @@ export interface Site {
   limits: string[];
   image: string | null;
   selection: Selection;
+  /** Why a mission would go there (candidates only), with its sources. null until written. */
+  purpose: Purpose | null;
+}
+
+export interface Purpose {
+  text: string;
+  sources: string[];
+}
+
+/** Past landings shown on the globes as name-only markers (no card, no fly-to). */
+export interface Landing {
+  name: string;
+  body: Body;
+  agency: string;
+  year: number;
+  lat: number;
+  lon: number;
+}
+
+export interface LandingsFile {
+  version: number;
+  landings: Landing[];
 }
 
 export interface SitesFile {

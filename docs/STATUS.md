@@ -10,6 +10,8 @@ Single source of truth for what is done, in progress and next. Update it in the 
 |---|---|---|
 | 2026-11-13 | Challenge: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* | Most room for original thinking; every team uses AI, so the concept matters more than raw computation. |
 | 2026-11-14 | Output is an **interactive website**: Moon/Mars globe → landing site → Earth analogs → report (similar / different / what to test) | Team's own idea; see `docs/PROJECT_PLAN.md` |
+| 2026-11-14 | Every candidate gets a **purpose** — why a mission would go there — with sources (`site.purpose`) | Mentors (rover team): no mission lands somewhere only because it is safe. Our candidates are engineering-safe; the purpose answers "why go there?" |
+| 2026-11-14 | **All past landings shown as name-only markers** on the globes (`landings.json`): no card, no fly-to, no info | Context for where humanity has already been, without competing with our candidates |
 | 2026-11-14 | Split: **backend Sadık**, **frontend Deniz (globes) + Kmar (panels, content, slides)** | Two clear sides that only meet at the data contract |
 | 2026-11-14 | Stack: React + TS + Vite + Tailwind + React Router + three.js / `three-globe` on Vercel (react-globe.gl replaced the same day, see below); Python 3.12 pipeline (earthaccess, rasterio, pydantic) | Matches what the team already knows |
 | 2026-11-14 | Data contract fixed in `docs/DATA_CONTRACT.md`, mock JSON committed | Frontend can start before the analysis is done |
@@ -52,7 +54,10 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 - Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
-- Sadık: B3 — Earth candidate pool for the 4 candidates (coarse global pass, shortlist), then B4–B5.
+- Sadık: B3 — Earth candidate pool for the 7 candidates (coarse global pass, shortlist), then B4–B5.
+- **Kmar: candidate purposes** — for each of the 7 candidates, one or two sentences on *why a mission would go there* (science goal or base role), with paper/NASA sources, in `pipeline/content/purposes.json` (`{"mars-candidate-a": {"text": "...", "sources": ["https://..."]}}`). Only write what a source supports; leave a candidate out rather than guess. `build_sites.py` puts it into `sites.json`.
+- **Kmar: Moon landings list** — every successful lunar landing (Luna, Surveyor, Apollo, Chang'e, Chandrayaan-3, SLIM, IM-1, Blue Ghost 1, IM-2, …) with lat/lon and a source, added to `docs/LANDING_CONSTRAINTS.md` (new section) — Sadık then adds them to `landings.json`. Mars is already in.
+- **Deniz: name-only landing markers** from `app/public/data/landings.json` on the Moon and Mars globes — just the name, a little larger, not clickable, no zoom.
 - Kmar: K2 — the 7 candidate summaries in `sites.json` are first drafts from the data (names, coordinates, criteria and notes are final); refine the text using `docs/SCREENING_RESULTS.md` and send it to Sadık. The Method page (K5) can take its criteria and validation tables from the same file.
 - Deniz: `sites.json` now has real coordinates — the Moon candidates are within ~1.5° of the pole, worth checking the camera fly-to there.
 - Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Geist / JetBrains Mono; motion tokens `--ease-out`, `.press`, `.reveal`).
