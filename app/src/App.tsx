@@ -17,9 +17,9 @@ import { LandingPage } from './pages/LandingPage'
  */
 export default function App() {
   return (
-    <div className="relative h-full overflow-hidden bg-space">
+    <div className="relative min-h-full bg-space">
       <SpaceScene />
-      <p className="scene-loader pointer-events-none absolute inset-x-0 bottom-10 z-20 text-center text-sm tracking-wide text-ink-muted">
+      <p className="scene-loader pointer-events-none fixed inset-x-0 bottom-10 z-20 text-center text-sm tracking-wide text-ink-muted">
         Bringing the Moon, Earth and Mars into view…
       </p>
       <Routes>

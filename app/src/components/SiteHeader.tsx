@@ -6,7 +6,7 @@ export function SiteHeader({ showBrand = true }: { showBrand?: boolean }) {
     `press rounded-md px-2.5 py-1 text-sm ${isActive ? 'text-accent' : 'text-ink-muted hover:text-ink'}`
 
   return (
-    <header className="reveal pointer-events-auto absolute inset-x-0 top-0 z-20 flex items-center justify-between px-5 py-4">
+    <header className="reveal pointer-events-auto fixed inset-x-0 top-0 z-20 flex items-center justify-between px-5 py-4">
       <NavLink to="/" className={`font-display text-lg font-semibold tracking-tight ${showBrand ? '' : 'invisible'}`}>
         Earth Analogs
       </NavLink>

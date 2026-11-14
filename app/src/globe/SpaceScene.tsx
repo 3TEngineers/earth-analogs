@@ -92,7 +92,7 @@ export function SpaceScene() {
   }, [markers])
 
   return (
-    <div ref={containerRef} className="absolute inset-0" role="img" aria-label="3D view of the Moon, Earth and Mars">
+    <div ref={containerRef} className="fixed inset-0" role="img" aria-label="3D view of the Moon, Earth and Mars">
       {hover && (
         <div
           className="pointer-events-none absolute z-30 rounded-md border border-line bg-panel px-2 py-1 font-mono text-xs text-ink backdrop-blur-md"
