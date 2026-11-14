@@ -60,7 +60,7 @@ export function ReportPanel() {
       </header>
 
       <dl className="stagger mt-7 grid grid-cols-3 gap-4 border-t border-white/15 pt-5" style={step(3)}>
-        <Stat label="Match score" value={`${current.totalScore}`} suffix="/100" tone="text-accent" />
+        <Stat label="Match score" value={`${current.totalScore}`} suffix="/100" />
         <Stat label="Location" value={formatLatLon(current.lat, current.lon).replace(' · ', '\n')} />
         <Stat label="Area radius" value={`${current.radiusKm}`} suffix=" km" />
       </dl>
@@ -82,12 +82,7 @@ export function ReportPanel() {
                         {s?.score == null ? <span className="text-ink-muted">No data</span> : s.score}
                       </span>
                     </div>
-                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
-                      <div
-                        className="accent-transition h-full origin-left rounded-full bg-accent transition-transform duration-700 ease-[var(--ease-out)]"
-                        style={{ transform: `scaleX(${(s?.score ?? 0) / 100})` }}
-                      />
-                    </div>
+                    <Meter score={s?.score ?? null} />
                     <p className="mt-1 text-xs text-ink-muted">{d.description}</p>
                   </li>
                 )
@@ -188,6 +183,18 @@ function Switcher({ analogs, currentId, onSelect }: { analogs: Analog[]; current
         )
       })}
     </nav>
+  )
+}
+
+/** Quiet meter: 20 thin ticks, filled ones in soft white, no colour or glow (scores are relative, not alarms). */
+function Meter({ score }: { score: number | null }) {
+  const filled = score === null ? 0 : Math.round(score / 5)
+  return (
+    <div className="mt-2 flex gap-[3px]" aria-hidden="true">
+      {Array.from({ length: 20 }, (_, i) => (
+        <span key={i} className={`h-1.5 flex-1 rounded-[1px] ${i < filled ? 'bg-ink/55' : 'bg-white/[0.07]'}`} />
+      ))}
+    </div>
   )
 }
 
