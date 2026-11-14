@@ -1,35 +1,33 @@
-import { useData } from './data/DataProvider'
-import { StateDebugPanel } from './dev/StateDebugPanel'
-import { GlobeView } from './globe/GlobeView'
-import { SitePanel } from './panels/SitePanel'
-import { useAppState } from './state/AppState'
+import { Navigate, Route, Routes } from 'react-router'
+import { SpaceScene } from './globe/SpaceScene'
+import { AboutPage } from './pages/AboutPage'
+import ExplorePage from './pages/ExplorePage'
+import { LandingPage } from './pages/LandingPage'
 
 /**
- * Page layout. The globe fills the screen; panels sit on top of it.
- * Deniz owns src/globe/, Kmar owns src/panels/ and src/pages/; both use src/state/.
+ * Layers, back to front:
+ *   SpaceScene  — the one 3D scene (stars, Moon, Earth, Mars); never unmounts, so page changes animate
+ *   loader      — one quiet line until the planet textures are in
+ *   page        — text and panels; empty areas let clicks through to the planets
+ *
+ * Pages:
+ *   /               LandingPage  — intro over the floating planets
+ *   /explore/:body  ExplorePage  — Moon or Mars in focus + panels (SitePanel), then Earth training areas
+ *   /about          AboutPage    — team, method, data, AI usage
  */
 export default function App() {
-  const data = useData()
-  const { phase } = useAppState()
-
   return (
-    <main className="relative h-full overflow-hidden bg-space">
-      <GlobeView />
-
-      <header className="pointer-events-none absolute top-4 left-4">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Earth Analogs</h1>
-        <p className="text-sm text-ink-muted">Find the places on Earth that resemble Moon and Mars landing sites.</p>
-        {data.status === 'ready' && data.sites.mock && (
-          <p className="mt-1 font-mono text-xs text-different">Mock data</p>
-        )}
-      </header>
-
-      {data.status === 'loading' && <p className="absolute bottom-4 left-4 text-ink-muted">Loading data…</p>}
-      {data.status === 'error' && <p className="absolute bottom-4 left-4 text-different">{data.message}</p>}
-
-      <SitePanel />
-      {/* TEMPORARY: the Earth phase still uses the debug panel until the report panel (K4) lands. */}
-      {phase === 'earth' && <StateDebugPanel />}
-    </main>
+    <div className="relative h-full overflow-hidden bg-space">
+      <SpaceScene />
+      <p className="scene-loader pointer-events-none absolute inset-x-0 bottom-10 z-20 text-center text-sm tracking-wide text-ink-muted">
+        Bringing the Moon, Earth and Mars into view…
+      </p>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/explore/:body" element={<ExplorePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
   )
 }

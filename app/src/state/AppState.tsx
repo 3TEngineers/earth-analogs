@@ -85,10 +85,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.body = displayBody
   }, [displayBody])
 
-  const value = useMemo<AppStateValue>(
+  // Actions never change identity, so they are safe in effect dependency lists.
+  const actions = useMemo<AppActions>(
     () => ({
-      ...state,
-      displayBody,
       setBody: (body) => dispatch({ type: 'setBody', body }),
       selectSite: (siteId, body) => dispatch({ type: 'selectSite', siteId, body }),
       showAnalogs: (analogId) => dispatch({ type: 'showAnalogs', analogId }),
@@ -96,8 +95,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       backToSite: () => dispatch({ type: 'backToSite' }),
       reset: () => dispatch({ type: 'reset' }),
     }),
-    [state, displayBody],
+    [],
   )
+
+  const value = useMemo<AppStateValue>(() => ({ ...state, displayBody, ...actions }), [state, displayBody, actions])
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }

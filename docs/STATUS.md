@@ -11,12 +11,14 @@ Single source of truth for what is done, in progress and next. Update it in the 
 | 2026-11-13 | Challenge: *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* | Most room for original thinking; every team uses AI, so the concept matters more than raw computation. |
 | 2026-11-14 | Output is an **interactive website**: Moon/Mars globe → landing site → Earth analogs → report (similar / different / what to test) | Team's own idea; see `docs/PROJECT_PLAN.md` |
 | 2026-11-14 | Split: **backend Sadık**, **frontend Deniz (globes) + Kmar (panels, content, slides)** | Two clear sides that only meet at the data contract |
-| 2026-11-14 | Stack: React + TS + Vite + Tailwind + react-globe.gl on Vercel; Python 3.12 pipeline (earthaccess, rasterio, pydantic) | Matches what the team already knows |
+| 2026-11-14 | Stack: React + TS + Vite + Tailwind + React Router + three.js / `three-globe` on Vercel (react-globe.gl replaced the same day, see below); Python 3.12 pipeline (earthaccess, rasterio, pydantic) | Matches what the team already knows |
 | 2026-11-14 | Data contract fixed in `docs/DATA_CONTRACT.md`, mock JSON committed | Frontend can start before the analysis is done |
 | 2026-11-14 | **New direction (mentor feedback):** we find our own candidate sites (Mars safe landing zones, Moon permanent base sites) by screening with published constraints, then their Earth training areas. Past landings and Artemis III regions become validation | Using past sites alone isn't new; finding candidates ourselves answers the challenge title directly. See `PROJECT_HISTORY.md` §12 |
 | 2026-11-14 | No database, no API server — results precomputed into JSON | Site can't go down or sleep during judging (runs into December) |
 | 2026-11-14 | `sites.json` v2: new `selection` block (goal, role, criteria, note) | Card shows "Why this site"; past landings show validation |
 | 2026-11-14 | Globe and panels share one UI state (`app/src/state/`) with a fixed set of actions; neither side calls the other directly | Deniz and Kmar can build in parallel without merge conflicts |
+| 2026-11-14 | Site has three pages: landing `/`, explore `/explore/moon|mars`, about `/about`; **one persistent 3D scene** (three.js + `three-globe`) behind all of them instead of react-globe.gl | Team idea: the landing page shows small Moon/Earth/Mars, clicking one flies it forward into the explore view in one continuous animation — react-globe.gl can only draw one globe |
+| 2026-11-14 | Site deployed manually from Deniz's machine with the Vercel CLI (prebuilt output) | Vercel's free plan can't deploy a private org repo from GitHub and blocks CLI deploys whose last commit is by another author |
 | 2026-11-14 | Repo back to **private** until submission; a local pre-push hook (`.githooks/pre-push`) blocks pushes to `main` | Keeping the idea away from other teams matters more than GitHub's branch protection, which the free plan only offers on public repos. Make the repo public when submitting. |
 
 ## Current direction
@@ -27,6 +29,8 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: **Deniz — landing page and 3D scene** (D2–D4 groundwork). Routes `/`, `/explore/:body`, `/about` (React Router). One three.js scene (`app/src/globe/SpaceScene.tsx`, `space/SpaceEngine.ts`, `space/planets.ts`): NASA/USGS textures (Moon LRO, Mars Viking MDIM 2.1 4K + MOLA, Earth Blue Marble) with bump maps, 3D star field, intro push-in, mouse parallax, hover lift; on `/explore/<body>` the planet flies to the center and its sites appear (candidates bright with rings, past landings muted), click a site → camera flies there, Earth phase → Earth with training areas. About page is a placeholder (Kmar). Kmar's `SitePanel` is wired into `ExplorePage`; small edits in Kmar's area: `BodyToggle` now navigates to `/explore/<body>` (the body lives in the URL) and the panel starts below the header (`md:top-16`). See `app/README.md` → Pages and flow.
+- 2026-11-14: D1 (part 2) — **live site https://earth-analogs.vercel.app** (Vercel project under Deniz's account, deployed manually; ask Deniz to redeploy).
 - 2026-11-14: **B2 + B2b — screening and validation** (`docs/SCREENING_RESULTS.md`, maps in `docs/images/`). **4 Mars candidates**: southern Elysium Planitia, Chryse–Acidalia plains, Margaritifer Terra lowland (rougher, Spirit-like), western Amazonis Planitia — each in a ≥ 40 000 km² safe patch, ≥ 40 km inside it, > 500 km from landers, > 1500 km apart, and re-checked on the 463 m DEM. Validation: Viking 1, Spirit, InSight, Perseverance pass; Pathfinder, Opportunity, Zhurong fail only thermal inertia; Curiosity fails km-scale roughness (Mount Sharp); polar landers fail latitude by design; ESA's Oxia Planum passes. **3 Moon candidates**: de Gerlache rim ridge and the known Shackleton–de Gerlache connecting ridge (next to NASA's regions), and the **Cabeus–Malapert ridge** outside NASA's regions (best lit of the three, Earth in view 92 %). Only searched south of 84° S, where 50 % sunlight is exceptional; a 4th Moon site was dropped for quality. 5 of 7 Artemis III named features have passing ground; Chandrayaan-3 fails as a base site. `app/public/data/sites.json` now holds the **real** 10 sites (`mock: false`); analogs stay mock until B8.
 - 2026-11-14: K3 (part 2) — Mars list in `docs/KNOWN_ANALOGS.md` §2: 25 published Mars analog sites with coordinates and sources, plus 3 that are **not** published (Harrat Khaybar, Kunlun, Lake Magadi → new candidates).
 - 2026-11-14: K3 (part 1) — `docs/KNOWN_ANALOGS.md`: 17 known **lunar** analog sites with coordinates and sources, and the **test/training mapping** checked against real tests (B7 wording in §3: aridity → life detection and drilling, temperature marked weak, solar-power tests dropped). Finding: most lunar training sites are basaltic (maria-like) while the south pole is anorthosite highland; anorthosite sites (Kamestastin, Lofoten) were only added recently. Mock-data note: Svalbard is a Mars analog, not a known lunar one.
@@ -41,7 +45,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## In progress
 
-- Deniz: D1 (part 2) — first Vercel deploy. The free plan may not deploy private org repos from GitHub; fallback is deploying with the Vercel CLI.
+- Deniz: landing page redesign — short title in the center, small info cards next to the Moon and Mars instead of the big text block.
 
 ## Next
 
@@ -50,7 +54,6 @@ Open question to verify before relying on it: the south pole is highland (anorth
 - Sadık: B3 — Earth candidate pool for the 4 candidates (coarse global pass, shortlist), then B4–B5.
 - Kmar: K2 — the 7 candidate summaries in `sites.json` are first drafts from the data (names, coordinates, criteria and notes are final); refine the text using `docs/SCREENING_RESULTS.md` and send it to Sadık. The Method page (K5) can take its criteria and validation tables from the same file.
 - Deniz: `sites.json` now has real coordinates — the Moon candidates are within ~1.5° of the pole, worth checking the camera fly-to there.
-- Deniz: D2 — NASA textures, bump maps, atmosphere, idle rotation. D3 now shows candidates highlighted and past landings muted (`site.selection.role`).
-- Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Inter / JetBrains Mono).
-- **Kmar (stopped for now, 2026-11-14):** K3 is complete. Next: K2 (site summaries) and K4 (report panel). Specs in `app/src/panels/README.md`.
+- Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Geist / JetBrains Mono; motion tokens `--ease-out`, `.press`, `.reveal`).
+- **Kmar (stopped for now, 2026-11-14):** K3 is complete. Next: K2 (site summaries) and K4 (report panel). Specs in `app/src/panels/README.md`. The About page (`app/src/pages/AboutPage.tsx`) should have two parts: **about us** (team, roles) and **about the project** (method, data, limits, texture credits, AI usage).
 - Sadık: `docs/KNOWN_ANALOGS.md` is complete (Moon §1, Mars §2, test mapping §3) for B5–B7. §2 flags Lut Desert as possibly "known" (one *Icarus* paper) and points to a USGS point layer of known analog sites (doi:10.5066/P9J72921) for the automatic "known" check.

@@ -17,7 +17,7 @@ export function SitePanel() {
   return (
     <aside
       aria-label="Landing sites"
-      className="accent-transition absolute inset-x-0 bottom-0 max-h-[55vh] overflow-y-auto rounded-t-xl border border-line bg-panel p-4 backdrop-blur-md md:inset-x-auto md:top-4 md:right-4 md:bottom-4 md:max-h-none md:w-[380px] md:rounded-xl"
+      className="accent-transition absolute inset-x-0 bottom-0 max-h-[55vh] overflow-y-auto rounded-t-xl border border-line bg-panel p-4 backdrop-blur-md md:inset-x-auto md:top-16 md:right-4 md:bottom-4 md:max-h-none md:w-[380px] md:rounded-xl"
     >
       {phase === 'site' && site ? (
         <MissionCard site={site} />
