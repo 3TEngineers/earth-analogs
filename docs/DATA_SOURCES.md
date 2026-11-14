@@ -17,7 +17,11 @@ Last run: **2026-11-14** (Sadık, B1). All checks passed.
 | LOLA average sunlit time, south pole 75°S, 120 m | Base-site screening: power | https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_75S_120M_201608.TIF — 83 MB, polar stereographic, values are **fractions 0–1**. Downloaded to `data/raw/` (one-time, ~2 min) | **Yes** — near Mons Mouton 0.0–0.5 |
 | LOLA average Earth visibility, 75°S, 120 m | Base-site screening: comms | `…/AVGVISIB_75S_120M_201608_EARTH.TIF` — 43 MB, fractions 0–1 | **Yes** — near Mons Mouton 0.0–0.9 |
 | LOLA permanently shadowed regions, 75°S, 120 m | Base-site screening: distance to ice | `…/LPSR_75S_120M_201608.TIF` — 1 MB, 0/1 mask | **Yes** |
-| Same products at 85°S 60 m and 65°S 240 m | Finer pole detail / wider coverage | Same folder; 85°S sunlit 34 MB, Earth 25 MB | Files exist (not read) |
+| Same products at 65°S 240 m | Chandrayaan-3 check (69°S, outside the 75°S grid) | Same folder; `AVGVISIB_65S_240M_201608.TIF` (60 MB), `_EARTH` (23 MB), `LPSR_65S_240M_201608.TIF` | **Yes** (B2) |
+| Same products at 85°S 60 m | Finer pole detail | Same folder; sunlit 34 MB, Earth 25 MB | Files exist (not read) |
+| LOLA south-pole slope map, 240 m | Base-site screening: slope | https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/ldsm_75s_240m.lbl + `.img` (29 MB), same polar stereographic grid family as PGDA; DEMs `ldem_75s_*` also there | **Yes** (B2) |
+
+**Scale gotcha:** every PGDA and LOLA polar layer is int16 with a scale/offset (sunlit and Earth ×4e-5; PSR ×2.5e-5 + 0.5; slope ×0.0015 + 45). Always apply `src.scales` / `src.offsets`.
 | LRO Diviner | Surface temperature, rock abundance | https://pds-geosciences.wustl.edu/missions/lro/diviner.htm | No |
 | Artemis III candidate regions | Validation for base-site screening (2024 list of 9) | NASA announcements — Kmar collects coordinates in K3b | No |
 
@@ -27,6 +31,7 @@ Note: PGDA's page links `*_COG.TIF` versions, but the server returns 404 for all
 
 | Dataset | What it gives us | Access | Checked |
 |---|---|---|---|
+| MOLA MEGDR topography, 16 px/deg (~3.7 km) | Global landing screening: elevation, slope, relief | https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg016/megt90n000eb.lbl + `.img` (33 MB). **Gotcha:** the label says column 0 is 0°E but GDAL's transform starts at −180°; roll the data half a turn (checked: Jezero −2561 m, Gale −4485 m) | **Yes** (B2) |
 | MOLA DEM 463 m | Elevation, slope (km scale) | https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif — 46080×23040, not tiled; small windows read remotely in ~7–20 s | **Yes** — Jezero ≈ −2510 m (floor −2675 m) |
 | MGS TES thermal inertia, global 8 px/deg | Landing screening: dust / load-bearing surface | https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-special-v1/global_ti_60n_50s_8ppd.lbl + `.img` — 10 MB, 60°N–50°S, east-positive −180..180; GDAL reads the PDS3 label directly | **Yes** — Jezero ≈ 314 |
 | TES thermal inertia 2007 day/night maps | Alternative to the above | `https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-5-timap-v1/mgst_9001/data/global_ti_night_2007.img` (+ day, masks) | Files exist (not read) |
