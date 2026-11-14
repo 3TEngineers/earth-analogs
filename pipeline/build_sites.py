@@ -60,6 +60,10 @@ MOON_CONTEXT = [
 ]
 FINE_REFERENCE = "InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m"
 
+# "Why would a mission go there?" per candidate, with sources — written by Kmar in
+# pipeline/content/purposes.json ({"mars-candidate-a": {"text": "...", "sources": ["https://..."]}, ...}).
+PURPOSES = json.loads((Path(__file__).resolve().parent / "content" / "purposes.json").read_text(encoding="utf-8"))
+
 
 def clean(criteria: list[dict]) -> list[dict]:
     """Make criteria valid JSON: infinite distances become null with pass false."""
@@ -81,6 +85,7 @@ def candidate_site(ctx, result: dict, body: str, goal: str, note: str) -> dict:
         "summary": summary, "processes": processes, "limits": MARS_LIMITS if body == "mars" else MOON_LIMITS,
         "image": None,
         "selection": {"goal": goal, "role": "candidate", "criteria": clean(result["criteria"]), "note": note},
+        "purpose": PURPOSES.get(site_id),
     }
 
 
@@ -102,6 +107,7 @@ def main() -> None:
         sites.append(candidate_site(ctx, result, "moon", "Permanent base site", note))
 
     ch3 = copy.deepcopy(old_sites["chandrayaan-3"])
+    ch3["purpose"] = None
     ch3["selection"] = {"goal": "Permanent base site", "role": "validation",
                         "criteria": clean(moon["chandrayaan3"]["criteria"]),
                         "note": "A good landing site — flat and always in view of Earth — but a normal day/night cycle "
@@ -118,6 +124,7 @@ def main() -> None:
 
     for site_id, name in [("curiosity", "Curiosity"), ("perseverance", "Perseverance")]:
         site = copy.deepcopy(old_sites[site_id])
+        site["purpose"] = None
         check = next(v for v in mars["validation"] if v["name"] == name)
         failed = [c["label"].lower() for c in check["criteria"] if c["pass"] is False]
         site["selection"] = {

@@ -65,7 +65,8 @@
           }
         ],
         "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (16.1 km from its named feature), which cross-checks our method against NASA's own choice."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "moon-candidate-b",
@@ -130,7 +131,8 @@
           }
         ],
         "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (37.6 km from its named feature), which cross-checks our method against NASA's own choice."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "moon-candidate-c",
@@ -195,7 +197,8 @@
           }
         ],
         "note": "Passes all four criteria, 42 km from the nearest NASA Artemis feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and at least as well lit as our candidates next to NASA's regions."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "chandrayaan-3",
@@ -260,7 +263,8 @@
           }
         ],
         "note": "A good landing site — flat and always in view of Earth — but a normal day/night cycle and no permanent shadow nearby: fine for a short mission, not for a permanent base."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "mars-candidate-a",
@@ -334,7 +338,8 @@
           }
         ],
         "note": "Passes every criterion inside a 4330 thousand km2 safe area, 220 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.05 deg, relief 50 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "mars-candidate-b",
@@ -408,7 +413,8 @@
           }
         ],
         "note": "Passes every criterion inside a 209 thousand km2 safe area, 85 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.4 deg, relief 62 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "mars-candidate-c",
@@ -482,7 +488,8 @@
           }
         ],
         "note": "Passes every criterion inside a 50 thousand km2 safe area, 41 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 3.82 deg, relief 298 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "mars-candidate-d",
@@ -556,7 +563,8 @@
           }
         ],
         "note": "Passes every criterion inside a 46 thousand km2 safe area, 57 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.07 deg, relief 84 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "curiosity",
@@ -630,7 +638,8 @@
           }
         ],
         "note": "Fails slope at ~4 km scale, relief over ~18 km at our ~4 km scale: the landing ellipse fit between Gale's wall and Mount Sharp thanks to precision-guided entry, which km-scale maps can't see."
-      }
+      },
+      "purpose": null
     },
     {
       "id": "perseverance",
@@ -704,7 +713,8 @@
           }
         ],
         "note": "Passes our criteria, as a past landing should."
-      }
+      },
+      "purpose": null
     }
   ]
 }

@@ -6,10 +6,22 @@ The backend (`pipeline/`) writes these files; the frontend (`app/`) only reads t
 |---|---|---|
 | `app/public/data/sites.json` | pipeline | app |
 | `app/public/data/analogs.json` | pipeline | app |
+| `app/public/data/landings.json` | pipeline (from sourced lists in `docs/`) | app |
 | `app/public/images/sites/<siteId>.png` | pipeline | app |
 | `app/public/images/analogs/<analogId>.png` | pipeline | app |
 
-Both JSON files carry `"mock": true` until the real pipeline output replaces them.
+`sites.json` and `analogs.json` carry `"mock": true` until the real pipeline output replaces them (`sites.json` is real since B2; analogs are mock until B8).
+
+## Additions on 2026-11-14 (team decision)
+
+- **`site.purpose`** — *why a mission would go there*, for candidates: `{ "text": "...", "sources": ["https://..."] }`, or `null` until written. Kmar writes it in `pipeline/content/purposes.json` (keyed by site id, with sources); `build_sites.py` copies it into `sites.json`. Past landings have `null`.
+- **`landings.json`** — every past landing as a **name-only marker** on the Moon and Mars globes: no card, no fly-to, no zoom, just the name (slightly larger than normal text). Shape:
+
+  ```jsonc
+  { "version": 1, "landings": [ { "name": "Viking 1", "body": "mars", "agency": "NASA", "year": 1976, "lat": 22.269, "lon": -47.951 } ] }
+  ```
+
+  Mars (all 11) comes from `docs/LANDING_CONSTRAINTS.md` §2. **Moon landings are still to be collected with sources.** The validation sites in `sites.json` (Chandrayaan-3, Curiosity, Perseverance) stay clickable as before; drawing them twice is the frontend's call.
 
 ## `sites.json`
 
