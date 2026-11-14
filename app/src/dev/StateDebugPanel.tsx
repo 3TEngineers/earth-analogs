@@ -1,32 +1,18 @@
 import { useAppState } from '../state/AppState'
 import { useSelection } from '../state/useSelection'
-import type { Body } from '../types/data'
 
 /**
  * TEMPORARY. Exercises the shared state until Kmar's real panels (K1, K4) replace it.
- * Delete this file and its use in App.tsx once src/panels/ has the site list and report.
+ * Delete this file and its use in pages/ExplorePage.tsx once src/panels/ has the site list and report.
+ * The Moon / Mars switch lives in the URL now (header links), not here.
  */
 export function StateDebugPanel() {
   const state = useAppState()
   const { sitesForBody, site, analogs, analog } = useSelection()
-  const bodies: Body[] = ['moon', 'mars']
 
   return (
-    <aside className="accent-transition absolute top-4 right-4 bottom-4 w-80 overflow-y-auto rounded-xl border border-line bg-panel p-4 text-sm backdrop-blur-md">
+    <aside className="accent-transition absolute top-14 right-4 bottom-4 z-10 w-80 overflow-y-auto rounded-xl border border-line bg-panel p-4 text-sm backdrop-blur-md">
       <p className="mb-3 font-mono text-xs text-ink-muted">Temporary state panel (replaced by K1/K4)</p>
-
-      <div className="mb-4 flex gap-2">
-        {bodies.map((b) => (
-          <button
-            key={b}
-            type="button"
-            onClick={() => state.setBody(b)}
-            className={`rounded-md border px-3 py-1 capitalize ${state.body === b ? 'border-accent text-accent' : 'border-line text-ink-muted'}`}
-          >
-            {b}
-          </button>
-        ))}
-      </div>
 
       {state.phase !== 'earth' && (
         <ul className="space-y-2">

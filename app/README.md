@@ -16,6 +16,29 @@ npm run build    # type-check + production build into dist/
 npm run lint     # oxlint
 ```
 
+## Pages and flow
+
+```
+ /  Landing page                    /explore/:body  Explore page                       /about
+ ┌──────────────────────────┐       ┌──────────────────────────────────────────┐       ┌─────────┐
+ │ title + intro            │ click │ 3D globe of the Moon or Mars             │       │ team    │
+ │ (Moon) (Earth) (Mars)    │──────▶│   browse → pick a site → site card       │       │ method  │
+ │ key numbers              │ Moon/ │   → "Show Earth training areas"          │       │ data    │
+ │ link to About            │ Mars  │   → Earth globe + 3 analogs + report     │       │ AI use  │
+ └──────────────────────────┘       └──────────────────────────────────────────┘       └─────────┘
+        header on every page: Earth Analogs (home) · Moon · Mars · About
+```
+
+| Route | File | What happens | Owner |
+|---|---|---|---|
+| `/` | `src/pages/LandingPage.tsx` | Star field, small Moon / Earth / Mars (`src/globe/PlanetLineup.tsx`), intro text, key numbers counted from the data. Clicking the Moon or Mars flies it to the center and grows it (`LAUNCH_MS`), then opens `/explore/<body>`. Earth is decoration. | Layout + planets: Deniz. Text: Kmar |
+| `/explore/moon`, `/explore/mars` | `src/pages/ExplorePage.tsx` | The URL sets `body` in the shared state; the rest (`site` → `earth`) is the shared state. Loaded lazily, so three.js isn't downloaded on the landing page. Leaving the page resets the selection. Unknown bodies redirect to `/`. | Globe: Deniz. Panels: Kmar |
+| `/about` | `src/pages/AboutPage.tsx` | Team, method, NASA data, references, AI usage. | Kmar |
+
+Shared layout pieces: `src/components/StarField.tsx` (background on every page) and `src/components/SiteHeader.tsx` (top bar).
+
+Planned (Deniz, D2–D4): NASA textures on the small planets and the globes; the landing planet hands over seamlessly to the 3D globe at the same size and spot.
+
 ## Structure
 
 | Path | What | Owner |
@@ -24,6 +47,7 @@ npm run lint     # oxlint
 | `src/panels/` | Site list, mission card, report panel | Kmar |
 | `src/pages/` | Method, Limitations, About | Kmar |
 | `src/state/` | Shared UI state between globe and panels | Shared — change by agreement |
+| `src/components/` | Layout pieces used on every page (header, star field) | Shared |
 | `src/data/` | Loads `public/data/*.json` once (`useData()`) | Shared |
 | `src/types/data.ts` | Types for the data files | Shared contract |
 | `src/dev/` | Temporary helpers; `StateDebugPanel` goes away once K1/K4 land | — |
