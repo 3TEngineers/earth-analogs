@@ -11,7 +11,7 @@ import type { PlanetId } from './space/planets'
  * page to /explore/mars is a single continuous animation: Mars flies to the center, the other
  * planets drift away, the landing sites appear.
  *
- *   /, /about            → landing: Moon, Earth, Mars float behind the text
+ *   /, /about            → landing: Moon, Earth, Mars float behind the text (on "/", scrolling features one at a time)
  *   /explore/:body       → focus on that body; markers = its sites (candidates bright, past landings muted)
  *   phase "earth"        → focus on Earth; markers = the selected site's training areas
  */
@@ -90,6 +90,20 @@ export function SpaceScene() {
   useEffect(() => {
     engineRef.current?.setMarkers(markers.planet, markers.list)
   }, [markers])
+
+  // Landing page: the scroll position (in screen heights) drives the planet story; other pages stay at stage 0.
+  useEffect(() => {
+    const engine = engineRef.current
+    if (!engine) return
+    if (pathname !== '/') {
+      engine.setStory(0)
+      return
+    }
+    const onScroll = () => engine.setStory(window.scrollY / window.innerHeight)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [pathname])
 
   return (
     <div ref={containerRef} className="fixed inset-0" role="img" aria-label="3D view of the Moon, Earth and Mars">

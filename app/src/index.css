@@ -42,6 +42,8 @@
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Planet names on the landing story only (big, uppercase). */
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
 
   /* Motion tokens (Emil Kowalski's curves): enter/settle → out, on-screen moves → in-out. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -162,5 +164,32 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   .panel-in {
     animation: none;
+  }
+}
+
+/*
+ * Landing story: each section gets data-in-view while it fills most of the screen (LandingPage).
+ * Its .story-item children arrive from blur and leave the same way, staggered with style="--i: 0|1|2…".
+ */
+.story-item {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(10px);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    filter 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+[data-in-view] .story-item {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-item {
+    transform: none;
+    filter: none;
+    transition: opacity 300ms ease;
   }
 }

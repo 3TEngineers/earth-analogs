@@ -9,6 +9,8 @@ import { PLANET_IDS, PLANETS, type PlanetId } from './planets'
  *
  * Layouts:
  *  - landing: the planets float behind the page text, spin slowly and drift with the mouse (parallax).
+ *             On "/" the page scroll drives a story (setStory): one planet at a time slides in large beside
+ *             its section text (Mars, Moon, Earth), then all three settle back behind the method card.
  *  - focus:   one planet flies to the center at full size, the others drift far away;
  *             the user can orbit it, and the camera can fly to a lat/lon on it.
  *
@@ -57,6 +59,11 @@ const panelPx = (w: number) => (w >= 1024 ? 34 : 30) * 16 + 16
 /** How far the landing camera drifts with the mouse (world units). */
 const PARALLAX = { x: 70, y: 45 }
 
+/** Story stages on the landing page, one per screen height of scroll. `null` = the floating landing poses. */
+const STORY: ({ planet: PlanetId; side: 1 | -1 } | null)[] = [null, { planet: 'mars', side: 1 }, { planet: 'moon', side: -1 }, { planet: 'earth', side: 1 }, null]
+/** Depth of a featured planet (camera sits at z = 1000) and its size on wide and narrow screens. */
+const FEATURE = { z: 250, scale: 1.9, mobileScale: 1.15 }
+
 const easeOut = (t: number) => 1 - (1 - t) ** 4 // close to cubic-bezier(0.23, 1, 0.32, 1)
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
@@ -91,6 +98,9 @@ export class SpaceEngine {
   private planets = {} as Record<PlanetId, PlanetState>
   private stars = new THREE.Group()
   private layout: Layout = { kind: 'landing' }
+  /** Landing-page scroll story: target from the page, smoothed value used for drawing (both in stages). */
+  private storyTarget = 0
+  private story = 0
   private pendingLayout: Layout | null = null
   private ready = false
   private tween: Tween | null = null
@@ -181,6 +191,38 @@ export class SpaceEngine {
     this.applyLayout(layout, FLY_MS, easeInOut, 9)
   }
 
+  /** Landing-page scroll position in stages (1 = one screen height). Planets follow it smoothly. */
+  setStory(stage: number) {
+    this.storyTarget = Math.max(0, Math.min(stage, STORY.length - 1))
+    if (this.reduceMotion) this.story = this.storyTarget
+  }
+
+  /** Where every planet sits at a (fractional) story stage: the two neighbouring stages, blended with an ease. */
+  private storyPoses(stage: number) {
+    const i = Math.min(Math.floor(stage), STORY.length - 2)
+    const t = easeInOut(Math.min(Math.max(stage - i, 0), 1))
+    const result = {} as Record<PlanetId, { position: THREE.Vector3; scale: number }>
+    for (const id of PLANET_IDS) {
+      const a = this.stagePose(i, id)
+      const b = this.stagePose(i + 1, id)
+      result[id] = { position: a.position.lerp(b.position, t), scale: a.scale + (b.scale - a.scale) * t }
+    }
+    return result
+  }
+
+  private stagePose(stage: number, id: PlanetId) {
+    const config = PLANETS[id]
+    const step = STORY[stage]
+    if (!step) return { position: new THREE.Vector3(...config.landing.position), scale: config.landing.scale }
+    if (step.planet !== id) return { position: new THREE.Vector3(...config.away.position), scale: config.away.scale }
+    // Featured: beside the text on wide screens, above it on narrow ones.
+    const depth = LANDING_CAMERA.z - FEATURE.z
+    const halfH = Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2)) * depth
+    const aspect = this.camera.aspect
+    if (aspect < 0.9) return { position: new THREE.Vector3(0, halfH * 0.5, FEATURE.z), scale: FEATURE.mobileScale }
+    return { position: new THREE.Vector3(step.side * halfH * aspect * 0.42, 0, FEATURE.z), scale: FEATURE.scale }
+  }
+
   /** Markers drawn on one planet; other planets are cleared. */
   setMarkers(planet: PlanetId | null, markers: Marker[]) {
     for (const id of PLANET_IDS) {
@@ -217,7 +259,7 @@ export class SpaceEngine {
       const config = PLANETS[id]
       p.from = { position: p.group.position.clone(), scale: p.base }
       if (layout.kind === 'landing') {
-        p.to = { position: new THREE.Vector3(...config.landing.position), scale: config.landing.scale }
+        p.to = this.storyPoses(this.story)[id]
       } else if (id === layout.planet) {
         p.to = { position: new THREE.Vector3(0, 0, 0), scale: 1 }
       } else {
@@ -366,9 +408,18 @@ export class SpaceEngine {
         }
       }
     }
+    // Landing page: planets follow the scroll story once no flight is running.
+    if (this.layout.kind === 'landing' && !this.tween) {
+      this.story += (this.storyTarget - this.story) * smooth(5)
+      const poses = this.storyPoses(this.story)
+      for (const id of PLANET_IDS) {
+        this.planets[id].group.position.copy(poses[id].position)
+        this.planets[id].base = poses[id].scale
+      }
+    }
     for (const id of PLANET_IDS) {
       const p = this.planets[id]
-      const lift = this.layout.kind === 'landing' && this.hoveredPlanet === id && !this.tween ? 1.08 : 1
+      const lift = this.layout.kind === 'landing' && this.story < 0.5 && this.hoveredPlanet === id && !this.tween ? 1.08 : 1
       p.hover += (lift - p.hover) * smooth(10)
       p.group.scale.setScalar(p.base * p.hover)
     }
