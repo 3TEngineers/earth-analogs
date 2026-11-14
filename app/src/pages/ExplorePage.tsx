@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
 import { useData } from '../data/DataProvider'
-import { StateDebugPanel } from '../dev/StateDebugPanel'
 import { SitePanel } from '../panels/SitePanel'
 import { useAppState } from '../state/AppState'
 import type { Body } from '../types/data'
@@ -13,13 +12,13 @@ const BODIES: Body[] = ['moon', 'mars']
  * Explore page ("/explore/moon" or "/explore/mars").
  * The planet itself is drawn by <SpaceScene> behind this page; the URL decides which body is in focus,
  * and everything after that (site → Earth training areas) lives in the shared state.
- * Panels: Kmar (src/panels/) — StateDebugPanel is the temporary stand-in.
+ * Panels: src/panels/ — SitePanel shows the site list, the selected site and (phase earth) the training-area report.
  * Empty areas let pointer events through so the user can drag the globe.
  */
 export default function ExplorePage() {
   const { body } = useParams()
   const isValid = BODIES.includes(body as Body)
-  const { body: stateBody, phase, setBody, reset } = useAppState()
+  const { body: stateBody, setBody, reset } = useAppState()
   const data = useData()
 
   // Keep the shared state in sync with the URL.
@@ -41,8 +40,6 @@ export default function ExplorePage() {
       {data.status === 'error' && <p className="absolute bottom-4 left-4 text-different">{data.message}</p>}
       <div className="pointer-events-auto">
         <SitePanel />
-        {/* TEMPORARY: the Earth phase still uses the debug panel until the report panel (K4) lands. */}
-        {phase === 'earth' && <StateDebugPanel />}
       </div>
     </main>
   )

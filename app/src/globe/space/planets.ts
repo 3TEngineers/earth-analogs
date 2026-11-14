@@ -14,8 +14,10 @@ export interface PlanetConfig {
   accent: string
   /** Where the planet floats on the landing page, behind the text (world units, globe radius = 100). */
   landing: { position: [number, number, number]; scale: number; spin: number }
-  /** Where it waits while another planet is in focus: far away and small. */
+  /** Where it waits while another planet is featured in the landing story: far away and small. */
   away: { position: [number, number, number]; scale: number }
+  /** Same on the explore page: kept on the left, so it never sits behind the site text on the right. */
+  focusAway: [number, number, number]
   /** Clickable on the landing page (Earth is reached through a site's training areas). */
   clickable: boolean
 }
@@ -38,6 +40,7 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     accent: '#c9d1dc',
     landing: { position: [-470, 190, -120], scale: 0.5, spin: 0.05 },
     away: { position: [-1700, 900, -2200], scale: 0.3 },
+    focusAway: [-1700, 900, -2200],
     clickable: true,
   },
   earth: {
@@ -50,6 +53,7 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     accent: '#3fd0e8',
     landing: { position: [-380, -420, -520], scale: 0.95, spin: 0.04 },
     away: { position: [1500, -1100, -2600], scale: 0.35 },
+    focusAway: [-1600, -1000, -2600],
     clickable: false,
   },
   mars: {
@@ -62,6 +66,7 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     accent: '#e0663a',
     landing: { position: [500, 120, -200], scale: 0.75, spin: 0.06 },
     away: { position: [1800, 1000, -2000], scale: 0.3 },
+    focusAway: [-500, 1250, -2600],
     clickable: true,
   },
 }

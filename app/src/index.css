@@ -42,6 +42,8 @@
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Planet names on the landing story only (big, uppercase). */
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
 
   /* Motion tokens (Emil Kowalski's curves): enter/settle → out, on-screen moves → in-out. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -142,5 +144,59 @@ h3 {
     to {
       opacity: 1;
     }
+  }
+}
+
+/* Panel content swaps (list / site): the column arrives from blur, its .stagger children one after another (--i). */
+.panel-in {
+  animation: blur-in 600ms var(--ease-out) both;
+}
+.stagger {
+  animation: blur-in 800ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+}
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel-in,
+  .stagger {
+    animation: reveal-fade 300ms ease both;
+  }
+}
+
+/*
+ * Landing story: each section gets data-in-view while it fills most of the screen (LandingPage).
+ * Its .story-item children arrive from blur and leave the same way, staggered with style="--i: 0|1|2…".
+ */
+.story-item {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(10px);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    filter 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+[data-in-view] .story-item {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-item {
+    transform: none;
+    filter: none;
+    transition: opacity 300ms ease;
   }
 }

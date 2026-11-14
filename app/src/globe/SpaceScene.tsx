@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useAppState } from '../state/AppState'
+import { useData } from '../data/DataProvider'
 import { useSelection } from '../state/useSelection'
 import type { Body } from '../types/data'
 import { SpaceEngine, type Layout, type Marker } from './space/SpaceEngine'
@@ -11,8 +12,9 @@ import type { PlanetId } from './space/planets'
  * page to /explore/mars is a single continuous animation: Mars flies to the center, the other
  * planets drift away, the landing sites appear.
  *
- *   /, /about            → landing: Moon, Earth, Mars float behind the text
- *   /explore/:body       → focus on that body; markers = its sites (candidates bright, past landings muted)
+ *   /, /about            → landing: Moon, Earth, Mars float behind the text (on "/", scrolling features one at a time)
+ *   /explore/:body       → focus on that body; markers = its sites (candidates bright, validation sites muted)
+ *                          plus every other past landing from landings.json as a name-only tag
  *   phase "earth"        → focus on Earth; markers = the selected site's training areas
  */
 export function SpaceScene() {
@@ -23,6 +25,9 @@ export function SpaceScene() {
   const { pathname } = useLocation()
   const { phase, selectSite, selectAnalog } = useAppState()
   const { sitesForBody, site, analogs, analog } = useSelection()
+  const data = useData()
+  // Stable reference: a fresh [] on every render would rebuild every marker on every render.
+  const landings = useMemo(() => (data.status === 'ready' ? data.landings.landings : []), [data])
 
   const body = pathname.match(/^\/explore\/(moon|mars)$/)?.[1] as Body | undefined
 
@@ -68,18 +73,22 @@ export function SpaceScene() {
         list: analogs.map((a) => ({ id: a.id, lat: a.lat, lon: a.lon, label: `#${a.rank} ${a.name}`, emphasis: 'strong', active: a.id === analog?.id })),
       }
     }
-    return {
-      planet: body,
-      list: sitesForBody.map((s) => ({
-        id: s.id,
-        lat: s.lat,
-        lon: s.lon,
-        label: s.name,
-        emphasis: s.selection.role === 'candidate' ? 'strong' : 'muted',
-        active: s.id === site?.id,
-      })),
-    }
-  }, [body, phase, analogs, analog, sitesForBody, site])
+    const siteMarkers: Marker[] = sitesForBody.map((s) => ({
+      id: s.id,
+      lat: s.lat,
+      lon: s.lon,
+      label: s.name,
+      emphasis: s.selection.role === 'candidate' ? 'strong' : 'muted',
+      active: s.id === site?.id,
+    }))
+    // Every other past landing: name and year only. Skip ones already shown as a validation site (within ~1°).
+    const near = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
+      Math.abs(a.lat - b.lat) < 1 && Math.abs(((a.lon - b.lon + 540) % 360) - 180) < 1
+    const landingMarkers: Marker[] = landings
+      .filter((l) => l.body === body && !sitesForBody.some((s) => near(s, l)))
+      .map((l) => ({ id: `landing:${l.name}`, lat: l.lat, lon: l.lon, label: `${l.name} · ${l.year}`, emphasis: 'landing', active: false }))
+    return { planet: body, list: [...siteMarkers, ...landingMarkers] }
+  }, [body, phase, analogs, analog, sitesForBody, site, landings])
 
   // Compare by value so re-renders with equal content don't restart the animation.
   const layoutKey = JSON.stringify(layout)
@@ -90,6 +99,20 @@ export function SpaceScene() {
   useEffect(() => {
     engineRef.current?.setMarkers(markers.planet, markers.list)
   }, [markers])
+
+  // Landing page: the scroll position (in screen heights) drives the planet story; other pages stay at stage 0.
+  useEffect(() => {
+    const engine = engineRef.current
+    if (!engine) return
+    if (pathname !== '/') {
+      engine.setStory(0)
+      return
+    }
+    const onScroll = () => engine.setStory(window.scrollY / window.innerHeight)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [pathname])
 
   return (
     <div ref={containerRef} className="fixed inset-0" role="img" aria-label="3D view of the Moon, Earth and Mars">
