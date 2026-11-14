@@ -121,6 +121,12 @@ export class SpaceEngine {
   private mouse = new THREE.Vector2()
   private mouseTarget = new THREE.Vector2()
   private hoveredPlanet: PlanetId | null = null
+  /** HTML name tags that follow the markers on screen (hidden on the far side, overlaps dropped by priority). */
+  private labelLayer = document.createElement('div')
+  private labels: { el: HTMLElement; datum: PointDatum; width: number }[] = []
+  /** Additive glow sprites under the markers; the active one pulses. */
+  private glows: { sprite: THREE.Sprite; size: number; active: boolean }[] = []
+  private glowTexture = makeGlowTexture()
   private pointerDown: { x: number; y: number } | null = null
   private frame = 0
   private lastTime = performance.now()
@@ -138,6 +144,8 @@ export class SpaceEngine {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     Object.assign(this.renderer.domElement.style, { display: 'block', width: '100%', height: '100%' })
     container.appendChild(this.renderer.domElement)
+    Object.assign(this.labelLayer.style, { position: 'absolute', inset: '0', pointerEvents: 'none', overflow: 'hidden' })
+    container.appendChild(this.labelLayer)
 
     this.camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 1, 20000)
     this.camera.position.copy(this.reduceMotion ? LANDING_CAMERA : INTRO_CAMERA)
@@ -191,6 +199,8 @@ export class SpaceEngine {
     this.controls.dispose()
     this.renderer.dispose()
     el.remove()
+    this.labelLayer.remove()
+    this.glowTexture.dispose()
   }
 
   /** Moves planets and camera to a new layout with one smooth flight. Waits for the textures first. */
@@ -242,30 +252,118 @@ export class SpaceEngine {
     return { position: new THREE.Vector3(step.side * halfH * aspect * 0.42, 0, FEATURE.z), scale: FEATURE.scale }
   }
 
-  /** Markers drawn on one planet; other planets are cleared. */
+  /**
+   * Markers drawn on one planet; other planets are cleared. Each marker is a bright disc with a soft glow, radar rings
+   * for candidates and the active one, and an HTML name tag beside it (see updateLabels).
+   */
   setMarkers(planet: PlanetId | null, markers: Marker[]) {
+    this.glows = []
     for (const id of PLANET_IDS) {
       const data: PointDatum[] = id === planet ? markers.map((m) => ({ ...m, planet: id })) : []
       const accent = PLANETS[id].accent
+      const color = (m: PointDatum) => (m.active ? '#ffffff' : m.emphasis === 'strong' ? accent : '#9aa4b6')
       this.planets[id].globe
         .pointsData(data)
-        .pointColor((d) => {
-          const m = d as PointDatum
-          return m.active ? '#ffffff' : m.emphasis === 'strong' ? accent : '#8a94a6'
-        })
-        // Flat beacons, not columns: a small bright disc on the surface, with radar-style rings for candidates.
-        .pointAltitude(0.003)
-        .pointRadius((d) => ((d as PointDatum).active ? 0.9 : (d as PointDatum).emphasis === 'strong' ? 0.6 : 0.4))
+        .pointColor((d) => color(d as PointDatum))
+        .pointAltitude(0.004)
+        .pointRadius((d) => ((d as PointDatum).active ? 1.1 : (d as PointDatum).emphasis === 'strong' ? 0.75 : 0.45))
         .ringsData(data.filter((m) => m.active || m.emphasis === 'strong'))
         .ringColor((d: object) => {
           const m = d as PointDatum
           const rgb = m.active ? '255,255,255' : hexToRgb(accent)
-          return (t: number) => `rgba(${rgb},${1 - t})`
+          return (t: number) => `rgba(${rgb},${0.9 * (1 - t)})`
         })
-        .ringMaxRadius((d) => ((d as PointDatum).active ? 5 : 2.5))
-        .ringPropagationSpeed((d) => ((d as PointDatum).active ? 2.5 : 1.2))
-        .ringRepeatPeriod((d) => ((d as PointDatum).active ? 700 : 2200))
-        .ringAltitude(0.002)
+        .ringMaxRadius((d) => ((d as PointDatum).active ? 6 : 3.5))
+        .ringPropagationSpeed((d) => ((d as PointDatum).active ? 3 : 1.6))
+        .ringRepeatPeriod((d) => ((d as PointDatum).active ? 800 : 1800))
+        .ringAltitude(0.003)
+        .objectsData(data)
+        .objectLat((d) => (d as PointDatum).lat)
+        .objectLng((d) => (d as PointDatum).lon)
+        .objectAltitude(0.012)
+        .objectThreeObject((d) => {
+          const m = d as PointDatum
+          const material = new THREE.SpriteMaterial({
+            map: this.glowTexture,
+            color: color(m),
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            opacity: m.emphasis === 'muted' && !m.active ? 0.55 : 0.95,
+          })
+          const sprite = new THREE.Sprite(material)
+          const size = m.active ? 13 : m.emphasis === 'strong' ? 8 : 4.5
+          sprite.scale.setScalar(size)
+          this.glows.push({ sprite, size, active: m.active })
+          return sprite
+        })
+    }
+    this.buildLabels(planet, markers)
+  }
+
+  private buildLabels(planet: PlanetId | null, markers: Marker[]) {
+    this.labelLayer.replaceChildren()
+    this.labels = []
+    if (!planet) return
+    const accent = PLANETS[planet].accent
+    // Priority: active first, then candidates, then the muted ones; later tags give way when they overlap.
+    const rank = (m: Marker) => (m.active ? 0 : m.emphasis === 'strong' ? 1 : 2)
+    for (const m of [...markers].sort((a, b) => rank(a) - rank(b))) {
+      const el = document.createElement('button')
+      el.type = 'button'
+      el.className = `absolute top-0 left-0 flex items-center gap-1.5 whitespace-nowrap rounded-full font-mono uppercase transition-opacity duration-200 will-change-transform ${
+        m.active
+          ? 'border border-white bg-white px-3 py-1.5 text-xs tracking-[0.14em] text-[#05070d] shadow-[0_0_28px_rgba(255,255,255,0.35)]'
+          : m.emphasis === 'strong'
+            ? 'border border-white/20 bg-[#05070d]/75 px-2.5 py-1 text-[11px] tracking-[0.14em] text-[#e8ecf2] backdrop-blur-md hover:border-white/60'
+            : 'px-1 text-[10px] tracking-[0.12em] text-[#aeb6c4] [text-shadow:0_1px_6px_#05070d] hover:text-white'
+      }`
+      if (m.emphasis === 'strong' && !m.active) {
+        const dot = document.createElement('span')
+        dot.className = 'size-1.5 shrink-0 rounded-full'
+        dot.style.background = accent
+        dot.style.boxShadow = `0 0 8px ${accent}`
+        el.append(dot)
+      }
+      el.append(m.label)
+      el.style.opacity = '0'
+      el.addEventListener('click', () => this.events.onMarkerClick(planet, m.id))
+      this.labelLayer.append(el)
+      this.labels.push({ el, datum: { ...m, planet }, width: 0 })
+    }
+  }
+
+  /** Places the name tags next to their markers; hides tags on the far side and lower-priority tags that overlap. */
+  private updateLabels() {
+    const show = this.layout.kind === 'focus'
+    this.labelLayer.style.visibility = show ? 'visible' : 'hidden'
+    if (!show || this.labels.length === 0) return
+    const { clientWidth: w, clientHeight: h } = this.container
+    // Tags stay out of the site text on the right (desktop); a tag that would cross it flips to the marker's left.
+    const limit = w >= DESKTOP_MIN ? w - panelPx(w) - 8 : w - 8
+    const placed: { x0: number; x1: number; y0: number; y1: number }[] = []
+    const center = new THREE.Vector3()
+    const toCamera = new THREE.Vector3()
+    for (const label of this.labels) {
+      const p = this.planets[label.datum.planet]
+      const local = p.globe.getCoords(label.datum.lat, label.datum.lon, 0.012)
+      const world = new THREE.Vector3(local.x, local.y, local.z).applyMatrix4(p.group.matrixWorld)
+      p.group.getWorldPosition(center)
+      const facing = world.clone().sub(center).normalize().dot(toCamera.copy(this.camera.position).sub(world).normalize())
+      const ndc = world.clone().project(this.camera)
+      const px = ((ndc.x + 1) / 2) * w
+      const y = ((1 - ndc.y) / 2) * h
+      if (!label.width) label.width = label.el.offsetWidth
+      const x = px + 14 + label.width > limit ? px - 14 - label.width : px + 14
+      const box = { x0: x, x1: x + label.width, y0: y - 12, y1: y + 12 }
+      const hidden =
+        facing < 0.12 ||
+        x < 4 ||
+        (!label.datum.active && placed.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0))
+      label.el.style.opacity = hidden ? '0' : String(Math.min(1, (facing - 0.12) / 0.2))
+      label.el.style.pointerEvents = hidden ? 'none' : 'auto'
+      label.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translateY(-50%)`
+      if (!hidden) placed.push(box)
     }
   }
 
@@ -455,7 +553,13 @@ export class SpaceEngine {
     if (!this.reduceMotion) this.stars.rotation.y += 0.004 * dt
 
     if (this.controls.enabled) this.controls.update()
+    // The active marker's glow breathes.
+    if (!this.reduceMotion) {
+      const pulse = 1 + 0.18 * Math.sin(time / 260)
+      for (const g of this.glows) if (g.active) g.sprite.scale.setScalar(g.size * pulse)
+    }
     this.renderer.render(this.scene, this.camera)
+    this.updateLabels()
     this.frame = requestAnimationFrame(this.animate)
   }
 
@@ -490,7 +594,7 @@ export class SpaceEngine {
       let planet: PlanetId | null = null
       while (obj) {
         const t = obj as THREE.Object3D & { __globeObjType?: string; __data?: unknown }
-        if (t.__globeObjType === 'point' && t.__data) point = t.__data as PointDatum
+        if ((t.__globeObjType === 'point' || t.__globeObjType === 'object') && t.__data) point = t.__data as PointDatum
         if (obj.userData.planet) planet = obj.userData.planet as PlanetId
         obj = obj.parent
       }
@@ -525,8 +629,9 @@ export class SpaceEngine {
     const landingPlanet = result && this.layout.kind === 'landing' && PLANETS[result.planet].clickable ? result.planet : null
     this.hoveredPlanet = landingPlanet
     if (result?.point) {
+      // Markers carry their own name tags, so no tooltip here.
       this.renderer.domElement.style.cursor = 'pointer'
-      this.events.onHover({ label: result.point.label, ...position })
+      this.events.onHover(null)
     } else if (landingPlanet) {
       this.renderer.domElement.style.cursor = 'pointer'
       this.events.onHover({ label: `Explore ${PLANETS[landingPlanet].label}`, ...position })
@@ -558,4 +663,22 @@ function slerpAround(from: THREE.Vector3, to: THREE.Vector3, center: THREE.Vecto
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16)
   return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`
+}
+
+/** Soft white dot fading to transparent; tinted per marker through the sprite color. */
+function makeGlowTexture() {
+  const size = 128
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  g.addColorStop(0, 'rgba(255,255,255,1)')
+  g.addColorStop(0.18, 'rgba(255,255,255,0.85)')
+  g.addColorStop(0.45, 'rgba(255,255,255,0.22)')
+  g.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, size, size)
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
 }

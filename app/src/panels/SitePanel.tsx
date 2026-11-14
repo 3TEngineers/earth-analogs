@@ -4,6 +4,7 @@ import { useAppState } from '../state/AppState'
 import { useSelection } from '../state/useSelection'
 import { BodyToggle } from './BodyToggle'
 import { MissionCard } from './MissionCard'
+import { ReportPanel } from './ReportPanel'
 import { SiteList } from './SiteList'
 
 /**
@@ -13,25 +14,23 @@ import { SiteList } from './SiteList'
  *   The column scrolls inside and fades out at its top edge (the bottom keeps the sticky button).
  * - Mobile: a bottom sheet over the lower ~40 % of the screen, "More" lifts it to 85 %.
  * Content swaps (list ↔ site) arrive from blur, like the story text (.panel-in).
- * The `earth` phase is the report panel (K4), not built yet.
+ * The `earth` phase shows the training-area report (K4, ReportPanel) in the same place.
  */
 export function SitePanel() {
-  const { phase, siteId, body } = useAppState()
+  const { phase, siteId, analogId, body } = useAppState()
   const { site, sitesForBody } = useSelection()
   // Expansion (mobile only) belongs to one view: a new selection starts at the normal height again.
-  const view = `${phase}:${siteId ?? ''}`
+  const view = `${phase}:${siteId ?? ''}:${analogId ?? ''}`
   const [expandedView, setExpandedView] = useState<string | null>(null)
   const expanded = expandedView === view
   const toggle = () => setExpandedView(expanded ? null : view)
-
-  if (phase === 'earth') return null
 
   const candidates = sitesForBody.filter((s) => s.selection.role === 'candidate').length
   const isMoon = body === 'moon'
 
   return (
     <aside
-      aria-label="Landing sites"
+      aria-label={phase === 'earth' ? 'Earth training areas' : 'Landing sites'}
       className={`accent-transition fixed inset-x-0 bottom-0 z-20 mx-auto flex flex-col overflow-hidden rounded-t-2xl border border-b-0 border-white/10 bg-[#080b14]/92 shadow-[0_-12px_40px_rgb(0_0_0/0.45)] backdrop-blur-2xl transition-[height] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
         expanded ? 'h-[85svh]' : 'h-[40svh]'
       } md:inset-x-auto md:top-20 md:right-6 md:bottom-4 md:h-auto md:w-[30rem] md:rounded-none md:border-0 md:bg-transparent md:shadow-none md:backdrop-blur-none md:[text-shadow:0_2px_18px_rgb(5_7_13/0.95)] lg:right-12 lg:w-[34rem]`}
@@ -47,10 +46,12 @@ export function SitePanel() {
       </button>
 
       <div
-        key={site?.id ?? `list-${body}`}
+        key={phase === 'earth' ? `earth-${siteId}` : (site?.id ?? `list-${body}`)}
         className="panel-in min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 sm:px-7 md:px-1 md:[mask-image:linear-gradient(to_bottom,transparent,black_2rem)] md:[scrollbar-width:none]"
       >
-        {phase === 'site' && site ? (
+        {phase === 'earth' ? (
+          <ReportPanel />
+        ) : phase === 'site' && site ? (
           <MissionCard site={site} />
         ) : (
           <div className="pb-10 md:pt-8">
