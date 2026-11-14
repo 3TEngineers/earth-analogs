@@ -23,6 +23,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: `docs/PROJECT_HISTORY.md` — full step-by-step history of the decisions so far. Kmar (`kmarrabid-ai`) joined with write access.
 - 2026-11-14: Project plan, team split, data contract with mock JSON, TypeScript types and pydantic schema (mock JSON validated against the schema).
 - 2026-11-13: Repo skeleton, working rules (`CLAUDE.md`), challenge brief, data source list.
 
@@ -32,7 +33,6 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Next
 
-- Invite Kmar to the org and give them write access to this repo.
 - Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
 - Sadık: B1 — confirm data access for the datasets in `docs/DATA_SOURCES.md`.

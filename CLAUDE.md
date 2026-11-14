@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Shared context for every Claude session on this repo. Three teammates work in parallel, each with their own Claude account, so **Claude memory is not shared between us — this repo is the shared memory.** Read this file and `docs/STATUS.md` before doing anything.
+Shared context for every Claude session on this repo. Three teammates work in parallel, each with their own Claude account, so **Claude memory is not shared between us — this repo is the shared memory.** Read this file and `docs/STATUS.md` before doing anything. If this is your first session on the repo, also read `docs/PROJECT_HISTORY.md` (why every decision was made) and `docs/PROJECT_PLAN.md` (what we're building and who does what).
 
 ## Project
 
@@ -32,7 +32,7 @@ Shared context for every Claude session on this repo. Three teammates work in pa
 |---|---|---|
 | Backend: data, scoring, JSON output | `pipeline/`, `notebooks/` | Sadık (`SadikBoraErteni`) |
 | Frontend: globes and animation | `app/src/globe/` | Deniz (`DenizASL4N`) |
-| Frontend: panels, pages, content, slides | `app/src/panels/`, `app/src/pages/`, site text in `docs/` | Kmar (GitHub username TBD) |
+| Frontend: panels, pages, content, slides | `app/src/panels/`, `app/src/pages/`, site text in `docs/` | Kmar (`kmarrabid-ai`) |
 | Shared contract | `docs/DATA_CONTRACT.md`, `app/src/types/data.ts`, `pipeline/schema.py`, `app/public/data/` | Change only by agreement |
 
 Each person's step-by-step tasks (B0–B9, D1–D7, K1–K8) are in `docs/PROJECT_PLAN.md`.
