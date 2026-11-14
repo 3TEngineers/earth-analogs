@@ -23,8 +23,10 @@ pipeline/.venv/bin/python -m pip install -r pipeline/requirements.txt       # ma
 | `build_sites.py` | Writes `app/public/data/sites.json` from both screenings (and keeps mock analogs keyed to the candidates until B8) |
 | `make_maps.py` | Draws the screening maps into `docs/images/` (for the team and the slides) |
 | `earth_pool.py` | B3: global 0.25° Earth land grid (precipitation, vegetation, temperature, land cover) and a Mars-like and a Moon-like pool of Earth candidates → `data/interim/earth_pool.json` |
-
-Results and their explanation: [`docs/SCREENING_RESULTS.md`](../docs/SCREENING_RESULTS.md).
+| `earth_ranking.py` | B4: per-candidate ranking of the Earth pools on terrain (slope distributions) and rock type (GLiM) → `data/interim/earth_rankings.json` |
+| `build_analogs.py` | B5+B7+B8: 3 training areas per candidate, report text, writes `app/public/data/analogs.json` |
 | `requirements.txt` | Python dependencies |
+
+Results and their explanation: [`docs/SCREENING_RESULTS.md`](../docs/SCREENING_RESULTS.md) (B2) and [`docs/ANALOG_RESULTS.md`](../docs/ANALOG_RESULTS.md) (B3–B8).
 
 Downloaded data goes to `data/raw/` (git-ignored).

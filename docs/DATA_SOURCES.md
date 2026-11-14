@@ -52,8 +52,9 @@ Note: PGDA's page links `*_COG.TIF` versions, but the server returns 404 for all
 | MODIS NDVI monthly CMG (MOD13C2 v061, 0.05°) | Global vegetation | Earthdata (LP DAAC), HDF4 via `pyhdf`: `CMG 0.05 Deg Monthly NDVI`, × 1e-4, fill −3000. No data over Antarctica | **Yes** (B3) — same 4 months, ~390 MB |
 | MODIS land cover CMG (MCD12C1 v061, 0.05°) | Ice-sheet mask and barren fraction | Earthdata (LP DAAC), HDF4 via `pyhdf`: `Land_Cover_Type_1_Percent` (IGBP class 15 snow/ice, 16 barren). **Gotchas:** ice shelves and the polar plateau have empty percentages; the McMurdo Dry Valleys are mostly "ice" at 0.05° | **Yes** (B3) — 2023, 1.2 GB |
 | EMIT L2B mineral identification (60 m) | Surface minerals, arid regions only (±54° lat) | Earthdata | **Search yes** — 33 granules / 3 GB over Salda since 2022: too big to pull everywhere, subset or pick single granules |
-| Permafrost extent | Frozen ground | To find | No |
-| Global lithology map | Rock type (e.g. anorthosite vs basalt) | To find | No |
+| Permafrost extent | Frozen ground | Not used — mean MODIS surface temperature below 0 °C is our proxy | — |
+| GLiM global lithological map, 0.5° (Hartmann & Moosdorf 2012) | Rock type (basalt `vb`, basic plutonic incl. anorthosite `pb`, sediments `su/ss/sm`, …) | https://doi.pangaea.de/10.1594/PANGAEA.788537 ; zip from https://epic.awi.de/id/eprint/31092/ (38 kB, ASCII grid + `Classnames.txt`) | **Yes** (B4) — Iceland `vb`, Atacama `su` |
+| Natural Earth regions and countries (10m) | Naming Earth places | https://naciscdn.org/naturalearth/10m/physical/ne_10m_geography_regions_polys.zip, …/cultural/ne_10m_admin_0_countries.zip | **Yes** (B5) |
 
 ## Access notes
 
