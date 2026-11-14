@@ -22,6 +22,7 @@ pipeline/.venv/bin/python -m pip install -r pipeline/requirements.txt       # ma
 | `moon_screening.py` | B2: screens the lunar south pole for base sites, validates on Artemis III regions and Chandrayaan-3 → `data/interim/moon_screening.json` |
 | `build_sites.py` | Writes `app/public/data/sites.json` from both screenings (and keeps mock analogs keyed to the candidates until B8) |
 | `make_maps.py` | Draws the screening maps into `docs/images/` (for the team and the slides) |
+| `earth_pool.py` | B3: global 0.25° Earth land grid (precipitation, vegetation, temperature, land cover) and a Mars-like and a Moon-like pool of Earth candidates → `data/interim/earth_pool.json` |
 
 Results and their explanation: [`docs/SCREENING_RESULTS.md`](../docs/SCREENING_RESULTS.md).
 | `requirements.txt` | Python dependencies |
