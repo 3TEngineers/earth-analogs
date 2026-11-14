@@ -16,11 +16,11 @@ Published constraints that past missions used to choose where to land, collected
 | **Phoenix** (2008) | Below **−3.5 km** | **65°N–72°N** (polar ice was the goal) | Slopes and rocks no worse than at the Viking Lander 2 site | Same as above (no worse than Viking 2) | — | Low winds; a few cm of soil over ice | Medium (abstract) | [PH1] |
 | **MSL Curiosity** (2012) | Below **−1 km** | **±30°** (rover thermal management) | Relief < 100–130 m at 1–1000 m baselines; slopes **< 30° at 2–5 m** | "Moderate" (to protect the belly pan) | Radar-reflective, load-bearing, trafficable, not dominated by fine dust | Initial sites 25 × 20 km | High for the six criteria (quoted abstract); thresholds for rocks and thermal inertia not verified | [MSL1] |
 | **InSight** (2018) | Below about **−2.5 km** | 15°S–5°N at first, narrowed to **3°N–5°N** (solar power, thermal) | Slopes **< 15°** at 84 m and 2 m scales | **< 10 %** | Load-bearing, confirmed with thermal inertia and radar; one source gives ~100–140 J m⁻² s⁻½ K⁻¹ | Ellipse ~130 × 27 km; 3–5 m of fine regolith for the heat probe | Medium (abstract + secondary pages) | [I1] |
-| **Mars 2020 Perseverance** (2021) | Below **−0.5 km** MOLA | ±30° | Relief < ~100 m at 1–1000 m; slopes **< 25°–30° at 2–5 m** | ~7–12 %, locally up to 20 % (Terrain Relative Navigation avoids hazards) | Thermal inertia **> 100 J m⁻² s⁻½ K⁻¹**; < ~150 with high albedo = possibly dusty, check further | Ellipse 25 × 20 km, later 13 × 7 km with range trigger; final 7.7 × 6.6 km | High for elevation, relief, slope, TI (abstract read in full); rock abundance Medium (secondary page) | [M20-1], [M20-2] |
+| **Mars 2020 Perseverance** (2021) | Below **+0.5 km** MOLA (corrected 14 Nov audit; was "−0.5") | ±30° | Relief < ~100 m at 1–1000 m; slopes **< 25°–30° at 2–5 m** | ~7–12 %, locally up to 20 % (Terrain Relative Navigation avoids hazards) | Thermal inertia **> 100–150 J m⁻² s⁻½ K⁻¹**; < ~150 with high albedo = possibly dusty, check further | Ellipse 25 × 20 km, later 13 × 7 km with range trigger; final 7.7 × 6.6 km | High for elevation, relief, slope, TI (abstract read in full); rock abundance Medium (secondary page) | [M20-1], [M20-2] |
 
 ### What the constraints mean (plain English, for the Method page)
 
-- **Elevation** — lower ground has more atmosphere above it, so the parachute has more time to slow the spacecraft. Every mission set a "must be below" height. Better entry systems allowed higher sites over time (Phoenix −3.5 km → MER −1.3 km → Mars 2020 −0.5 km).
+- **Elevation** — lower ground has more atmosphere above it, so the parachute has more time to slow the spacecraft. Every mission set a "must be below" height. Better entry systems allowed higher sites over time (Phoenix −3.5 km → MER −1.3 km → MSL −1 km → Mars 2020 +0.5 km).
 - **Latitude** — near the equator there is more sunlight for solar power and milder temperatures. Phoenix is the exception: it went north on purpose to dig into ice.
 - **Slope and relief** — steep ground can fool the landing radar, tip the lander or waste fuel during powered descent.
 - **Rocks** — big rocks can puncture airbags or hit the bottom of the lander.
@@ -54,8 +54,8 @@ NASA gives **no coordinates** for the regions, only names and an image. The tabl
 
 | Region (NASA name) | Feature used | Latitude | Longitude | Source | Note |
 |---|---|---|---|---|---|
-| Peak near Cabeus B | Cabeus B crater | −82.40 | −53.00 | [G-8058] | The region is a peak near this crater |
-| Haworth | Haworth crater | −86.9 | −4.0 | [W-HA] | Wikipedia only, no USGS check |
+| Peak near Cabeus B | Cabeus B crater | −82.259 | −54.585 | [G-8058] | The region is a peak near this crater |
+| Haworth | Haworth crater | −87.45 | −5.17 | [G-14502] | USGS Gazetteer (corrected 14 Nov audit; Wikipedia gave −86.9, −4.0) |
 | Malapert Massif | Mons Malapert | −85.98 | −1.67 | [G-16338] | |
 | Mons Mouton Plateau | Mons Mouton | −84.60 | 31.00 | [G-16070] | Plateau on the same massif |
 | Mons Mouton | Mons Mouton | −84.60 | 31.00 | [G-16070] | |
@@ -110,7 +110,7 @@ These are **suggestions**, not decisions. Sadık sets the thresholds in B2.
 - **[A2]** Astronomy.com, *Here are the nine sites where Artemis 3 might land on the Moon* — https://www.astronomy.com/space-exploration/here-are-the-nine-sites-where-artemis-3-might-land-on-the-moon/
 - **[W-A3]** https://en.wikipedia.org/wiki/Artemis_III
 - **[G-…]** USGS Gazetteer of Planetary Nomenclature, feature pages: Cabeus B https://planetarynames.wr.usgs.gov/Feature/8058 · Mons Malapert https://planetarynames.wr.usgs.gov/Feature/16338 · Mons Mouton https://planetarynames.wr.usgs.gov/Feature/16070 · Nobile https://planetarynames.wr.usgs.gov/Feature/4321 · de Gerlache https://planetarynames.wr.usgs.gov/Feature/1439 · Slater https://planetarynames.wr.usgs.gov/Feature/15325
-- **[W-HA]** https://en.wikipedia.org/wiki/Haworth_(crater)
+- **[G-14502]** USGS Gazetteer, Haworth — https://planetarynames.wr.usgs.gov/Feature/14502
 - **[L1]** Gläser et al. (2014), *Illumination conditions at the lunar south pole using high resolution Digital Terrain Models from LOLA*, Icarus 243, 78–90
 - **[L2]** Gläser et al. (2018), *Illumination conditions at the lunar poles: Implications for future exploration*, Planet. Space Sci. 162
 - **[L3]** Mazarico et al. (2011), *Illumination conditions of the lunar polar regions using LOLA topography*, Icarus 211, 1066–1081; data: NASA PGDA *Lunar Polar Illumination* — https://pgda.gsfc.nasa.gov/products/69

@@ -63,8 +63,8 @@ FAR_MIN_KM_APART = 30.0
 POLAR_LAT = -84.0
 
 ARTEMIS = [  # docs/LANDING_CONSTRAINTS.md §3 — feature centres, not exact regions
-    ("Peak near Cabeus B", -82.40, -53.00),
-    ("Haworth", -86.9, -4.0),
+    ("Peak near Cabeus B", -82.259, -54.585),  # USGS Gazetteer 8058 (audit: KNOWN list had -82.40, -53.00)
+    ("Haworth", -87.45, -5.17),  # USGS Gazetteer 14502 (audit: Wikipedia value -86.9, -4.0 was 17 km off)
     ("Malapert Massif", -85.98, -1.67),
     ("Mons Mouton (and Plateau)", -84.60, 31.00),
     ("Nobile Rim 1 and 2", -85.28, 53.27),

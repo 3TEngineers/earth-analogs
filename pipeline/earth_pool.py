@@ -107,7 +107,9 @@ def scores(f: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     # polar plateau have empty land-cover and no NDVI, so the second test alone would let them in.
     exposed = (f["barren_pct"] >= 10) | ((f["snow_ice_pct"] < 50) & np.isfinite(f["ndvi_max"]))
     s = {
-        "aridity": clip01(1 - f["precip_mm"] / 250.0),  # 0 mm -> 1, 250 mm/yr (semi-arid) -> 0
+        # <= 100 mm/yr -> 1: GPM IMERG reports 40-70 mm over the hyperarid Atacama where gauges record ~1-2 mm
+        # (audit), so below 100 mm satellite rainfall cannot rank deserts; 350 mm/yr (semi-arid) -> 0
+        "aridity": clip01(1 - (f["precip_mm"] - 100.0) / 250.0),
         # bare ground: low NDVI, or land cover that says barren
         "barren": np.maximum(clip01(1 - (np.nan_to_num(f["ndvi_max"], nan=0) - 0.05) / 0.25), f["barren_pct"] / 100.0),
         "swing": clip01(f["swing_k"] / 35.0),  # Earth's largest day-night LST swings are ~35-40 K

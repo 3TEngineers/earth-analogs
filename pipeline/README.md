@@ -25,6 +25,7 @@ pipeline/.venv/bin/python -m pip install -r pipeline/requirements.txt       # ma
 | `earth_pool.py` | B3: global 0.25° Earth land grid (precipitation, vegetation, temperature, land cover) and a Mars-like and a Moon-like pool of Earth candidates → `data/interim/earth_pool.json` |
 | `earth_ranking.py` | B4: per-candidate ranking of the Earth pools on terrain (slope distributions) and rock type (GLiM) → `data/interim/earth_rankings.json` |
 | `build_analogs.py` | B5+B7+B8: 3 training areas per candidate, report text, writes `app/public/data/analogs.json` |
+| `audit.py` | Data accuracy audit: checks every output against independent references, see `docs/AUDIT.md`. Run after the chain; expect 0 FAIL |
 | `requirements.txt` | Python dependencies |
 
 Results and their explanation: [`docs/SCREENING_RESULTS.md`](../docs/SCREENING_RESULTS.md) (B2) and [`docs/ANALOG_RESULTS.md`](../docs/ANALOG_RESULTS.md) (B3–B8).

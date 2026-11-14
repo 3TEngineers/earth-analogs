@@ -56,13 +56,13 @@ export function AboutPage() {
               </Step>
               <Step title="Validate">
                 The same rules on the 11 past Mars landings: Viking 1, Spirit, InSight and Perseverance pass every rule; the
-                others fail for known reasons. ESA&apos;s Oxia Planum also passes. On the Moon, 5 of 7 Artemis III features have
+                others fail for known reasons. ESA&apos;s Oxia Planum also passes. On the Moon, 4 of 7 Artemis III features have
                 passing ground next to them.
               </Step>
               <Step title="Match">
                 Earth&apos;s land on a 0.25° grid by dryness, vegetation and temperature, then ranked for each site on terrain
                 (slope distributions at the same pixel size) and rock type. Three places per site, at least 500 km apart: 21
-                training areas. Published analogs such as the Dry Valleys, Qaidam and Atacama land in the top 1 % on climate.
+                training areas. Published analogs such as the Dry Valleys, Qaidam and Atacama land in the top 1.5 % on climate.
               </Step>
             </ol>
           </Section>
