@@ -148,5 +148,5 @@ Also decided the same day: **no database and no API server** (a mentor had sugge
 Keep this list updated — the project page must state where AI was used.
 
 - **Idea:** the website concept (globe → landing site → Earth analogs → report) and the choice of challenge are the team's; the "find new candidate sites first" step came from our mentor. Claude proposed alternatives that the team rejected or reshaped.
-- **Claude (Claude Code) was used for:** summarising and comparing the challenges; checking data availability and landing statistics via web search; drafting the scoring method, the data contract and the project plan; repository setup and documentation; mock data.
+- **Claude (Claude Code) was used for:** summarising and comparing the challenges; checking data availability and landing statistics via web search; drafting the scoring method, the data contract and the project plan; repository setup and documentation; mock data; writing and running the data pipeline (B1–B8) with Sadık; the data accuracy audit (`docs/AUDIT.md`), including fact-checking the test examples against their source pages.
 - Code written with AI help must be acknowledged in the project description; any AI-generated images need a watermark.

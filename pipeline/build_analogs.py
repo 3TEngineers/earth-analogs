@@ -62,6 +62,14 @@ DATA_SOURCES = {
               "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
               "https://doi.pangaea.de/10.1594/PANGAEA.788537"],
 }
+ALWAYS_DIFFERENT = {  # NASA NSSDC fact sheets: Mars 6.36 mb surface pressure, 3.71 m/s2; Moon 1.62 m/s2
+    "mars": "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), "
+            "0.38 g gravity and no global magnetic field to block radiation",
+    "moon": "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity "
+            "and no global magnetic field to block radiation",
+}
+FACT_SHEETS = {"mars": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+               "moon": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"}
 PROCESSES = {"vb": "Basaltic lava flows", "py": "Volcanic ash and cinder", "pb": "Mafic plutonic crust",
              "mt": "Metamorphosed crust", "su": "Loose sediments and dunes", "ss": "Sedimentary layers",
              "sm": "Mixed sedimentary layers", "sc": "Carbonate rocks", "ev": "Salt and evaporite deposits"}
@@ -165,11 +173,12 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
         return (f"Same rock family: {rock}, like the {expected_note}" if good else
                 f"Different rock type: {rock}, not the {expected_note}")
     if dim == "aridity":
-        return (f"Very dry and bare ({entry.get('precip_mm')} mm of rain a year)" if good else
-                f"Wetter or greener than {planet} ({entry.get('precip_mm')} mm of rain a year)")
+        return (f"Very dry and bare ({entry.get('precip_mm'):.0f} mm of rain a year, satellite estimate)" if good else
+                f"Wetter or greener than {planet} ({entry.get('precip_mm'):.0f} mm of rain a year)")
     if dim == "temperature":
         return (f"Large day-night surface temperature swing ({entry.get('swing_k')} K)" if good else
-                f"Mild day-night swing ({entry.get('swing_k')} K) — far from {planet}'s hundreds of degrees")
+                f"Mild day-night swing ({entry.get('swing_k')} K) — far from "
+                + ("the Moon's ~300 K" if body == "moon" else "the up to ~100 K on Mars' surface (Curiosity REMS)"))
     if dim == "sun_angle":
         return (f"The Sun stays low all year at {abs(entry['lat']):.0f}° latitude, with long shadows" if good else
                 "The Sun climbs much higher than at the lunar pole")
@@ -177,6 +186,15 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
         return (f"Ground frozen most of the year (mean surface {mean_c} °C)" if good else
                 f"No lasting frozen ground (mean surface {mean_c} °C)")
     return ""
+
+
+def add_climate(e: dict, grid) -> None:
+    """B4's rock-pool cells carry only scores; fill the raw values the sentences quote from B3's grid."""
+    r, c = int((90 - e["lat"]) / 0.25), int((e["lon"] + 180) / 0.25)
+    for key, digits in (("precip_mm", 0), ("swing_k", 1), ("mean_lst_k", 1)):
+        if e.get(key) is None:
+            v = float(grid[key][r, c])
+            e[key] = round(v, digits) if np.isfinite(v) else None
 
 
 def candidate_entries(rank: dict, known: list[dict]) -> list[dict]:
@@ -238,7 +256,11 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
         different = [d for d in dims if scores[d]["score"] is not None and scores[d]["score"] <= DIFFERENT]
         test_list = []
         for d in similar:
-            if d in tests and not (d == "temperature"):  # temperature tests are weak evidence (KNOWN_ANALOGS §3)
+            if d == "temperature":  # temperature tests are weak evidence (KNOWN_ANALOGS §3)
+                continue
+            if d == "aridity" and body == "moon":  # the aridity tests are about life detection, a Mars goal
+                continue
+            if d in tests:
                 wording, examples = tests[d]
                 test_list.append({"title": wording, "detail": f"Done before at analog sites: {examples}"})
         slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:40]
@@ -248,11 +270,11 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
             "radiusKm": 12.5, "known": bool(k), "knownRef": k["ref"] if k else None,
             "totalScore": round(100 * e["total"]), "scores": scores,
             "similarities": [sentence_for(d, True, e, rank, body) for d in similar],
-            "differences": [sentence_for(d, False, e, rank, body) for d in different],
+            "differences": [sentence_for(d, False, e, rank, body) for d in different] + [ALWAYS_DIFFERENT[body]],
             "tests": test_list,
             "processes": [p for p in [PROCESSES.get(e.get("rock") or "")] if p],
             "image": None,
-            "sources": ([k["ref"]] if k and k["ref"] else []) + DATA_SOURCES[body] + DATA_SOURCES["earth"],
+            "sources": ([k["ref"]] if k and k["ref"] else []) + DATA_SOURCES[body] + DATA_SOURCES["earth"] + [FACT_SHEETS[body]],
         })
     return analogs
 
@@ -263,6 +285,10 @@ def main() -> None:
     known, tests, namer = known_analogs(), test_mapping(), Namer()
     candidates = [s for s in sites if s["status"] == "candidate"]
     picks = pick_round_robin(candidates, rankings, known)
+    grid = np.load(INTERIM / "earth_grid.npz")
+    for ps in picks.values():
+        for e in ps:
+            add_climate(e, grid)
     analogs = []
     for site in sites:
         if site["status"] == "candidate":

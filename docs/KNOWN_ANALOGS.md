@@ -107,13 +107,13 @@ Updated from the draft in `PROJECT_PLAN.md` to match what agencies have actually
 
 | Strong dimension | Use this wording | Real examples | Evidence |
 |---|---|---|---|
-| **Terrain** | Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection | NASA Desert RATS pressurized rovers, Black Point, AZ (2010) [T1]; ESA self-driving rover trial, Erfoud, Morocco (2018) [T2]; ESA ExoMars prototype "Bridget", Atacama (2013) [T3] | Strong |
-| **Mineralogy / rock type** | Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra | ESA PANGAEA, Lanzarote (2017, 2021) [T4]; NASA/CSA/DLR field mineral instruments, Mauna Kea (2008) [M1]; rover-ops spectrometer test vs. orbital data, Green River, Utah (2016) [T5] | Strong |
+| **Terrain** | Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection | NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010) [T1]; ESA self-driving rover trial, Erfoud, Morocco (2018) [T2]; ESA rover prototype "Bridget" with ExoMars prototype instruments, Atacama (2013) [T3] | Strong |
+| **Mineralogy / rock type** | Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra | ESA astronaut geology training, Lanzarote [T4]; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008) [M1]; rover-ops spectrometer test vs. orbital data, Green River, Utah (2016) [T5] | Strong |
 | **Water history** (Mars) | Biosignature search and sample-selection training (stromatolites, microbialites, carbonates) | Mars 2020 + ExoMars field trip, Pilbara (2019) [T6]; Perseverance team at Lake Salda (2019) [T7]; Mars 2020 ROASTT, Walker Lake, Nevada (2020) [T8] | Strong |
 | **Aridity** | Life-detection limits and drilling for life underground in near-sterile, dry soil | NASA ARADS rover + 2 m drill, Atacama (2016–19) [T9]; Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003) [T10] | Strong |
 | **Temperature** | Durability of habitats and hardware in extreme cold (Antarctica). Earth **cannot** reproduce the Moon's ~300 °C day–night swing; that is tested in vacuum chambers | Inflatable lunar habitat left 13 months at McMurdo (2008–09) [T11] | **Weak** — news source only |
-| **Sun angle** (Moon) | Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights) | NASA JETT5, San Francisco Volcanic Field (2024) [M13]; JPL rover drives at dawn/dusk, Colorado Desert (2026) [T12]; D-RATS 2022 night EVAs [T13] (snippet only) | Medium. **No evidence for solar-power tests** at analog sites — removed |
-| **Ice / permafrost** | Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU) | Icebreaker drill, Haughton and Antarctica (~2011–13) [T14]; NASA/CSA RESOLVE prospecting, Hawaii (2012) [T15] | Strong |
+| **Sun angle** (Moon) | Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights) | NASA JETT5, San Francisco Volcanic Field (2024) [M13]; JPL rover drives at dawn/dusk, Colorado Desert (2026) [T12] | Medium. **No evidence for solar-power tests** at analog sites — removed |
+| **Ice / permafrost** | Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU) | Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica) [T14]; NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012) [T15] | Strong |
 
 **Changes from the draft:** aridity was "Remote-sensing ground truth" (no evidence tied to aridity; moved to mineralogy); temperature reworded and marked weak; "solar power tests" dropped from sun angle.
 
@@ -190,7 +190,7 @@ Updated from the draft in `PROJECT_PLAN.md` to match what agencies have actually
 - [T10] Navarro-González et al. (2003), *Science* 302:1018, doi:10.1126/science.1089143 (abstract only)
 - [T11] UPI (2007), NASA to test lunar habitat in Antarctic — https://www.upi.com/Science_News/2007/11/28/NASA-to-test-lunar-habitat-in-Antarctic/88371196264072/
 - [T12] NASA JPL (2026), Testing advanced capabilities for Moon and Mars rovers — https://www.jpl.nasa.gov/news/nasa-testing-advanced-capabilities-for-moon-mars-rovers/
-- [T13] NASA NTRS, D-RATS 2022 — https://ntrs.nasa.gov/citations/20230007175 (not read)
+- [T13] (removed 14 Nov audit: NTRS D-RATS 2022 record does not mention night EVAs)
 - [T14] NASA Astrobiology, Icebreaking Mars — https://astrobiology.nasa.gov/news/icebreaking-mars/
 - [T15] phys.org (2012), NASA mission simulations in Hawaii — https://phys.org/news/2012-07-nasa-mission-simulations-hawaii.html
 
