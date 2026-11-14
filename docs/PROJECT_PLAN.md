@@ -55,7 +55,7 @@ Rules come from **published mission constraints**, not machine learning: 11 Mars
 
 | Criterion | Why | Past constraints (for reference) | Data |
 |---|---|---|---|
-| Elevation | Enough atmosphere to slow down | MER below −1.3 km; Phoenix below −3.5 km; MSL up to +1 km | MOLA DEM |
+| Elevation | Enough atmosphere to slow down | MER below −1.3 km; Phoenix below −3.5 km; MSL below −1 km (early plans allowed +1 km); Mars 2020 below +0.5 km. We use −1 km (MSL) | MOLA DEM |
 | Latitude | Solar power, temperature | MER 10°N–15°S; MSL within ±45° | Coordinates |
 | Slope | Safe touchdown | MSL < 3° over 2–5 km | MOLA DEM (km scale) |
 | Thermal inertia | Low values mean thick dust that can't bear load | Dusty, low-inertia areas avoided | MGS TES thermal inertia map |

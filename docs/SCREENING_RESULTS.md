@@ -115,15 +115,15 @@ Passing ground within 25 km of each region's named feature (NASA gives no region
 
 | Region | Passing ground | Best sunlit |
 |---|---|---|
-| Peak near Cabeus B | yes (0.12 km²) | 53.9 % |
-| Haworth | **no** | 42.3 % |
+| Peak near Cabeus B | **no** | 41.4 % |
+| Haworth | **no** | 34.0 % |
 | Malapert Massif | yes (1.04 km²) | 65.9 % |
 | Mons Mouton (and Plateau) | yes (3.17 km²) | 64.8 % |
 | Nobile Rim 1 and 2 | **no** | 41.5 % |
 | de Gerlache Rim 2 | yes (0.17 km²) | 68.9 % |
 | Slater Plain | yes (0.06 km²) | 68.2 % |
 
-**5 of 7** named features have ground passing our criteria. NASA also weighs science, launch windows and trajectories, which we don't model.
+**4 of 7** named features have ground passing our criteria. NASA also weighs science, launch windows and trajectories, which we don't model. Feature centres are from the USGS Gazetteer (audit, 14 Nov: the first run used centres 8–17 km off for Cabeus B and Haworth, which made Cabeus B pass; see `docs/AUDIT.md`). The Cabeus B region is a *peak near* the crater, so a 25 km circle around the crater centre may miss it.
 
 **Chandrayaan-3** (−69.373°, 32.319°): sunlit 48.3 % ✗ (a normal day/night cycle), Earth in view 100 %, slope 0.8°, no permanent shadow within ~29 km ✗ — a good landing site, but not a permanent base site.
 
