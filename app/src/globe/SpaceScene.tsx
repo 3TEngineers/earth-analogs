@@ -26,7 +26,8 @@ export function SpaceScene() {
   const { phase, selectSite, selectAnalog } = useAppState()
   const { sitesForBody, site, analogs, analog } = useSelection()
   const data = useData()
-  const landings = data.status === 'ready' ? data.landings.landings : []
+  // Stable reference: a fresh [] on every render would rebuild every marker on every render.
+  const landings = useMemo(() => (data.status === 'ready' ? data.landings.landings : []), [data])
 
   const body = pathname.match(/^\/explore\/(moon|mars)$/)?.[1] as Body | undefined
 
