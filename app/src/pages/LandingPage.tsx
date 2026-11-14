@@ -1,64 +1,71 @@
+import type { CSSProperties } from 'react'
 import { Link } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
 import { useData } from '../data/DataProvider'
 
 /**
- * Landing page ("/"). The Moon, Earth and Mars float behind this text in <SpaceScene>;
- * clicking the Moon or Mars (or the buttons) opens /explore/<body> and the planet flies forward.
- * The page itself ignores pointer events except on its links and buttons, so the planets stay clickable.
- * Copy and the facts block: Kmar — replace the TODO texts; keep numbers coming from the data files.
+ * Landing page ("/"). The Moon, Earth and Mars float behind this text in <SpaceScene> and drift with the mouse;
+ * clicking the Moon or Mars (or a button) opens /explore/<body> and the planet flies forward.
+ * The page ignores pointer events except on its links, so the planets stay clickable.
+ * Text arrives in a short stagger once the planets are in view (.reveal, --i).
+ * Copy: Kmar — replace the TODO texts; keep numbers coming from the data files.
  */
 export function LandingPage() {
   const data = useData()
   const sites = data.status === 'ready' ? data.sites.sites : []
   const count = (body: 'moon' | 'mars', role: 'candidate' | 'validation') =>
     sites.filter((s) => s.body === body && s.selection.role === role).length
+  const mars = count('mars', 'candidate')
+  const moon = count('moon', 'candidate')
+  const past = count('mars', 'validation') + count('moon', 'validation')
+  const areas = data.status === 'ready' ? data.analogs.analogs.length : 0
+  const step = (i: number) => ({ '--i': i }) as CSSProperties
 
   return (
-    <main className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center gap-10 px-4 text-center">
+    <main className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
       <SiteHeader />
 
-      <section className="max-w-2xl">
-        <h1 className="font-display text-4xl font-semibold tracking-tight drop-shadow-lg sm:text-6xl">Earth Analogs</h1>
-        {/* TODO(Kmar): final tagline and intro. */}
-        <p className="mt-5 text-lg text-ink/80 drop-shadow">
-          We screened the Moon and Mars for new landing and base sites, then found the places on Earth where
-          astronauts and engineers could train for them.
-        </p>
-      </section>
+      <h1
+        className="reveal font-display text-5xl font-semibold tracking-[-0.03em] [text-shadow:0_2px_24px_rgb(5_7_13/0.8)] sm:text-7xl"
+        style={step(0)}
+      >
+        Earth Analogs
+      </h1>
 
-      <div className="pointer-events-auto flex gap-3">
-        <Link to="/explore/moon" className="rounded-full border border-moon/60 px-5 py-2 font-medium text-moon backdrop-blur-sm transition hover:bg-moon/10">
+      {/* TODO(Kmar): final intro. */}
+      <p className="reveal mt-6 max-w-[38rem] text-lg leading-relaxed text-ink/85 [text-shadow:0_1px_16px_rgb(5_7_13/0.9)]" style={step(1)}>
+        We screened the Moon and Mars for new landing and base sites, then found the places on Earth where
+        astronauts and engineers could train for them.
+      </p>
+
+      <div className="reveal pointer-events-auto mt-10 flex flex-wrap justify-center gap-3" style={step(2)}>
+        <Link
+          to="/explore/moon"
+          className="press rounded-full border border-moon/50 bg-space/40 px-6 py-2.5 font-medium text-moon backdrop-blur-sm hover:border-moon hover:bg-moon/10"
+        >
           Explore the Moon
         </Link>
-        <Link to="/explore/mars" className="rounded-full border border-mars/60 px-5 py-2 font-medium text-mars backdrop-blur-sm transition hover:bg-mars/10">
+        <Link
+          to="/explore/mars"
+          className="press rounded-full border border-mars/50 bg-space/40 px-6 py-2.5 font-medium text-mars backdrop-blur-sm hover:border-mars hover:bg-mars/10"
+        >
           Explore Mars
         </Link>
       </div>
 
-      {/* TODO(Kmar): facts block — how we found the sites, key numbers, data used. */}
-      <section className="grid grid-cols-2 gap-6 font-mono text-sm sm:grid-cols-4" aria-label="Key numbers">
-        <Fact value={count('mars', 'candidate')} label="Mars landing zones found" />
-        <Fact value={count('moon', 'candidate')} label="Moon base sites found" />
-        <Fact value={count('mars', 'validation') + count('moon', 'validation')} label="Past landings checked" />
-        <Fact value={data.status === 'ready' ? data.analogs.analogs.length : 0} label="Earth training areas" />
-      </section>
-
-      <p className="text-sm text-ink-muted">
-        Or click a planet ·{' '}
-        <Link to="/about" className="pointer-events-auto underline hover:text-ink">
-          About the project
+      {/* TODO(Kmar): how we found the sites. Numbers come from the data files. */}
+      <p className="reveal mt-10 max-w-[34rem] text-sm leading-relaxed text-ink-muted [text-shadow:0_1px_12px_rgb(5_7_13/0.9)]" style={step(3)}>
+        <Num>{mars}</Num> landing {mars === 1 ? 'zone' : 'zones'} on Mars and <Num>{moon}</Num> base{' '}
+        {moon === 1 ? 'site' : 'sites'} on the Moon, checked against <Num>{past}</Num> past landings, with{' '}
+        <Num>{areas}</Num> places on Earth to train for them.{' '}
+        <Link to="/about" className="pointer-events-auto underline decoration-ink-muted/50 underline-offset-4 hover:text-ink">
+          How we did it
         </Link>
       </p>
     </main>
   )
 }
 
-function Fact({ value, label }: { value: number; label: string }) {
-  return (
-    <div>
-      <div className="text-2xl text-ink">{value}</div>
-      <div className="mt-1 text-xs text-ink-muted">{label}</div>
-    </div>
-  )
+function Num({ children }: { children: number }) {
+  return <span className="font-medium text-ink tabular-nums">{children}</span>
 }

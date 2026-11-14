@@ -43,7 +43,8 @@ One three.js scene sits behind every page and never unmounts, so page changes ar
 
 | Where | Scene |
 |---|---|
-| `/`, `/about` | **landing** — Moon, Earth and Mars float behind the text and spin slowly |
+| first load | **intro** — a slow push-in from deep space once the textures are in; page text then fades in (`.reveal`) |
+| `/`, `/about` | **landing** — Moon, Earth and Mars float behind the text, spin slowly and drift with the mouse (parallax against three depths of stars); hovered planets lift |
 | `/explore/<body>` | **focus** — that body flies to the center (left of the side panel on wide screens), the others drift far away; the user can drag to orbit. Its sites are markers: our candidates bright with pulsing rings, past landings muted |
 | site selected | the camera flies to the site |
 | `phase: 'earth'` | **focus on Earth** — markers are the site's training areas; the camera flies to the selected one |
@@ -51,6 +52,7 @@ One three.js scene sits behind every page and never unmounts, so page changes ar
 - `SpaceScene.tsx` — React side: turns the route + shared state into a layout and markers.
 - `space/SpaceEngine.ts` — three.js side: planets (`three-globe`), lights, camera, orbit controls, tweens, clicks and hover.
 - `space/planets.ts` — per-planet textures, colors, landing/away positions.
+- Motion rules (from Emil Kowalski's animation skill): ease-out `cubic-bezier(0.23, 1, 0.32, 1)` for entrances, ease-in-out for on-screen moves, buttons press to `scale(0.97)` in 160 ms (`.press`), hover effects only on fine pointers, one authored moment (the planet flight) instead of effects everywhere. `prefers-reduced-motion` turns flights into cuts and keeps only fades. Tokens live in `src/index.css`.
 - Textures (`public/textures/`, public domain): Moon — NASA SVS CGI Moon Kit (LRO); Mars — USGS Viking color mosaic + MOLA elevation; Earth — NASA Blue Marble (via three-globe examples). Credit them on the About page.
 
 ## Structure

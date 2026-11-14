@@ -42,6 +42,10 @@ export function SpaceScene() {
         else handlers.current.selectSite(id, planet)
       },
       onHover: setHover,
+      // Pages fade their text in once the planets are there (see .reveal in index.css).
+      onReady: () => {
+        document.documentElement.dataset.sceneReady = 'true'
+      },
     })
     engineRef.current = engine
     return () => {
