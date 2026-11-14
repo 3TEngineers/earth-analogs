@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+/*
+ * Shared design tokens (Deniz + Kmar). Use these through Tailwind classes,
+ * e.g. bg-space, bg-panel, text-ink, text-ink-muted, text-accent, border-line,
+ * text-similar, text-different, font-display, font-mono.
+ *
+ * The accent color follows the body on screen: set data-body="moon|mars|earth"
+ * on <html> (AppStateProvider does this) and every *-accent class updates.
+ */
+
+:root {
+  --body-accent: #c9d1dc;
+}
+
+:root[data-body='mars'] {
+  --body-accent: #e0663a;
+}
+
+:root[data-body='earth'] {
+  --body-accent: #3fd0e8;
+}
+
+@theme inline {
+  --color-accent: var(--body-accent);
+}
+
+@theme {
+  --color-space: #05070d;
+  --color-panel: rgb(10 14 24 / 0.7);
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-ink: #e8ecf2;
+  --color-ink-muted: #8a94a6;
+
+  --color-similar: #4ade80;
+  --color-different: #f5a524;
+
+  --color-moon: #c9d1dc;
+  --color-mars: #e0663a;
+  --color-earth: #3fd0e8;
+
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-space);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Add to elements whose accent color should fade when the body changes. */
+.accent-transition {
+  transition: color 600ms ease, background-color 600ms ease, border-color 600ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accent-transition {
+    transition: none;
+  }
+}
