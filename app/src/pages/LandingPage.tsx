@@ -1,14 +1,14 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
 import { useData } from '../data/DataProvider'
 
 /**
- * Landing page ("/"). The Moon, Earth and Mars float behind this text in <SpaceScene> and drift with the mouse;
- * clicking the Moon or Mars (or a button) opens /explore/<body> and the planet flies forward.
+ * Landing page ("/"). Text sits in a left column; the Moon, Earth and Mars own the rest of the screen
+ * (<SpaceScene>, positions in globe/space/planets.ts). Clicking a planet or a button opens /explore/<body>.
  * The page ignores pointer events except on its links, so the planets stay clickable.
- * Text arrives in a short stagger once the planets are in view (.reveal, --i).
- * Copy: Kmar — replace the TODO texts; keep numbers coming from the data files.
+ * The three steps are a real sequence (screen → check → match), so they carry numbers; every figure comes
+ * from the data files. Copy: Kmar may refine it.
  */
 export function LandingPage() {
   const data = useData()
@@ -22,50 +22,69 @@ export function LandingPage() {
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
   return (
-    <main className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-      <SiteHeader />
+    <main className="pointer-events-none relative z-10 flex h-full items-center overflow-y-auto px-6 pt-16 pb-8 sm:px-[7vw]">
+      <SiteHeader showBrand={false} />
 
-      <h1
-        className="reveal font-display text-5xl font-semibold tracking-[-0.03em] [text-shadow:0_2px_24px_rgb(5_7_13/0.8)] sm:text-7xl"
-        style={step(0)}
-      >
-        Earth Analogs
-      </h1>
+      <div className="max-w-[30rem] [text-shadow:0_1px_18px_rgb(5_7_13/0.95)]">
+        <h1 className="reveal font-display text-4xl leading-[0.95] font-semibold tracking-[-0.035em] sm:text-5xl xl:text-6xl" style={step(0)}>
+          Earth
+          <br />
+          Analogs
+        </h1>
+        <p className="reveal mt-5 text-lg leading-snug text-ink/90" style={step(1)}>
+          New places to land on Mars and to live on the Moon — and where on Earth to train for them.
+        </p>
 
-      {/* TODO(Kmar): final intro. */}
-      <p className="reveal mt-6 max-w-[38rem] text-lg leading-relaxed text-ink/85 [text-shadow:0_1px_16px_rgb(5_7_13/0.9)]" style={step(1)}>
-        We screened the Moon and Mars for new landing and base sites, then found the places on Earth where
-        astronauts and engineers could train for them.
-      </p>
+        <ol className="mt-7 space-y-4 border-l border-line pl-5">
+          <Step i={2} n={1} title="Screen">
+            Every point on Mars and near the lunar south pole, checked against published mission limits: elevation,
+            slope, latitude and surface for landing; sunlight, Earth in view and nearby ice for a base. <Fig>{mars}</Fig> landing{' '}
+            {mars === 1 ? 'zone' : 'zones'} and <Fig>{moon}</Fig> base {moon === 1 ? 'site' : 'sites'} pass.
+          </Step>
+          <Step i={3} n={2} title="Check">
+            The same rules run on <Fig>{past}</Fig> places where we already landed, so we can see they tell good sites
+            from bad ones.
+          </Step>
+          <Step i={4} n={3} title="Match">
+            Each site&apos;s terrain, minerals, dryness and cold compared with Earth: <Fig>{areas}</Fig> training areas,
+            with what is similar, what is not, and what to test there.
+          </Step>
+        </ol>
 
-      <div className="reveal pointer-events-auto mt-10 flex flex-wrap justify-center gap-3" style={step(2)}>
-        <Link
-          to="/explore/moon"
-          className="press rounded-full border border-moon/50 bg-space/40 px-6 py-2.5 font-medium text-moon backdrop-blur-sm hover:border-moon hover:bg-moon/10"
-        >
-          Explore the Moon
-        </Link>
-        <Link
-          to="/explore/mars"
-          className="press rounded-full border border-mars/50 bg-space/40 px-6 py-2.5 font-medium text-mars backdrop-blur-sm hover:border-mars hover:bg-mars/10"
-        >
-          Explore Mars
-        </Link>
+        <div className="reveal pointer-events-auto mt-7 flex flex-wrap items-center gap-3" style={step(5)}>
+          <Link
+            to="/explore/mars"
+            className="press rounded-full bg-mars px-6 py-2.5 font-medium text-space hover:bg-mars/90"
+          >
+            Explore Mars
+          </Link>
+          <Link
+            to="/explore/moon"
+            className="press rounded-full border border-moon/50 px-6 py-2.5 font-medium text-moon backdrop-blur-sm hover:border-moon hover:bg-moon/10"
+          >
+            Explore the Moon
+          </Link>
+          <Link to="/about" className="press px-2 py-2.5 text-sm text-ink-muted hover:text-ink">
+            About
+          </Link>
+        </div>
       </div>
-
-      {/* TODO(Kmar): how we found the sites. Numbers come from the data files. */}
-      <p className="reveal mt-10 max-w-[34rem] text-sm leading-relaxed text-ink-muted [text-shadow:0_1px_12px_rgb(5_7_13/0.9)]" style={step(3)}>
-        <Num>{mars}</Num> landing {mars === 1 ? 'zone' : 'zones'} on Mars and <Num>{moon}</Num> base{' '}
-        {moon === 1 ? 'site' : 'sites'} on the Moon, checked against <Num>{past}</Num> past landings, with{' '}
-        <Num>{areas}</Num> places on Earth to train for them.{' '}
-        <Link to="/about" className="pointer-events-auto underline decoration-ink-muted/50 underline-offset-4 hover:text-ink">
-          How we did it
-        </Link>
-      </p>
     </main>
   )
 }
 
-function Num({ children }: { children: number }) {
+function Step({ i, n, title, children }: { i: number; n: number; title: string; children: ReactNode }) {
+  return (
+    <li className="reveal relative" style={{ '--i': i } as CSSProperties}>
+      <span className="absolute top-1 -left-[1.6rem] grid size-2 place-items-center rounded-full bg-accent ring-4 ring-space" aria-hidden="true" />
+      <h2 className="font-display text-sm font-semibold tracking-wide text-ink">
+        <span className="text-ink-muted tabular-nums">{n}</span>&nbsp;&nbsp;{title}
+      </h2>
+      <p className="mt-1 text-sm leading-relaxed text-ink-muted">{children}</p>
+    </li>
+  )
+}
+
+function Fig({ children }: { children: number }) {
   return <span className="font-medium text-ink tabular-nums">{children}</span>
 }
