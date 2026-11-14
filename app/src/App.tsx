@@ -1,6 +1,8 @@
 import { useData } from './data/DataProvider'
 import { StateDebugPanel } from './dev/StateDebugPanel'
 import { GlobeView } from './globe/GlobeView'
+import { SitePanel } from './panels/SitePanel'
+import { useAppState } from './state/AppState'
 
 /**
  * Page layout. The globe fills the screen; panels sit on top of it.
@@ -8,6 +10,7 @@ import { GlobeView } from './globe/GlobeView'
  */
 export default function App() {
   const data = useData()
+  const { phase } = useAppState()
 
   return (
     <main className="relative h-full overflow-hidden bg-space">
@@ -24,7 +27,9 @@ export default function App() {
       {data.status === 'loading' && <p className="absolute bottom-4 left-4 text-ink-muted">Loading data…</p>}
       {data.status === 'error' && <p className="absolute bottom-4 left-4 text-different">{data.message}</p>}
 
-      <StateDebugPanel />
+      <SitePanel />
+      {/* TEMPORARY: the Earth phase still uses the debug panel until the report panel (K4) lands. */}
+      {phase === 'earth' && <StateDebugPanel />}
     </main>
   )
 }

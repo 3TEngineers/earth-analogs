@@ -27,6 +27,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: K1 — site panel in `app/src/panels/`: Moon | Mars toggle, site list in two groups (Our candidates / Past landings), mission card with coordinates, processes, image placeholder and the "Why this site" / "Checked against our criteria" checklist, and the Show Earth training areas button. Mobile: bottom sheet. `StateDebugPanel` now shows only in the Earth phase until K4 replaces it.
 - 2026-11-14: New direction written up (`PROJECT_PLAN.md`, `PROJECT_HISTORY.md` §12); data contract v2 with `selection`; mock data now has one Moon and one Mars candidate (5 sites, 15 analogs), validated with `pipeline/schema.py`; app builds and lints.
 - 2026-11-14: D1 (part 1) — app scaffold in `app/`: Vite + React + TypeScript, Tailwind v4, `react-globe.gl`, Lucide. Shared UI state (`src/state/`), data loading (`src/data/`), proposed design tokens (`src/index.css`), placeholder globe with site/analog points and fly-to, temporary state panel. Runs on mock data; build and lint pass. See `app/README.md`.
 - 2026-11-14: `docs/PROJECT_HISTORY.md` — full step-by-step history of the decisions so far. Kmar (`kmarrabid-ai`) joined with write access.
