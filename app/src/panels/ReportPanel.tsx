@@ -1,11 +1,12 @@
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
-import { assetUrl } from '../data/assetUrl'
 import { useData } from '../data/DataProvider'
 import { useAppState } from '../state/AppState'
 import { useSelection } from '../state/useSelection'
 import type { Analog, Confidence } from '../types/data'
 import { formatLatLon } from './format'
+import { orbitalImage } from './orbitalImage'
+import { OrbitalView } from './OrbitalView'
 
 /**
  * K4 — report for the Earth training area in focus (phase `earth`), in the same story style as MissionCard:
@@ -66,7 +67,7 @@ export function ReportPanel() {
       </dl>
 
       <div className="stagger" style={step(4)}>
-        {current.image && <img src={assetUrl(current.image)} alt={`Satellite view of ${current.name}`} className="mt-8 w-full rounded-lg" />}
+        <OrbitalView key={current.id} image={orbitalImage('earth', current.lat, current.lon, current.image)} alt={`Satellite view of ${current.name}`} />
 
         {dimensions.length > 0 && (
           <Section title="How close it is">

@@ -149,4 +149,5 @@ Keep this list updated — the project page must state where AI was used.
 
 - **Idea:** the website concept (globe → landing site → Earth analogs → report) and the choice of challenge are the team's; the "find new candidate sites first" step came from our mentor. Claude proposed alternatives that the team rejected or reshaped.
 - **Claude (Claude Code) was used for:** summarising and comparing the challenges; checking data availability and landing statistics via web search; drafting the scoring method, the data contract and the project plan; repository setup and documentation; mock data.
+- **Website code (Deniz, 2026-11-14):** the 3D scene, landing scroll story, explore and report panels, markers, journey arc, orbital close-ups and About page were written with Claude Code; the design direction and every review came from the team. No AI-generated images are used (close-ups are real USGS / EOX imagery).
 - Code written with AI help must be acknowledged in the project description; any AI-generated images need a watermark.

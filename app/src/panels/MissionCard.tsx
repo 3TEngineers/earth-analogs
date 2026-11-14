@@ -1,10 +1,11 @@
-import { ArrowLeft, ArrowRight, ImageOff } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
-import { assetUrl } from '../data/assetUrl'
 import { useAppState } from '../state/AppState'
 import { useSelection } from '../state/useSelection'
 import type { Site } from '../types/data'
 import { formatLatLon } from './format'
+import { orbitalImage } from './orbitalImage'
+import { OrbitalView } from './OrbitalView'
 import { SelectionChecklist } from './SelectionChecklist'
 
 /**
@@ -69,13 +70,7 @@ export function MissionCard({ site }: { site: Site }) {
       )}
 
       <div className="stagger" style={step(6)}>
-        {site.image ? (
-          <img src={assetUrl(site.image)} alt={`Orbital view of ${site.name}`} className="mt-8 w-full rounded-lg" />
-        ) : (
-          <div className="mt-8 flex h-16 items-center justify-center gap-2 border-y border-dashed border-white/10 text-sm text-ink-muted">
-            <ImageOff className="size-4" aria-hidden="true" /> Orbital image coming soon
-          </div>
-        )}
+        <OrbitalView key={site.id} image={orbitalImage(site.body, site.lat, site.lon, site.image)} alt={`Orbital view around ${site.name}`} />
 
         {site.purpose && (
           <Section title="Why go there">

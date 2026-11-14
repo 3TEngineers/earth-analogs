@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import type { AnalogsFile, SitesFile } from '../types/data'
+import type { AnalogsFile, LandingsFile, SitesFile } from '../types/data'
 import { assetUrl } from './assetUrl'
 
 /**
@@ -10,7 +10,7 @@ import { assetUrl } from './assetUrl'
 type DataState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; sites: SitesFile; analogs: AnalogsFile }
+  | { status: 'ready'; sites: SitesFile; analogs: AnalogsFile; landings: LandingsFile }
 
 const DataContext = createContext<DataState>({ status: 'loading' })
 
@@ -25,9 +25,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([fetchJson<SitesFile>('data/sites.json'), fetchJson<AnalogsFile>('data/analogs.json')])
-      .then(([sites, analogs]) => {
-        if (!cancelled) setState({ status: 'ready', sites, analogs })
+    // landings.json only adds name tags to the globes, so if it is missing the app still runs without them.
+    const landings = fetchJson<LandingsFile>('data/landings.json').catch(() => ({ version: 0, landings: [] }) as LandingsFile)
+    Promise.all([fetchJson<SitesFile>('data/sites.json'), fetchJson<AnalogsFile>('data/analogs.json'), landings])
+      .then(([sites, analogs, landings]) => {
+        if (!cancelled) setState({ status: 'ready', sites, analogs, landings })
       })
       .catch((error: unknown) => {
         if (!cancelled) setState({ status: 'error', message: error instanceof Error ? error.message : String(error) })
