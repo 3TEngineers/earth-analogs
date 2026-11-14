@@ -16,23 +16,25 @@ export function SiteList() {
     },
     {
       title: 'Past landings',
-      hint: 'Checked against the same criteria',
+      hint: 'Same rules, used as a check',
       sites: sitesForBody.filter((s) => s.selection.role === 'validation'),
     },
   ]
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
       {groups.map(
         (g) =>
           g.sites.length > 0 && (
             <section key={g.title} aria-label={g.title}>
-              <h2 className="font-display text-base font-semibold text-ink">{g.title}</h2>
-              <p className="mb-3 text-sm text-ink-muted">{g.hint}</p>
+              <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-white/10 pb-2">
+                <h3 className="font-mono text-xs tracking-[0.18em] text-ink uppercase">{g.title}</h3>
+                <p className="text-[13px] text-ink-muted">{g.hint}</p>
+              </div>
               <ul className="grid gap-2 sm:grid-cols-2 md:grid-cols-1">
-                {g.sites.map((s) => (
+                {g.sites.map((s, i) => (
                   <li key={s.id}>
-                    <SiteCard site={s} selected={s.id === siteId} onSelect={() => selectSite(s.id, s.body)} />
+                    <SiteCard site={s} index={i + 1} selected={s.id === siteId} onSelect={() => selectSite(s.id, s.body)} />
                   </li>
                 ))}
               </ul>

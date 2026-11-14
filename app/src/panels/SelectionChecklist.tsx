@@ -1,41 +1,64 @@
 import { Check, Minus, X } from 'lucide-react'
 import type { Selection } from '../types/data'
+import { pretty } from './format'
 
 /**
- * "Why this site" checklist from site.selection.
- * Past landings get a different title: a ✗ there is expected and shows the criteria tell sites apart.
+ * Criteria from site.selection, one row each: what was measured, the value, the rule and the data source.
+ * Past landings may fail some rows on purpose: that shows the rules tell sites apart.
+ * The section title is set by the caller (MissionCard).
  */
 export function SelectionChecklist({ selection }: { selection: Selection }) {
-  const title = selection.role === 'candidate' ? 'Why this site' : 'Checked against our criteria'
-
   return (
-    <section aria-label={title} className="rounded-lg border border-line p-3">
-      <h3 className="font-display text-sm font-semibold">{title}</h3>
-      <p className="mb-2 text-xs text-ink-muted">{selection.goal}</p>
-
-      <ul className="space-y-2">
+    <div>
+      <ul className="divide-y divide-white/[0.07] rounded-xl border border-white/10 bg-white/[0.02]">
         {selection.criteria.map((c) => (
-          <li key={c.id} className="flex gap-2">
+          <li key={c.id} className="grid grid-cols-[1.25rem_1fr_auto] gap-x-3 px-4 py-3.5">
             <StatusIcon pass={c.pass} />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-sm">{c.label}</span>
-                <span className="font-mono text-sm">{c.value === null ? 'No data' : `${c.value} ${c.unit}`}</span>
-              </div>
-              <div className="text-xs text-ink-muted">{c.rule}</div>
-              <div className="text-[11px] text-ink-muted/80">{c.source}</div>
+            <div className="min-w-0">
+              <p className="text-[15px] leading-snug text-ink">{c.label}</p>
+              <p className="mt-1 text-[13px] leading-snug text-ink/60">Rule {pretty(c.rule)}</p>
+              <p className="mt-0.5 font-mono text-[11px] text-ink-muted/80">{pretty(c.source)}</p>
             </div>
+            <p className="text-right font-mono text-[15px] leading-snug text-ink tabular-nums">
+              {c.value === null ? (
+                <span className="text-ink-muted">No data</span>
+              ) : (
+                <>
+                  {c.value}
+                  <span className="block text-[11px] text-ink-muted">{pretty(c.unit)}</span>
+                </>
+              )}
+            </p>
           </li>
         ))}
       </ul>
 
-      {selection.note && <p className="mt-3 border-t border-line pt-2 text-xs text-ink-muted">{selection.note}</p>}
-    </section>
+      {selection.note && (
+        <p className="mt-3 rounded-xl border-l-2 border-accent/60 bg-white/[0.03] px-4 py-3 text-[13px] leading-relaxed text-ink/70">
+          {pretty(selection.note)}
+        </p>
+      )}
+    </div>
   )
 }
 
 function StatusIcon({ pass }: { pass: boolean | null }) {
-  if (pass === null) return <Minus aria-label="No data" className="mt-0.5 size-4 shrink-0 text-ink-muted" />
-  if (pass) return <Check aria-label="Passes" className="mt-0.5 size-4 shrink-0 text-similar" />
-  return <X aria-label="Fails" className="mt-0.5 size-4 shrink-0 text-different" />
+  const base = 'mt-0.5 flex size-5 items-center justify-center rounded-full'
+  if (pass === null)
+    return (
+      <span className={`${base} bg-white/10`}>
+        <Minus aria-label="No data" className="size-3 text-ink-muted" />
+      </span>
+    )
+  if (pass)
+    return (
+      <span className={`${base} bg-similar/15`}>
+        <Check aria-label="Passes" className="size-3 text-similar" strokeWidth={3} />
+      </span>
+    )
+  return (
+    <span className={`${base} bg-different/15`}>
+      <X aria-label="Fails" className="size-3 text-different" strokeWidth={3} />
+    </span>
+  )
 }

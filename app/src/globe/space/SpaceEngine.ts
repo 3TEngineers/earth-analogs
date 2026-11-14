@@ -51,9 +51,9 @@ const FLY_MS = 1500
 const INTRO_MS = 3200
 /** Mobile: share of the screen height covered by the bottom sheet; the focused planet is centered above it. */
 const SHEET_SHARE = 0.4
-/** Desktop (≥ 768 px): width of the right site panel plus its margin (SitePanel: md:w-[26rem] md:right-4). */
-const PANEL_PX = 26 * 16 + 16
+/** Desktop (≥ 768 px): width of the right site panel plus its margin — keep in sync with SitePanel (md:w-[30rem] lg:w-[34rem], right-4). */
 const DESKTOP_MIN = 768
+const panelPx = (w: number) => (w >= 1024 ? 34 : 30) * 16 + 16
 /** How far the landing camera drifts with the mouse (world units). */
 const PARALLAX = { x: 70, y: 45 }
 
@@ -400,7 +400,7 @@ export class SpaceEngine {
   private updateViewOffset() {
     const { clientWidth: w, clientHeight: h } = this.container
     if (this.layout.kind !== 'focus') this.camera.clearViewOffset()
-    else if (w >= DESKTOP_MIN) this.camera.setViewOffset(w, h, PANEL_PX / 2, 0, w, h)
+    else if (w >= DESKTOP_MIN) this.camera.setViewOffset(w, h, panelPx(w) / 2, 0, w, h)
     else this.camera.setViewOffset(w, h, 0, (h * SHEET_SHARE) / 2, w, h)
     this.camera.updateProjectionMatrix()
   }
