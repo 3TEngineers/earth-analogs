@@ -31,11 +31,34 @@ Both JSON files carry `"mock": true` until the real pipeline output replaces the
       "summary": "Short paragraph about the mission and the site.",
       "processes": ["River delta sedimentation"],
       "limits": ["Gravity on Earth is about 2.6 times Mars gravity"],  // Earth can't reproduce these
-      "image": "images/sites/perseverance.png"   // or null
+      "image": "images/sites/perseverance.png",  // or null
+      "selection": {
+        "goal": "Safe landing zone",     // Mars: "Safe landing zone"; Moon: "Permanent base site"
+        "role": "validation",            // "candidate" = a site we found; "validation" = a past landing checked against the same criteria
+        "criteria": [
+          {
+            "id": "elevation",
+            "label": "Elevation",
+            "value": -2.6,               // or null when there is no data
+            "unit": "km",
+            "rule": "<= -1 km",          // human-readable threshold
+            "pass": true,                // or null when there is no data
+            "source": "MOLA DEM"
+          }
+        ],
+        "note": "Why this site is on the list, in one or two sentences."
+      }
     }
   ]
 }
 ```
+
+Criteria used (thresholds are set from published mission constraints during B2):
+
+| Body | Goal | Criteria ids |
+|---|---|---|
+| Mars | Safe landing zone | `elevation`, `latitude`, `slope`, `thermal_inertia` |
+| Moon | Permanent base site | `illumination`, `earth_visibility`, `slope`, `ice_distance` |
 
 ## `analogs.json`
 
@@ -78,6 +101,8 @@ Both JSON files carry `"mock": true` until the real pipeline output replaces the
 ## Rules
 
 - Coordinates are in degrees. Longitude is −180..180, east positive, on all three bodies.
-- Every site has exactly 3 analogs, ranks 1–3, from different regions. At least one has `"known": false`.
+- Every `candidate` site has exactly 3 analogs, ranks 1–3, from different regions, at least one with `"known": false`. A `past` site may have 0 or 3 analogs — the app hides "Show Earth analogs" when there are none.
+- A `candidate` site passes all its criteria. A `past` site may fail some — that's the point of validation (e.g. a good short-mission site that's too far from the pole for a permanent base).
+- `sites.json` version 2 added `selection`. Bump `version` whenever the shape changes.
 - `similarities` come from scores ≥ 70, `differences` from scores ≤ 40 — the frontend shows them as given and does not recompute.
 - Text is English and plain (no HTML or Markdown).

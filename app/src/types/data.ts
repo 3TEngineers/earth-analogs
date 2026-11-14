@@ -4,6 +4,28 @@
 export type Body = 'moon' | 'mars';
 export type Confidence = 'high' | 'medium' | 'low';
 
+/** One landing/base criterion checked for a site, e.g. elevation ≤ -1 km. */
+export interface Criterion {
+  id: string;
+  label: string;
+  value: number | null;
+  unit: string;
+  rule: string;
+  pass: boolean | null;
+  source: string;
+}
+
+/**
+ * Why a site is on the list. Candidates are sites we found; past landings
+ * are run through the same criteria to validate them ("validation").
+ */
+export interface Selection {
+  goal: string;
+  role: 'candidate' | 'validation';
+  criteria: Criterion[];
+  note: string;
+}
+
 export interface Site {
   id: string;
   body: Body;
@@ -18,6 +40,7 @@ export interface Site {
   processes: string[];
   limits: string[];
   image: string | null;
+  selection: Selection;
 }
 
 export interface SitesFile {

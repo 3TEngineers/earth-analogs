@@ -11,6 +11,23 @@ Body = Literal["moon", "mars"]
 Confidence = Literal["high", "medium", "low"]
 
 
+class Criterion(BaseModel):
+    id: str
+    label: str
+    value: float | None
+    unit: str
+    rule: str
+    pass_: bool | None = Field(alias="pass")  # "pass" is a keyword; dump with by_alias=True
+    source: str
+
+
+class Selection(BaseModel):
+    goal: str
+    role: Literal["candidate", "validation"]
+    criteria: list[Criterion]
+    note: str
+
+
 class Site(BaseModel):
     id: str
     body: Body
@@ -25,6 +42,7 @@ class Site(BaseModel):
     processes: list[str]
     limits: list[str]
     image: str | None
+    selection: Selection
 
 
 class SitesFile(BaseModel):

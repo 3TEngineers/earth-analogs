@@ -67,7 +67,7 @@ const { sitesForBody, site, analogs, analog, dimensions } = useSelection()
 | `phase` | What the user sees | Your panel shows | Buttons call |
 |---|---|---|---|
 | `browse` | Rotating Moon or Mars | Moon \| Mars toggle + site list (`sitesForBody`) | `setBody('moon' \| 'mars')`, `selectSite(s.id, s.body)` |
-| `site` | Globe zoomed to `site` | Mission card for `site` | **Show Earth analogs** → `showAnalogs(analogs[0].id)`; another site → `selectSite(...)`; close → `reset()` |
+| `site` | Globe zoomed to `site` | Mission card for `site` | **Show Earth training areas** → `showAnalogs(analogs[0].id)` (hide the button when `analogs` is empty); another site → `selectSite(...)`; close → `reset()` |
 | `earth` | Earth globe with the 3 analogs | Report panel for `analog` | Switch analog → `selectAnalog(a.id)`; back → `backToSite()` |
 
 - `analogs` is already sorted by rank (1..3); `dimensions` only contains the dimensions for the site's body.
@@ -75,14 +75,25 @@ const { sitesForBody, site, analogs, analog, dimensions } = useSelection()
 
 ## 4. Your steps and what "done" means
 
+> **Direction update (2026-11-14, mentor feedback):** our main result is now **our own candidate sites** (found by screening), and past landings are shown as **validation**. Every site has a `selection` block (contract v2). Why: `docs/PROJECT_HISTORY.md` §12.
+
+### K3b — Published landing/base constraints (content, **needed by Sadık Saturday afternoon — do this first**)
+For B2 screening. In `docs/LANDING_CONSTRAINTS.md`, with a source link for every number:
+- Mars missions (Pathfinder, MER, Phoenix, MSL, InSight, Mars 2020): elevation limit, latitude range, slope limit, rock abundance limit, thermal inertia / dust notes.
+- The 11 successful Mars landings with coordinates (Mars 3, Viking 1–2, Pathfinder, Spirit, Opportunity, Phoenix, Curiosity, InSight, Perseverance, Zhurong).
+- NASA's 9 Artemis III candidate regions (2024 list) with approximate center coordinates.
+- Anything published on what makes a good lunar base site (illumination %, Earth visibility, distance to permanent shadow).
+
 ### K1 — Site list + mission card (`src/panels/`)
-Suggested files: `SitePanel.tsx` (decides what to show from `phase`), `BodyToggle.tsx`, `SiteList.tsx`, `SiteCard.tsx`, `MissionCard.tsx`.
-- Moon | Mars toggle; one card per site: `name`, `agency`, `year` (or "Future" when `null`), badge **Past landing** / **Future candidate** from `status`.
-- Mission card: name, mission, agency, year, coordinates in `font-mono` (e.g. `-69.37°, 32.32°`), `summary`, `processes` as tags, primary button **Show Earth analogs →**.
+Suggested files: `SitePanel.tsx` (decides what to show from `phase`), `BodyToggle.tsx`, `SiteList.tsx`, `SiteCard.tsx`, `MissionCard.tsx`, `SelectionChecklist.tsx`.
+- Moon | Mars toggle; the list has **two groups**: **Our candidates** (`selection.role === 'candidate'`, highlighted with the accent) first, then **Past landings** (`'validation'`, muted). One card per site: `name`, `agency`, `year` (or "Candidate" when `null`).
+- Mission card: name, mission, agency, year, coordinates in `font-mono` (e.g. `-69.37°, 32.32°`), `summary`, `processes` as tags.
+- **"Why this site" checklist** from `selection`: title = `selection.goal`; one row per criterion — ✓ / ✗ / "No data" (`pass` true / false / null), `label`, `value` + `unit` in `font-mono`, `rule` in muted text, `source` as small text; then `selection.note`. For past landings title it **"Checked against our criteria"** — a ✗ there is fine and expected (it shows the criteria tell sites apart).
+- Primary button **Show Earth training areas →** (hidden when the site has no analogs).
 - Done when: the whole flow works without `StateDebugPanel`, which is deleted.
 
 ### K2 — Site summaries (content)
-Real text for the 4 sites' `summary` and `processes` (mission, year, key findings, processes). The JSON is written by the pipeline, so **send the text to Sadık** (or add it in `docs/` and tell him) — don't hand-edit `public/data/*.json`.
+Real text for `summary` and `processes` — past landings now, our candidates once Sadık picks them in B2 (mission/goal, key findings, processes). The JSON is written by the pipeline, so **send the text to Sadık** (or add it in `docs/` and tell him) — don't hand-edit `public/data/*.json`.
 
 ### K3 — Known analogs list + test mapping (content, **needed by Sadık Saturday evening**)
 A sourced list of already-known Earth analogs per site and the "strong dimension → test/training" mapping. Put it in `docs/` (e.g. `docs/KNOWN_ANALOGS.md`) and tell Sadık; he uses it for scoring (B5–B7).

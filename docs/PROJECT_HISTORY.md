@@ -119,13 +119,34 @@ Nice-to-haves if time allows: per-dimension confidence (now in the contract), vi
 ## 11. Still open
 
 - Project name.
-- Final confirmation of the four sites (proposed: Chandrayaan-3, an Artemis candidate region, Curiosity, Perseverance; Apollo 11 optional).
 - Dimension weights per site.
+- Exact screening thresholds (set in B2 from Kmar's K3b research).
 
-## 12. AI usage so far (for the submission's disclosure)
+## 12. Mentor feedback and the new direction (14 Nov)
+
+A mentor reviewed the plan and pointed out a weakness: **using past landing sites as the main subject isn't new** — some of their Earth analogs are already published (Lake Salda for Jezero). The mentor's suggestion, which we adopted:
+
+> Use past landings and known Earth analog areas to learn what makes a site work, **find new candidate landing sites on Mars and base sites on the Moon ourselves**, and then find the Earth training areas for those candidates.
+
+The mentor also noted that **sun angle and atmosphere** sharply limit where you can land on Mars — which matches published mission constraints (low elevation for enough atmosphere to slow down, latitude limits for solar power and temperature).
+
+What changed and what didn't:
+
+- **Main result:** our own candidates — 2 safe landing zones on Mars, 2 permanent base sites near the lunar south pole.
+- **Past landings become validation:** our Mars criteria should pass all 11 past landings; our Moon picks should overlap NASA's 9 Artemis III regions. Lake Salda–Jezero still validates the analog-scoring step.
+- **Rules, not machine learning:** 11 landings are too few to train a model, so screening uses published constraints (MER, MSL, Phoenix, InSight…) and the landings check them.
+- **Data exists** (checked by web search, not yet downloaded): MOLA elevation, MGS TES thermal inertia (global map on PDS), LOLA polar illumination and Earth visibility (NASA PGDA, cloud-optimized GeoTIFFs). A global Mars rock-abundance map wasn't found yet; it's optional.
+- **Honesty:** this is a **pre-screening** with simplified criteria at kilometre scale. Real landing-site selection takes years and metre-scale imagery; the site must say so.
+- **Roles unchanged.** Backend gains B2 (screening) and B2b (validation); Kmar takes K3b (published constraints, Artemis regions) to offset the backend load; Deniz's list shows candidates highlighted and past landings muted; Kmar's card gets a "Why this site" checklist.
+- **Contract:** `sites.json` version 2 adds a `selection` block (goal, role, criteria with value / rule / pass, note). Mock data updated: one Moon and one Mars candidate.
+- **Fallback:** if screening runs late, use the Artemis III regions and published Mars candidate sites as candidates.
+
+Also decided the same day: **no database and no API server** (a mentor had suggested MariaDB and FastAPI). All results are precomputed into small JSON files, so the deployed site can't go down or sleep during judging, which runs into December. FastAPI remains an option if we later add on-demand scoring.
+
+## 13. AI usage so far (kept up to date) (for the submission's disclosure)
 
 Keep this list updated — the project page must state where AI was used.
 
-- **Idea:** the website concept (globe → landing site → Earth analogs → report) and the choice of challenge are the team's. Claude proposed alternatives that the team rejected or reshaped.
+- **Idea:** the website concept (globe → landing site → Earth analogs → report) and the choice of challenge are the team's; the "find new candidate sites first" step came from our mentor. Claude proposed alternatives that the team rejected or reshaped.
 - **Claude (Claude Code) was used for:** summarising and comparing the challenges; checking data availability and landing statistics via web search; drafting the scoring method, the data contract and the project plan; repository setup and documentation; mock data.
 - Code written with AI help must be acknowledged in the project description; any AI-generated images need a watermark.
