@@ -40,4 +40,4 @@ Open question to verify before relying on it: the south pole is highland (anorth
 - Sadık: B1 — confirm data access for the datasets in `docs/DATA_SOURCES.md`.
 - Deniz: D2 — NASA textures, bump maps, atmosphere, idle rotation.
 - Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Inter / JetBrains Mono).
-- Kmar: K1/K2 — site list layout and the four site summaries. Build in `app/src/panels/` on top of `useAppState()` / `useSelection()`, then remove `app/src/dev/StateDebugPanel.tsx`.
+- **Kmar: start with `app/src/panels/README.md`** — setup, what already exists, the shared state API, exact specs and "done" for K1–K4, layout and design tokens. Next: K1 (site list + mission card) and K2 (site summaries); K3 (known analogs + test mapping) is needed by Sadık Saturday evening.
