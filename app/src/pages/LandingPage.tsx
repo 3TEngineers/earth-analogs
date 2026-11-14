@@ -6,19 +6,17 @@ import { useData } from '../data/DataProvider'
 
 /**
  * Landing page ("/"). Screen one: the title and two buttons in the center, the Moon, Earth and Mars floating
- * around them (<SpaceScene>, fixed behind the page). Scrolling down reveals how we found the sites; more
- * sections can be added below. The page ignores pointer events except on links, so the planets stay
- * clickable; wheel scrolling still reaches the page. Every figure comes from the data files. Copy: Kmar may refine it.
+ * around them (<SpaceScene>, fixed behind the page). Scrolling down reveals the method; more sections can be
+ * added below. The page ignores pointer events except on links, so the planets stay clickable; wheel scrolling
+ * still reaches the page. Site counts come from sites.json; the method text follows docs/SCREENING_RESULTS.md.
+ * Training-area counts are left out on purpose until the Earth analogs are final (B8).
  */
 export function LandingPage() {
   const data = useData()
   const sites = data.status === 'ready' ? data.sites.sites : []
-  const count = (body: 'moon' | 'mars', role: 'candidate' | 'validation') =>
-    sites.filter((s) => s.body === body && s.selection.role === role).length
-  const mars = count('mars', 'candidate')
-  const moon = count('moon', 'candidate')
-  const past = count('mars', 'validation') + count('moon', 'validation')
-  const areas = data.status === 'ready' ? data.analogs.analogs.length : 0
+  const count = (body: 'moon' | 'mars') => sites.filter((s) => s.body === body && s.selection.role === 'candidate').length
+  const mars = count('mars')
+  const moon = count('moon')
   const step = (i: number) => ({ '--i': i }) as CSSProperties
   const glow = '[text-shadow:0_2px_24px_rgb(5_7_13/0.9)]'
 
@@ -26,14 +24,18 @@ export function LandingPage() {
     <main className="pointer-events-none relative z-10">
       <SiteHeader showBrand={false} />
 
-      <section className="flex min-h-svh flex-col items-center justify-center px-6 text-center">
-        <h1 className={`reveal font-display text-5xl font-semibold tracking-[-0.035em] sm:text-7xl ${glow}`} style={step(0)}>
+      <section className="relative flex min-h-svh flex-col items-center justify-center px-6 text-center">
+        <p className={`reveal font-mono text-[11px] tracking-[0.22em] text-ink-muted uppercase sm:text-xs ${glow}`} style={step(0)}>
+          Mars <span className="text-mars">·</span> Moon <span className="text-earth">·</span> Earth
+        </p>
+        <h1 className={`reveal mt-4 font-display text-5xl font-semibold tracking-[-0.035em] sm:text-7xl ${glow}`} style={step(1)}>
           Earth Analogs
         </h1>
-        <p className={`reveal mt-5 max-w-xl text-lg leading-snug text-ink/90 sm:text-xl ${glow}`} style={step(1)}>
-          New places to land on Mars and to live on the Moon — and where on Earth to train for them.
+        <p className={`reveal mt-5 max-w-lg text-lg leading-snug text-ink/90 sm:text-xl ${glow}`} style={step(2)}>
+          {mars > 0 ? <Fig>{mars}</Fig> : 'New'} landing zones on Mars, {moon > 0 ? <Fig>{moon}</Fig> : 'new'} base
+          sites on the Moon, found with real mission limits. Then the places on Earth to rehearse each one.
         </p>
-        <div className="reveal pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" style={step(2)}>
+        <div className="reveal pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" style={step(3)}>
           <Link to="/explore/mars" className="press rounded-full bg-mars px-6 py-2.5 font-medium text-space hover:bg-mars/90">
             Explore Mars
           </Link>
@@ -44,28 +46,37 @@ export function LandingPage() {
             Explore the Moon
           </Link>
         </div>
-        <p className="reveal absolute bottom-8 flex flex-col items-center gap-1 text-xs text-ink-muted" style={step(4)}>
-          How we found them
+        <p
+          className="reveal absolute bottom-8 flex flex-col items-center gap-1.5 font-mono text-[11px] tracking-[0.18em] text-ink-muted uppercase"
+          style={step(5)}
+        >
+          Method
           <ChevronDown className="size-4 animate-bounce motion-reduce:animate-none" aria-hidden="true" />
         </p>
       </section>
 
       <section className="mx-auto max-w-2xl px-6 pb-32">
         <div className="rounded-2xl border border-line bg-space/70 p-6 backdrop-blur-xl sm:p-10">
-          <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">How we found them</h2>
-          <ol className="mt-8 space-y-7 border-l border-line pl-6">
-            <Step n={1} title="Screen">
-              Every point on Mars and near the lunar south pole, checked against published mission limits: elevation,
-              slope, latitude and surface for landing; sunlight, Earth in view and nearby ice for a base. <Fig>{mars}</Fig>{' '}
-              landing {mars === 1 ? 'zone' : 'zones'} and <Fig>{moon}</Fig> base {moon === 1 ? 'site' : 'sites'} pass.
+          <p className="font-mono text-[11px] tracking-[0.18em] text-ink-muted uppercase">Method</p>
+          <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+            Rules first, places second
+          </h2>
+          <ol className="mt-8 space-y-8">
+            <Step n="01" title="Screen">
+              We ran the whole of Mars and the lunar south pole through limits taken from published mission documents.
+              For landing: air to slow down in, winter sunlight, firm ground, gentle slopes. For a base: hours of
+              sunlight, Earth in view for radio, ice in permanent shadow close by. <Fig>{mars}</Fig> Mars zones and{' '}
+              <Fig>{moon}</Fig> lunar ridges passed every rule.
             </Step>
-            <Step n={2} title="Check">
-              The same rules run on <Fig>{past}</Fig> places where we already landed, so we can see they tell good sites
-              from bad ones.
+            <Step n="02" title="Validate">
+              The same rules ran on the places spacecraft have already landed. Most pass. Those that fail do so for
+              known reasons: Curiosity&apos;s Gale crater is too rough at kilometre scale, because Mount Sharp was the
+              target.
             </Step>
-            <Step n={3} title="Match">
-              Each site&apos;s terrain, minerals, dryness and cold compared with Earth: <Fig>{areas}</Fig> training areas,
-              each with what is similar, what is not, and what to test there.
+            <Step n="03" title="Match">
+              For each site we rank Earth&apos;s land by terrain, minerals, dryness and cold, and say what every
+              training area can test. No place on Earth has lunar gravity, vacuum or space radiation, so each match
+              also lists where the analogy stops.
             </Step>
           </ol>
           <div className="pointer-events-auto mt-10 flex flex-wrap gap-3">
@@ -82,15 +93,16 @@ export function LandingPage() {
   )
 }
 
-function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
+function Step({ n, title, children }: { n: string; title: string; children: ReactNode }) {
   return (
-    <li className="relative">
-      <span className="absolute top-1.5 -left-[1.85rem] size-2.5 rounded-full bg-accent ring-4 ring-space" aria-hidden="true" />
-      <h3 className="font-display text-lg font-semibold">
-        <span className="mr-2 text-ink-muted tabular-nums">{n}</span>
-        {title}
-      </h3>
-      <p className="mt-1.5 leading-relaxed text-ink-muted">{children}</p>
+    <li className="grid grid-cols-[2.5rem_1fr] gap-x-3">
+      <span className="pt-1 font-mono text-xs text-accent tabular-nums" aria-hidden="true">
+        {n}
+      </span>
+      <div>
+        <h3 className="font-mono text-xs tracking-[0.18em] text-ink uppercase">{title}</h3>
+        <p className="mt-2 leading-relaxed text-ink-muted">{children}</p>
+      </div>
     </li>
   )
 }
