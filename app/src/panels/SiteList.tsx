@@ -27,9 +27,9 @@ export function SiteList() {
         (g) =>
           g.sites.length > 0 && (
             <section key={g.title} aria-label={g.title}>
-              <h2 className="font-display text-xs font-semibold tracking-wider text-ink-muted uppercase">{g.title}</h2>
-              <p className="mb-2 text-xs text-ink-muted">{g.hint}</p>
-              <ul className="space-y-2">
+              <h2 className="font-display text-base font-semibold text-ink">{g.title}</h2>
+              <p className="mb-3 text-sm text-ink-muted">{g.hint}</p>
+              <ul className="grid gap-2 sm:grid-cols-2">
                 {g.sites.map((s) => (
                   <li key={s.id}>
                     <SiteCard site={s} selected={s.id === siteId} onSelect={() => selectSite(s.id, s.body)} />
