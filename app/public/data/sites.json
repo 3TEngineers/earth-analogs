@@ -210,7 +210,7 @@
       "status": "past",
       "lat": -69.373,
       "lon": 32.319,
-      "summary": "MOCK. One of the landings closest to the lunar south pole, on old highland terrain lit by a low Sun.",
+      "summary": "India's 2023 lander, one of the landings closest to the lunar south pole, on old highland terrain lit by a low Sun.",
       "processes": [
         "Impact cratering",
         "Space weathering of regolith"
@@ -576,7 +576,7 @@
       "status": "past",
       "lat": -4.5895,
       "lon": 137.4417,
-      "summary": "MOCK. Rover exploring the layered sediments of Mount Sharp inside Gale crater, a former lake basin.",
+      "summary": "NASA rover exploring the layered sediments of Mount Sharp inside Gale crater, a former lake basin.",
       "processes": [
         "Lake-bed sedimentation",
         "Wind erosion"
@@ -651,7 +651,7 @@
       "status": "past",
       "lat": 18.4447,
       "lon": 77.4508,
-      "summary": "MOCK. Rover exploring an ancient river delta in Jezero crater, searching for signs of past life and caching samples.",
+      "summary": "NASA rover exploring an ancient river delta in Jezero crater, searching for signs of past life and caching samples.",
       "processes": [
         "River delta sedimentation",
         "Carbonate formation in lake water"

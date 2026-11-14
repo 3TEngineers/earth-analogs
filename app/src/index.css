@@ -1,24 +1,27 @@
 @import 'tailwindcss';
 
 /*
- * Shared design tokens (Deniz + Kmar). Use these through Tailwind classes,
- * e.g. bg-space, bg-panel, text-ink, text-ink-muted, text-accent, border-line,
- * text-similar, text-different, font-display, font-mono.
+ * Shared design tokens. Use them through Tailwind classes:
+ * bg-space, bg-panel, text-ink, text-ink-muted, text-accent, border-line, text-similar, text-different,
+ * text-moon / text-mars / text-earth, font-display, font-sans, font-mono.
  *
- * The accent color follows the body on screen: set data-body="moon|mars|earth"
- * on <html> (AppStateProvider does this) and every *-accent class updates.
+ * Type: Jost for headings and names (a Futura descendant; Futura is the face on the Apollo 11 plaque),
+ * IBM Plex Sans for reading text, IBM Plex Mono for coordinates, values and units.
+ *
+ * The accent follows the body on screen: AppStateProvider sets data-body="moon|mars|earth" on <html>.
+ * A section can also pin its own accent with style="--body-accent: var(--color-mars)".
  */
 
 :root {
-  --body-accent: #c9d1dc;
+  --body-accent: #cfd4dc;
 }
 
 :root[data-body='mars'] {
-  --body-accent: #e0663a;
+  --body-accent: #e56f3e;
 }
 
 :root[data-body='earth'] {
-  --body-accent: #3fd0e8;
+  --body-accent: #56c7ee;
 }
 
 @theme inline {
@@ -26,24 +29,22 @@
 }
 
 @theme {
-  --color-space: #05070d;
-  --color-panel: rgb(10 14 24 / 0.7);
-  --color-line: rgb(255 255 255 / 0.1);
-  --color-ink: #e8ecf2;
-  --color-ink-muted: #8a94a6;
+  --color-space: #04060b;
+  --color-panel: rgb(10 13 22 / 0.74);
+  --color-line: rgb(255 255 255 / 0.11);
+  --color-ink: #eef0f3;
+  --color-ink-muted: #939cab;
 
-  --color-similar: #4ade80;
-  --color-different: #f5a524;
+  --color-similar: #5fd39b;
+  --color-different: #f0b14a;
 
-  --color-moon: #c9d1dc;
-  --color-mars: #e0663a;
-  --color-earth: #3fd0e8;
+  --color-moon: #cfd4dc;
+  --color-mars: #e56f3e;
+  --color-earth: #56c7ee;
 
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  /* Planet names on the landing story only (big, uppercase). */
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-display: 'Jost', 'Century Gothic', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   /* Motion tokens (Emil Kowalski's curves): enter/settle → out, on-screen moves → in-out. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -70,9 +71,54 @@ h3 {
   text-wrap: balance;
 }
 
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 2px solid var(--body-accent);
+  outline-offset: 2px;
+}
+
+/* Small caps label above a heading or a group: Jost, spaced, like the lettering on a mission plaque. */
+@utility eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Headline: Jost, tight. Size comes from the text-* class next to it. */
+@utility headline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+
+/* Dark glass for panels and cards that sit over the 3D scene. */
+@utility glass {
+  background-color: var(--color-panel);
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.45);
+}
+
+/* Text straight on the sky: a soft dark halo keeps it readable where a planet or stars pass behind it. */
+@utility on-sky {
+  text-shadow:
+    0 1px 2px rgb(4 6 11 / 0.9),
+    0 2px 26px rgb(4 6 11 / 0.95);
+}
+
 /* Add to elements whose accent color should fade when the body changes. */
 .accent-transition {
-  transition: color 600ms ease, background-color 600ms ease, border-color 600ms ease;
+  transition:
+    color 600ms ease,
+    background-color 600ms ease,
+    border-color 600ms ease;
 }
 
 /*
@@ -97,6 +143,14 @@ h3 {
     filter: blur(0);
   }
 }
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* Loader line: visible until the scene is ready, then fades away. */
 .scene-loader {
@@ -112,7 +166,8 @@ h3 {
     transform 160ms var(--ease-out),
     background-color 200ms ease,
     border-color 200ms ease,
-    color 200ms ease;
+    color 200ms ease,
+    opacity 200ms ease;
 }
 .press:active {
   transform: scale(0.97);
@@ -123,42 +178,18 @@ h3 {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .accent-transition,
-  .press,
-  .scene-loader {
-    transition: none;
-  }
-  .press:active,
-  .press:hover {
-    transform: none;
-  }
-  /* Reduced, not removed: keep the fade, drop the movement and blur. */
-  :root[data-scene-ready] .reveal {
-    animation: reveal-fade 400ms ease both;
-  }
-  @keyframes reveal-fade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
-/* Panel content swaps (list / site): the column arrives from blur, its .stagger children one after another (--i). */
+/* Panel content swaps (list / site / tab): the block arrives from blur, its .stagger children one after another (--i). */
 .panel-in {
-  animation: blur-in 600ms var(--ease-out) both;
+  animation: blur-in 550ms var(--ease-out) both;
 }
 .stagger {
-  animation: blur-in 800ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+  animation: blur-in 700ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 60ms);
 }
 @keyframes blur-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
     filter: blur(8px);
   }
   to {
@@ -167,15 +198,9 @@ h3 {
     filter: blur(0);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .panel-in,
-  .stagger {
-    animation: reveal-fade 300ms ease both;
-  }
-}
 
 /*
- * Landing story: each section gets data-in-view while it fills most of the screen (LandingPage).
+ * Landing story: each [data-stage] section gets data-in-view while it is on screen (LandingPage).
  * Its .story-item children arrive from blur and leave the same way, staggered with style="--i: 0|1|2…".
  */
 .story-item {
@@ -193,7 +218,71 @@ h3 {
   transform: none;
   filter: blur(0);
 }
+
+/* The pair card on the first screen: its text swaps with a quick fade each time the pair changes. */
+.pair-swap {
+  animation: reveal-fade 500ms ease both;
+}
+
+@keyframes pair-timer {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Side drawer (calculation details): slides in from the right over a dimmed page. */
+dialog.drawer {
+  margin: 0 0 0 auto;
+  height: 100dvh;
+  max-height: none;
+  width: min(34rem, 100vw);
+  max-width: none;
+  border: 0;
+  padding: 0;
+  color: var(--color-ink);
+  background: #0a0d16;
+  border-left: 1px solid var(--color-line);
+  transform: translateX(100%);
+  transition:
+    transform 420ms var(--ease-out),
+    display 420ms allow-discrete,
+    overlay 420ms allow-discrete;
+}
+dialog.drawer[open] {
+  transform: none;
+}
+@starting-style {
+  dialog.drawer[open] {
+    transform: translateX(100%);
+  }
+}
+dialog.drawer::backdrop {
+  background: rgb(4 6 11 / 0.6);
+  backdrop-filter: blur(3px);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .accent-transition,
+  .press,
+  .scene-loader,
+  dialog.drawer {
+    transition: none;
+  }
+  .press:active,
+  .press:hover {
+    transform: none;
+  }
+  /* Reduced, not removed: keep the fade, drop the movement and blur. */
+  :root[data-scene-ready] .reveal {
+    animation: reveal-fade 400ms ease both;
+  }
+  .panel-in,
+  .stagger {
+    animation: reveal-fade 300ms ease both;
+  }
   .story-item {
     transform: none;
     filter: none;

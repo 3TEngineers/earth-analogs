@@ -14,8 +14,8 @@ export function OrbitalView({ image, alt }: { image: OrbitalImage | null; alt: s
   const tenKmShare = (10 / image.widthKm) * 100
 
   return (
-    <figure className="mt-8">
-      <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-white/[0.03]">
+    <figure>
+      <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white/[0.03]">
         {state !== 'failed' && (
           <img
             src={image.src}
@@ -29,13 +29,13 @@ export function OrbitalView({ image, alt }: { image: OrbitalImage | null; alt: s
         )}
 
         {state === 'loading' && (
-          <p className="absolute inset-0 flex items-center justify-center font-mono text-[11px] tracking-[0.16em] text-ink-muted uppercase">
-            Loading orbital view…
+          <p className="absolute inset-0 flex items-center justify-center font-mono text-xs text-ink-muted">
+            Loading the view from orbit…
           </p>
         )}
         {state === 'failed' && (
           <p className="absolute inset-0 flex items-center justify-center gap-2 text-sm text-ink-muted">
-            <ImageOff className="size-4" aria-hidden="true" /> Orbital view unavailable right now
+            <ImageOff className="size-4" aria-hidden="true" /> The view from orbit is unavailable right now
           </p>
         )}
 

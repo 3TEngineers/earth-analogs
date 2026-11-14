@@ -23,3 +23,21 @@ export function formatLatLon(lat: number, lon: number) {
   const ew = `${Math.abs(lon).toFixed(2)}° ${lon >= 0 ? 'E' : 'W'}`
   return `${ns} · ${ew}`
 }
+
+/**
+ * Training areas are named "<ground> — <place>" by the pipeline ("Basalt plains — Sahara").
+ * The place alone is the short name for tags and lists; the ground is shown as a caption.
+ */
+export function placeOf(name: string) {
+  return name.split(' — ').at(-1) ?? name
+}
+
+export function groundOf(name: string) {
+  const parts = name.split(' — ')
+  return parts.length > 1 ? parts[0] : ''
+}
+
+/** "mars-candidate-a" → "A": the letter our docs use for a candidate. Empty for past landings. */
+export function candidateLetter(siteId: string) {
+  return /-candidate-([a-z])$/.exec(siteId)?.[1].toUpperCase() ?? ''
+}

@@ -3,17 +3,17 @@ import { useAppState } from '../state/AppState'
 import type { Body } from '../types/data'
 
 const bodies: { id: Body; label: string }[] = [
-  { id: 'moon', label: 'Moon' },
   { id: 'mars', label: 'Mars' },
+  { id: 'moon', label: 'Moon' },
 ]
 
-/** Moon | Mars tab. The body lives in the URL (/explore/<body>); switching navigates, which also clears the selection. */
+/** Mars | Moon switch for phones, where the header links sit behind the menu. The body lives in the URL (/explore/<body>). */
 export function BodyToggle() {
   const { body } = useAppState()
   const navigate = useNavigate()
 
   return (
-    <div role="tablist" aria-label="Body" className="flex rounded-lg border border-line p-1">
+    <div role="tablist" aria-label="World" className="flex rounded-full border border-line p-0.5">
       {bodies.map((b) => {
         const active = body === b.id
         return (
@@ -23,9 +23,7 @@ export function BodyToggle() {
             role="tab"
             aria-selected={active}
             onClick={() => navigate(`/explore/${b.id}`)}
-            className={`accent-transition flex-1 rounded-md px-3 py-1.5 font-display text-sm focus-visible:outline-2 focus-visible:outline-accent ${
-              active ? 'bg-accent text-space' : 'text-ink-muted hover:text-ink'
-            }`}
+            className={`accent-transition rounded-full px-3.5 py-1 font-display text-sm font-medium ${active ? 'bg-accent text-space' : 'text-ink-muted hover:text-ink'}`}
           >
             {b.label}
           </button>
