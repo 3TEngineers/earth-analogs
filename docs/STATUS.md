@@ -27,6 +27,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: **B1 — data access confirmed** (`pipeline/check_access.py`, results in `docs/DATA_SOURCES.md`). Copernicus DEM (Lake Salda 1135.5 m), MOLA (Jezero −2510 m), LOLA, TES thermal inertia (Jezero 314), PGDA lunar sunlit time / Earth visibility / permanent shadow (75°S, fractions 0–1), and Earthdata searches for MODIS LST, MODIS NDVI, GPM IMERG, EMIT all work. Gotcha: PGDA's `_COG.TIF` links are 404 — use the plain `.TIF`. EMIT is ~3 GB per region, so subset it. Python env: `pipeline/requirements.txt`.
 - 2026-11-14: New direction written up (`PROJECT_PLAN.md`, `PROJECT_HISTORY.md` §12); data contract v2 with `selection`; mock data now has one Moon and one Mars candidate (5 sites, 15 analogs), validated with `pipeline/schema.py`; app builds and lints.
 - 2026-11-14: D1 (part 1) — app scaffold in `app/`: Vite + React + TypeScript, Tailwind v4, `react-globe.gl`, Lucide. Shared UI state (`src/state/`), data loading (`src/data/`), proposed design tokens (`src/index.css`), placeholder globe with site/analog points and fly-to, temporary state panel. Runs on mock data; build and lint pass. See `app/README.md`.
 - 2026-11-14: `docs/PROJECT_HISTORY.md` — full step-by-step history of the decisions so far. Kmar (`kmarrabid-ai`) joined with write access.
@@ -41,7 +42,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 - Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
-- Sadık: B1 — confirm data access for the datasets in `docs/DATA_SOURCES.md`, now including MGS TES thermal inertia and PGDA lunar illumination / Earth visibility. Then B2 (screening).
+- Sadık: B2 — screening (Mars: MOLA elevation, latitude, slope, TES thermal inertia; Moon: PGDA sunlit time, Earth visibility, slope, distance to permanent shadow). Uses K3b thresholds once Kmar has them; starts with provisional ones. Earthdata Login needed before Earth-side downloads (B3).
 - **Kmar: K3b first (needed by Sadık for B2)** — published landing/base constraints and the Artemis III regions with coordinates, with sources, in `docs/LANDING_CONSTRAINTS.md`.
 - Deniz: D2 — NASA textures, bump maps, atmosphere, idle rotation. D3 now shows candidates highlighted and past landings muted (`site.selection.role`).
 - Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Inter / JetBrains Mono).
