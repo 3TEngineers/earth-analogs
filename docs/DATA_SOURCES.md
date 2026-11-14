@@ -1,43 +1,54 @@
 # Data sources
 
-One row per dataset we consider. **Checked** means someone actually downloaded or queried it and confirmed it works — until then treat the notes as unverified. Add size and format once known.
+One row per dataset we consider. **Checked** means someone actually read or queried it and confirmed it works — until then treat the notes as unverified. Re-run the checks any time with:
+
+```bash
+pipeline/.venv/Scripts/python pipeline/check_access.py     # Windows
+pipeline/.venv/bin/python pipeline/check_access.py         # macOS / Linux
+```
+
+Last run: **2026-11-14** (Sadık, B1). All checks passed.
 
 ## Moon
 
 | Dataset | What it gives us | Access | Checked |
 |---|---|---|---|
-| LRO LOLA topography (polar DEMs) | Elevation, slope, roughness at the south pole | PDS Geosciences / NASA PGDA | No |
-| LRO LOLA illumination products | Average illumination, Earth visibility at the poles | NASA PGDA (to confirm) | No |
-| LRO Diviner | Surface temperature, polar products, rock abundance | https://pds-geosciences.wustl.edu/missions/lro/diviner.htm | No |
-| LRO LEND / Mini-RF | Hydrogen / ice indicators, radar | PDS | No |
-| LOLA polar illumination and Earth visibility | Sunlit time and Earth-in-view percentage at the south pole (240 m and 60 m/pixel, cloud-optimized GeoTIFF) — base-site screening | https://pgda.gsfc.nasa.gov/products/69 | No |
-| Permanently shadowed regions | Distance to cold traps / ice — base-site screening | To find (Diviner or LOLA-derived PSR maps) | No |
-| Artemis III candidate regions | Peak near Cabeus B, Haworth, Malapert Massif, Mons Mouton Plateau, Mons Mouton, Nobile Rim 1 and 2, de Gerlache Rim 2, Slater Plain (2024 list) | NASA announcements | No |
+| LOLA global DEM 118 m | Elevation, slope | https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif — 92160×46080, not tiled; small windows read remotely in ~5 s | **Yes** — Chandrayaan-3 area ≈ 535 m |
+| LOLA average sunlit time, south pole 75°S, 120 m | Base-site screening: power | https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_75S_120M_201608.TIF — 83 MB, polar stereographic, values are **fractions 0–1**. Downloaded to `data/raw/` (one-time, ~2 min) | **Yes** — near Mons Mouton 0.0–0.5 |
+| LOLA average Earth visibility, 75°S, 120 m | Base-site screening: comms | `…/AVGVISIB_75S_120M_201608_EARTH.TIF` — 43 MB, fractions 0–1 | **Yes** — near Mons Mouton 0.0–0.9 |
+| LOLA permanently shadowed regions, 75°S, 120 m | Base-site screening: distance to ice | `…/LPSR_75S_120M_201608.TIF` — 1 MB, 0/1 mask | **Yes** |
+| Same products at 85°S 60 m and 65°S 240 m | Finer pole detail / wider coverage | Same folder; 85°S sunlit 34 MB, Earth 25 MB | Files exist (not read) |
+| LRO Diviner | Surface temperature, rock abundance | https://pds-geosciences.wustl.edu/missions/lro/diviner.htm | No |
+| Artemis III candidate regions | Validation for base-site screening (2024 list of 9) | NASA announcements — Kmar collects coordinates in K3b | No |
+
+Note: PGDA's page links `*_COG.TIF` versions, but the server returns 404 for all of them (checked 2026-11-14). Use the plain `.TIF`.
 
 ## Mars
 
 | Dataset | What it gives us | Access | Checked |
 |---|---|---|---|
-| MOLA DEM 463 m | Global topography | https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m | No |
-| MOLA–HRSC blended DEM 200 m | Higher-res global topography (~11 GB GeoTIFF) | https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m | No |
-| MGS TES thermal inertia (global, 8 px/deg) | Dust cover / load-bearing surface — landing screening | https://pds-geosciences.wustl.edu/missions/mgs/tes-timap.html (32-bit float `.img` + `.lbl`) | No |
-| Rock abundance (global) | Lander tip-over hazard | Not found yet — optional | No |
-| Published landing constraints | Thresholds for screening (MER, MSL, Phoenix, InSight, Mars 2020) | e.g. https://marsoweb.nas.nasa.gov/landingsites/msl/memoranda/MSL_Eng_User_Guide_v2.pdf, https://pubs.usgs.gov/publication/70025013 — Kmar collects in K3b | No |
+| MOLA DEM 463 m | Elevation, slope (km scale) | https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif — 46080×23040, not tiled; small windows read remotely in ~7–20 s | **Yes** — Jezero ≈ −2510 m (floor −2675 m) |
+| MGS TES thermal inertia, global 8 px/deg | Landing screening: dust / load-bearing surface | https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-special-v1/global_ti_60n_50s_8ppd.lbl + `.img` — 10 MB, 60°N–50°S, east-positive −180..180; GDAL reads the PDS3 label directly | **Yes** — Jezero ≈ 314 |
+| TES thermal inertia 2007 day/night maps | Alternative to the above | `https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-5-timap-v1/mgst_9001/data/global_ti_night_2007.img` (+ day, masks) | Files exist (not read) |
+| MOLA–HRSC blended DEM 200 m | Higher-res topography (~11 GB) | https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m | No — not needed yet |
+| Rock abundance (global) | Lander tip-over hazard | Not found — optional | No |
+| Published landing constraints | Screening thresholds (MER, MSL, Phoenix, InSight, Mars 2020) | e.g. https://marsoweb.nas.nasa.gov/landingsites/msl/memoranda/MSL_Eng_User_Guide_v2.pdf, https://pubs.usgs.gov/publication/70025013 — Kmar collects in K3b | No |
 | HiRISE DTMs | Very high-res topography, small areas only | https://stac.astrogeology.usgs.gov/docs/data/mars/hirise_dtms/ | No |
 
 ## Earth
 
 | Dataset | What it gives us | Access | Checked |
 |---|---|---|---|
-| SRTM / Copernicus DEM (30 m) | Elevation, slope, roughness | Earthdata / Copernicus Data Space | No |
-| MODIS land surface temperature (MOD11) | Day/night temperature, diurnal range | AppEEARS (Earthdata Login) | No |
-| MODIS NDVI | Vegetation cover | AppEEARS (Earthdata Login) | No |
-| GPM IMERG | Precipitation / aridity | Earthdata | No |
-| EMIT L2B mineral identification (60 m) | Surface minerals, arid regions only (±54° lat) | https://www.earthdata.nasa.gov/data/catalog/lpcloud-emitl2bmin-002 (Earthdata Login) | No |
+| Copernicus DEM GLO-30 | Elevation, slope, roughness | AWS open data, no login: `https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM/...tif` — 1°×1° cloud-optimized tiles, windows read in ~2 s | **Yes** — Lake Salda 1135.5 m (true ≈ 1140 m) |
+| MODIS land surface temperature (MOD11A2 v061, 8-day 1 km) | Day/night temperature swing | Earthdata (search: no login; download: login) | **Search yes** — 46 files / 216 MB for one year over Salda |
+| MODIS vegetation index (MOD13A2 v061, 16-day 1 km) | Vegetation cover | Earthdata | **Search yes** — 24 files / 277 MB per year |
+| GPM IMERG monthly (GPM_3IMERGM v07) | Precipitation / aridity | Earthdata | **Search yes** — 12 files / 214 MB per year (global files) |
+| EMIT L2B mineral identification (60 m) | Surface minerals, arid regions only (±54° lat) | Earthdata | **Search yes** — 33 granules / 3 GB over Salda since 2022: too big to pull everywhere, subset or pick single granules |
 | Permafrost extent | Frozen ground | To find | No |
 | Global lithology map | Rock type (e.g. anorthosite vs basalt) | To find | No |
 
 ## Access notes
 
-- **Earthdata Login** (free) is required for AppEEARS, EMIT and most LP DAAC products: https://urs.earthdata.nasa.gov/
-- AppEEARS can subset areas and time ranges server-side instead of downloading whole granules: https://appeears.earthdatacloud.nasa.gov/
+- **Earthdata Login** (free, https://urs.earthdata.nasa.gov/) is needed to *download* MODIS, GPM and EMIT; searching works without it. Put credentials in a local `.env` (see `.env.example`), never in code.
+- MODIS and GPM files are global or tiled — for many locations, AppEEARS (https://appeears.earthdatacloud.nasa.gov/) can subset server-side.
+- Downloaded files go to `data/raw/` (git-ignored).
