@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "mock": true,
+  "mock": false,
   "dimensions": [
     {
       "id": "terrain",
@@ -9,16 +9,16 @@
         "moon",
         "mars"
       ],
-      "description": "Slope and roughness distribution"
+      "description": "Slope distribution over ~25 km at the same pixel size (MOLA 463 m / LOLA 240 m vs Copernicus DEM)"
     },
     {
       "id": "mineralogy",
-      "label": "Mineralogy",
+      "label": "Rock type",
       "bodies": [
         "moon",
         "mars"
       ],
-      "description": "Rock type and mineral groups"
+      "description": "Expected rock family at the site vs the global lithological map GLiM on Earth"
     },
     {
       "id": "water_history",
@@ -26,16 +26,16 @@
       "bodies": [
         "mars"
       ],
-      "description": "Lake, delta and river landforms"
+      "description": "Lake, delta and river deposits — no global data we could compare, so not scored"
     },
     {
       "id": "aridity",
-      "label": "Aridity",
+      "label": "Dryness",
       "bodies": [
         "moon",
         "mars"
       ],
-      "description": "Rainfall and vegetation, closer to zero is better"
+      "description": "Rainfall (GPM IMERG) and bare ground (MODIS NDVI and land cover)"
     },
     {
       "id": "temperature",
@@ -44,1760 +44,1608 @@
         "moon",
         "mars"
       ],
-      "description": "Day-night temperature swing"
+      "description": "Day-night surface temperature swing and cold (MODIS land surface temperature)"
     },
     {
       "id": "sun_angle",
-      "label": "Sun angle",
+      "label": "Low Sun",
       "bodies": [
         "moon"
       ],
-      "description": "How low the Sun stays above the horizon"
+      "description": "How low the Sun stays (latitude)"
     },
     {
       "id": "ice",
-      "label": "Ice",
+      "label": "Frozen ground",
       "bodies": [
         "moon"
       ],
-      "description": "Ground ice or permafrost"
+      "description": "Mean surface temperature below freezing (MODIS) as a permafrost proxy"
     }
   ],
   "analogs": [
     {
-      "id": "chandrayaan-3-devon-island",
-      "siteId": "chandrayaan-3",
+      "id": "moon-candidate-a-gabbro-and-anorthosite-ground-ellesmere-",
+      "siteId": "moon-candidate-a",
       "rank": 1,
-      "name": "Haughton crater, Devon Island",
+      "name": "Gabbro and anorthosite ground — Ellesmere Island",
       "country": "Canada",
-      "lat": 75.38,
-      "lon": -89.68,
-      "radiusKm": 10,
-      "known": true,
+      "lat": 82.375,
+      "lon": -84.875,
+      "radiusKm": 12.5,
+      "known": false,
       "knownRef": null,
-      "totalScore": 72,
+      "totalScore": 69,
       "scores": {
         "terrain": {
-          "score": 78,
+          "score": 4,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 1.5°, site 12.99°"
         },
         "mineralogy": {
-          "score": 45,
-          "confidence": "medium",
-          "note": "MOCK"
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
         },
         "aridity": {
-          "score": 80,
+          "score": 76,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 60,
+          "score": 3,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         },
         "sun_angle": {
-          "score": 85,
+          "score": 100,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "ice": {
-          "score": 75,
+          "score": 100,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Impact crater terrain",
-        "MOCK. Low Sun for much of the year"
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Very dry and bare (None mm of rain a year)",
+        "The Sun stays low all year at 82° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface None °C)"
       ],
-      "differences": [],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 1.5° here vs 12.99°)",
+        "Mild day-night swing (None K) — far from the Moon's hundreds of degrees"
+      ],
       "tests": [
         {
-          "title": "Low-light camera navigation",
-          "detail": "MOCK. Long shadows resemble polar lunar lighting."
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
         }
       ],
       "processes": [
-        "Impact cratering"
+        "Mafic plutonic crust"
       ],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "chandrayaan-3-svalbard",
-      "siteId": "chandrayaan-3",
+      "id": "moon-candidate-a-gabbro-and-anorthosite-ground-qeqertarsu",
+      "siteId": "moon-candidate-a",
       "rank": 2,
-      "name": "Svalbard",
-      "country": "Norway",
-      "lat": 78.2,
-      "lon": 16.0,
-      "radiusKm": 10,
-      "known": true,
+      "name": "Gabbro and anorthosite ground — Qeqertarsuaq",
+      "country": "Greenland",
+      "lat": 70.125,
+      "lon": -53.625,
+      "radiusKm": 12.5,
+      "known": false,
       "knownRef": null,
-      "totalScore": 66,
+      "totalScore": 59,
       "scores": {
         "terrain": {
-          "score": 60,
+          "score": 15,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 18.03°, site 12.99°"
         },
         "mineralogy": {
-          "score": 40,
+          "score": 100,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
         },
         "aridity": {
-          "score": 70,
+          "score": 49,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 55,
+          "score": 10,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 51,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Ground frozen most of the year (mean surface None °C)"
+      ],
+      "differences": [
+        "Terrain is rougher than at the site (median slope 18.03° here vs 12.99°)",
+        "Mild day-night swing (None K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mafic plutonic crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-a-barren-ground-queen-elizabeth-islands",
+      "siteId": "moon-candidate-a",
+      "rank": 3,
+      "name": "Barren ground — Queen Elizabeth Islands",
+      "country": "Canada",
+      "lat": 77.625,
+      "lon": -85.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 55,
+      "scores": {
+        "terrain": {
+          "score": 3,
+          "confidence": "high",
+          "note": "Earth median slope 0.0°, site 12.99°"
+        },
+        "mineralogy": {
+          "score": null,
+          "confidence": "low",
+          "note": "Earth: no data (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 79,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 7,
+          "confidence": "medium",
+          "note": ""
         },
         "sun_angle": {
           "score": 88,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "ice": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Very low Sun angle",
-        "MOCK. Frozen ground"
+        "Very dry and bare (106.0 mm of rain a year)",
+        "The Sun stays low all year at 78° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -18 °C)"
       ],
       "differences": [
-        "MOCK. Different rock types"
+        "Terrain is much flatter than at the site (median slope 0.0° here vs 12.99°)",
+        "Mild day-night swing (2.5 K) — far from the Moon's hundreds of degrees"
       ],
       "tests": [
         {
-          "title": "Drilling in frozen ground",
-          "detail": "MOCK. Permafrost stands in for icy regolith."
-        }
-      ],
-      "processes": [
-        "Freeze-thaw cycles"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "chandrayaan-3-fiskenaesset",
-      "siteId": "chandrayaan-3",
-      "rank": 3,
-      "name": "Fiskenæsset anorthosite",
-      "country": "Greenland",
-      "lat": 63.1,
-      "lon": -50.7,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 61,
-      "scores": {
-        "terrain": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         },
-        "mineralogy": {
-          "score": 82,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 55,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 45,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 70,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Highland-like light-coloured rock"
-      ],
-      "differences": [],
-      "tests": [
         {
-          "title": "Instrument calibration on highland-like rock",
-          "detail": "MOCK."
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
         }
       ],
       "processes": [],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "moon-candidate-a-nain",
-      "siteId": "moon-candidate-a",
+      "id": "moon-candidate-b-gabbro-and-anorthosite-ground-franz-jose",
+      "siteId": "moon-candidate-b",
       "rank": 1,
-      "name": "Nain anorthosite, Labrador",
-      "country": "Canada",
-      "lat": 56.5,
-      "lon": -61.7,
-      "radiusKm": 10,
+      "name": "Gabbro and anorthosite ground — Franz Josef Land",
+      "country": "Russia",
+      "lat": 81.875,
+      "lon": 58.875,
+      "radiusKm": 12.5,
       "known": false,
-      "knownRef": null,
-      "totalScore": 68,
-      "scores": {
-        "terrain": {
-          "score": 65,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 85,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 50,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Highland-like rock type"
-      ],
-      "differences": [],
-      "tests": [
-        {
-          "title": "Sampling highland-type rock",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-a-svalbard",
-      "siteId": "moon-candidate-a",
-      "rank": 2,
-      "name": "Svalbard",
-      "country": "Norway",
-      "lat": 78.6,
-      "lon": 16.5,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 64,
-      "scores": {
-        "terrain": {
-          "score": 62,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 35,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 70,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 90,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Very low Sun angle",
-        "MOCK. Frozen ground"
-      ],
-      "differences": [
-        "MOCK. Different rock types"
-      ],
-      "tests": [
-        {
-          "title": "Solar power at low Sun angles",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-a-dry-valleys",
-      "siteId": "moon-candidate-a",
-      "rank": 3,
-      "name": "McMurdo Dry Valleys",
-      "country": "Antarctica",
-      "lat": -77.5,
-      "lon": 162.0,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 63,
-      "scores": {
-        "terrain": {
-          "score": 58,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 40,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 92,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 70,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 75,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Extremely dry and cold"
-      ],
-      "differences": [
-        "MOCK. Different rock types"
-      ],
-      "tests": [
-        {
-          "title": "Cold-weather equipment testing",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "curiosity-hanksville",
-      "siteId": "curiosity",
-      "rank": 1,
-      "name": "Hanksville, Utah",
-      "country": "USA",
-      "lat": 38.4,
-      "lon": -110.7,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 71,
-      "scores": {
-        "terrain": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 65,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 70,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 75,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Layered sedimentary rock"
-      ],
-      "differences": [],
-      "tests": [
-        {
-          "title": "Rover driving and route planning",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Sedimentation"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "curiosity-atacama",
-      "siteId": "curiosity",
-      "rank": 2,
-      "name": "Atacama Desert",
-      "country": "Chile",
-      "lat": -24.0,
-      "lon": -69.5,
-      "radiusKm": 10,
-      "known": true,
       "knownRef": null,
       "totalScore": 66,
       "scores": {
         "terrain": {
-          "score": 70,
+          "score": 1,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 0.0°, site 13.49°"
         },
         "mineralogy": {
-          "score": 45,
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 50,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 3,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "The Sun stays low all year at 82° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface None °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 0.0° here vs 13.49°)",
+        "Mild day-night swing (None K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mafic plutonic crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-b-metamorphic-ground-queen-maude-mountains",
+      "siteId": "moon-candidate-b",
+      "rank": 2,
+      "name": "Metamorphic ground — Queen Maude Mountains",
+      "country": "Antarctica",
+      "lat": -86.375,
+      "lon": -159.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 60,
+      "scores": {
+        "terrain": {
+          "score": 10,
+          "confidence": "high",
+          "note": "Earth median slope 18.28°, site 13.49°"
+        },
+        "mineralogy": {
+          "score": 50,
+          "confidence": "low",
+          "note": "Earth: metamorphic (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 2,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (0.0 mm of rain a year)",
+        "The Sun stays low all year at 86° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -41 °C)"
+      ],
+      "differences": [
+        "Terrain is rougher than at the site (median slope 18.28° here vs 13.49°)",
+        "Mild day-night swing (0.8 K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Metamorphosed crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-b-barren-ground-peary-land",
+      "siteId": "moon-candidate-b",
+      "rank": 3,
+      "name": "Barren ground — Peary Land",
+      "country": "Greenland",
+      "lat": 83.125,
+      "lon": -36.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 57,
+      "scores": {
+        "terrain": {
+          "score": 34,
+          "confidence": "high",
+          "note": "Earth median slope 10.13°, site 13.49°"
+        },
+        "mineralogy": {
+          "score": 15,
+          "confidence": "low",
+          "note": "Earth: ice and glaciers (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 97,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 1,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (16.0 mm of rain a year)",
+        "The Sun stays low all year at 83° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -18 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 10.13° here vs 13.49°)",
+        "Different rock type: ice and glaciers, not the anorthositic highland crust",
+        "Mild day-night swing (0.5 K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-c-gabbro-and-anorthosite-ground-severnaya-",
+      "siteId": "moon-candidate-c",
+      "rank": 1,
+      "name": "Gabbro and anorthosite ground — Severnaya Zemlya",
+      "country": "Russia",
+      "lat": 78.375,
+      "lon": 106.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 64,
+      "scores": {
+        "terrain": {
+          "score": 1,
+          "confidence": "high",
+          "note": "Earth median slope 0.0°, site 11.2°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 51,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 3,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 92,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "The Sun stays low all year at 78° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface None °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 0.0° here vs 11.2°)",
+        "Mild day-night swing (None K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mafic plutonic crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-c-gabbro-and-anorthosite-ground-victoria-i",
+      "siteId": "moon-candidate-c",
+      "rank": 2,
+      "name": "Gabbro and anorthosite ground — Victoria Island",
+      "country": "Canada",
+      "lat": 72.125,
+      "lon": -109.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 58,
+      "scores": {
+        "terrain": {
+          "score": 2,
+          "confidence": "high",
+          "note": "Earth median slope 1.66°, site 11.2°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 48,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 7,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 61,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Ground frozen most of the year (mean surface None °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 1.66° here vs 11.2°)",
+        "Mild day-night swing (None K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mafic plutonic crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "moon-candidate-c-barren-ground-king-frederik-viii-land",
+      "siteId": "moon-candidate-c",
+      "rank": 3,
+      "name": "Barren ground — King Frederik VIII Land",
+      "country": "Greenland",
+      "lat": 78.125,
+      "lon": -20.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 55,
+      "scores": {
+        "terrain": {
+          "score": 2,
+          "confidence": "high",
+          "note": "Earth median slope 0.0°, site 11.2°"
+        },
+        "mineralogy": {
+          "score": null,
+          "confidence": "low",
+          "note": "Earth: no data (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 75,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 4,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 91,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (124.0 mm of rain a year)",
+        "The Sun stays low all year at 78° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -16 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 0.0° here vs 11.2°)",
+        "Mild day-night swing (1.3 K) — far from the Moon's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        },
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026); D-RATS 2022 night EVAs (snippet only)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill, Haughton and Antarctica (~2011–13); NASA/CSA RESOLVE prospecting, Hawaii (2012)"
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-a-basalt-plains-sahara",
+      "siteId": "mars-candidate-a",
+      "rank": 1,
+      "name": "Basalt plains — Sahara",
+      "country": "Libya",
+      "lat": 28.375,
+      "lon": 14.875,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 86,
+      "scores": {
+        "terrain": {
+          "score": 97,
+          "confidence": "high",
+          "note": "Earth median slope 0.23°, site 0.17°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: young lava plains of Elysium Planitia (our reading, not a mapped unit)"
         },
         "water_history": {
-          "score": 40,
+          "score": null,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 98,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 35,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.23° here vs 0.17° at the site)",
+        "Same rock family: basic volcanic (basalt), like the young lava plains of Elysium Planitia",
+        "Very dry and bare (None mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (None K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-a-basalt-plains-sahara",
+      "siteId": "mars-candidate-a",
+      "rank": 2,
+      "name": "Basalt plains — Sahara",
+      "country": "Chad",
+      "lat": 23.125,
+      "lon": 16.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 85,
+      "scores": {
+        "terrain": {
+          "score": 95,
+          "confidence": "high",
+          "note": "Earth median slope 0.38°, site 0.17°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: young lava plains of Elysium Planitia (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 98,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 32,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.38° here vs 0.17° at the site)",
+        "Same rock family: basic volcanic (basalt), like the young lava plains of Elysium Planitia",
+        "Very dry and bare (None mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (None K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-a-basalt-plains-ahaggar-mts",
+      "siteId": "mars-candidate-a",
+      "rank": 3,
+      "name": "Basalt plains — Ahaggar Mts.",
+      "country": "Algeria",
+      "lat": 22.625,
+      "lon": 4.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 79,
+      "scores": {
+        "terrain": {
+          "score": 80,
+          "confidence": "high",
+          "note": "Earth median slope 0.57°, site 0.17°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: young lava plains of Elysium Planitia (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 90,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 37,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.57° here vs 0.17° at the site)",
+        "Same rock family: basic volcanic (basalt), like the young lava plains of Elysium Planitia",
+        "Very dry and bare (None mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (None K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-b-sedimentary-plains-plat-du-tadema-t",
+      "siteId": "mars-candidate-b",
+      "rank": 1,
+      "name": "Sedimentary plains — Plat. du Tademaït",
+      "country": "Algeria",
+      "lat": 28.375,
+      "lon": 1.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 87,
+      "scores": {
+        "terrain": {
+          "score": 97,
+          "confidence": "high",
+          "note": "Earth median slope 0.11°, site 0.15°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: mixed sedimentary (GLiM). Site: outflow-channel sediments over lowland plains (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 99,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 39,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.11° here vs 0.15° at the site)",
+        "Same rock family: mixed sedimentary, like the outflow-channel sediments over lowland plains",
+        "Very dry and bare (6.0 mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (22.7 K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Mixed sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-b-sedimentary-plains-libyan-desert",
+      "siteId": "mars-candidate-b",
+      "rank": 2,
+      "name": "Sedimentary plains — Libyan Desert",
+      "country": "Egypt",
+      "lat": 24.625,
+      "lon": 29.375,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 85,
+      "scores": {
+        "terrain": {
+          "score": 96,
+          "confidence": "high",
+          "note": "Earth median slope 0.24°, site 0.15°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: mixed sedimentary (GLiM). Site: outflow-channel sediments over lowland plains (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 32,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.24° here vs 0.15° at the site)",
+        "Same rock family: mixed sedimentary, like the outflow-channel sediments over lowland plains",
+        "Very dry and bare (None mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (None K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Mixed sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-b-sedimentary-plains-tian-shan",
+      "siteId": "mars-candidate-b",
+      "rank": 3,
+      "name": "Sedimentary plains — Tian Shan",
+      "country": "China",
+      "lat": 42.125,
+      "lon": 90.875,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 85,
+      "scores": {
+        "terrain": {
+          "score": 85,
+          "confidence": "high",
+          "note": "Earth median slope 0.58°, site 0.15°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: mixed sedimentary (GLiM). Site: outflow-channel sediments over lowland plains (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
         },
         "aridity": {
           "score": 95,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 55,
+          "score": 53,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. One of the driest places on Earth"
+        "Slopes match at the same scale (median 0.58° here vs 0.15° at the site)",
+        "Same rock family: mixed sedimentary, like the outflow-channel sediments over lowland plains",
+        "Very dry and bare (None mm of rain a year)"
       ],
-      "differences": [
-        "MOCK. Few lake-built landforms"
-      ],
+      "differences": [],
       "tests": [
         {
-          "title": "Biosignature detection methods",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "curiosity-lut",
-      "siteId": "curiosity",
-      "rank": 3,
-      "name": "Lut Desert yardangs",
-      "country": "Iran",
-      "lat": 30.5,
-      "lon": 59.0,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 62,
-      "scores": {
-        "terrain": {
-          "score": 75,
-          "confidence": "high",
-          "note": "MOCK"
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
         },
-        "mineralogy": {
-          "score": 45,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 35,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 92,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 40,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Wind-carved ridges"
-      ],
-      "differences": [
-        "MOCK. Much hotter than Mars"
-      ],
-      "tests": [
         {
-          "title": "Studying wind erosion",
-          "detail": "MOCK."
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
       "processes": [
-        "Wind erosion"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "perseverance-lake-salda",
-      "siteId": "perseverance",
-      "rank": 1,
-      "name": "Lake Salda",
-      "country": "Türkiye",
-      "lat": 37.55,
-      "lon": 29.68,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": "https://earthobservatory.nasa.gov/blogs/earthmatters/2021/02/17/what-a-lake-in-turkey-can-tell-us-about-mars/",
-      "totalScore": 74,
-      "scores": {
-        "terrain": {
-          "score": 62,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 90,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 88,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 35,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Carbonate minerals",
-        "MOCK. Delta deposits"
-      ],
-      "differences": [
-        "MOCK. The lake still holds water",
-        "MOCK. Milder temperatures"
-      ],
-      "tests": [
-        {
-          "title": "Sample selection rehearsal",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Delta sedimentation"
+        "Mixed sedimentary layers"
       ],
       "image": null,
       "sources": [
-        "https://earthobservatory.nasa.gov/blogs/earthmatters/2021/02/17/what-a-lake-in-turkey-can-tell-us-about-mars/"
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
       ]
     },
     {
-      "id": "perseverance-pilbara",
-      "siteId": "perseverance",
-      "rank": 2,
-      "name": "Pilbara",
-      "country": "Australia",
-      "lat": -21.2,
-      "lon": 119.5,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 63,
-      "scores": {
-        "terrain": {
-          "score": 58,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 55,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 60,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 45,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Very old traces of microbial life"
-      ],
-      "differences": [],
-      "tests": [
-        {
-          "title": "Recognising ancient biosignatures",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "perseverance-lake-magadi",
-      "siteId": "perseverance",
-      "rank": 3,
-      "name": "Lake Magadi",
-      "country": "Kenya",
-      "lat": -1.9,
-      "lon": 36.27,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 58,
-      "scores": {
-        "terrain": {
-          "score": 55,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 70,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 72,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 50,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Alkaline lake chemistry"
-      ],
-      "differences": [
-        "MOCK. Hot climate"
-      ],
-      "tests": [
-        {
-          "title": "Lake-sediment biosignature methods",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-a-harrat",
-      "siteId": "mars-candidate-a",
+      "id": "mars-candidate-c-sedimentary-plains-altun-mts",
+      "siteId": "mars-candidate-c",
       "rank": 1,
-      "name": "Harrat Khaybar",
-      "country": "Saudi Arabia",
-      "lat": 25.7,
-      "lon": 39.9,
-      "radiusKm": 10,
+      "name": "Sedimentary plains — Altun Mts.",
+      "country": "China",
+      "lat": 38.625,
+      "lon": 93.375,
+      "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 63,
+      "totalScore": 88,
       "scores": {
         "terrain": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 70,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 20,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
           "score": 90,
           "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Flat volcanic plain",
-        "MOCK. Very dry"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
-        {
-          "title": "Landing hazard detection trials",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Volcanic plains"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-a-namib",
-      "siteId": "mars-candidate-a",
-      "rank": 2,
-      "name": "Namib gravel plains",
-      "country": "Namibia",
-      "lat": -23.5,
-      "lon": 15.2,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 57,
-      "scores": {
-        "terrain": {
-          "score": 75,
-          "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 0.45°, site 0.5°"
         },
         "mineralogy": {
-          "score": 50,
+          "score": 100,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "Earth: mixed sedimentary (GLiM). Site: ancient cratered terrain cut by channels (our reading, not a mapped unit)"
         },
         "water_history": {
-          "score": 30,
+          "score": null,
           "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 88,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Smooth, wind-swept surface"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving on wind-swept gravel",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Wind erosion"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-a-danakil",
-      "siteId": "mars-candidate-a",
-      "rank": 3,
-      "name": "Danakil Depression",
-      "country": "Ethiopia",
-      "lat": 14.2,
-      "lon": 40.3,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 58,
-      "scores": {
-        "terrain": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 65,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 45,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 85,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Extremely dry"
-      ],
-      "differences": [
-        "MOCK. Much hotter than Mars"
-      ],
-      "tests": [
-        {
-          "title": "Instrument tests in extreme heat and salt",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-b-nain",
-      "siteId": "moon-candidate-b",
-      "rank": 1,
-      "name": "Nain anorthosite, Labrador",
-      "country": "Canada",
-      "lat": 56.5,
-      "lon": -61.7,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 68,
-      "scores": {
-        "terrain": {
-          "score": 65,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 85,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 50,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Highland-like rock type"
-      ],
-      "differences": [],
-      "tests": [
-        {
-          "title": "Sampling highland-type rock",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-b-svalbard",
-      "siteId": "moon-candidate-b",
-      "rank": 2,
-      "name": "Svalbard",
-      "country": "Norway",
-      "lat": 78.6,
-      "lon": 16.5,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 64,
-      "scores": {
-        "terrain": {
-          "score": 62,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 35,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 70,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 90,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Very low Sun angle",
-        "MOCK. Frozen ground"
-      ],
-      "differences": [
-        "MOCK. Different rock types"
-      ],
-      "tests": [
-        {
-          "title": "Solar power at low Sun angles",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-b-dry-valleys",
-      "siteId": "moon-candidate-b",
-      "rank": 3,
-      "name": "McMurdo Dry Valleys",
-      "country": "Antarctica",
-      "lat": -77.5,
-      "lon": 162.0,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 63,
-      "scores": {
-        "terrain": {
-          "score": 58,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 40,
-          "confidence": "low",
-          "note": "MOCK"
+          "note": "No global data we could compare"
         },
         "aridity": {
           "score": 92,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 70,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 75,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Extremely dry and cold"
-      ],
-      "differences": [
-        "MOCK. Different rock types"
-      ],
-      "tests": [
-        {
-          "title": "Cold-weather equipment testing",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-b-harrat",
-      "siteId": "mars-candidate-b",
-      "rank": 1,
-      "name": "Harrat Khaybar",
-      "country": "Saudi Arabia",
-      "lat": 25.7,
-      "lon": 39.9,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 63,
-      "scores": {
-        "terrain": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 70,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 20,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 90,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Flat volcanic plain",
-        "MOCK. Very dry"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
-        {
-          "title": "Landing hazard detection trials",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Volcanic plains"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-b-namib",
-      "siteId": "mars-candidate-b",
-      "rank": 2,
-      "name": "Namib gravel plains",
-      "country": "Namibia",
-      "lat": -23.5,
-      "lon": 15.2,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 57,
-      "scores": {
-        "terrain": {
-          "score": 75,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 50,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 30,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 88,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Smooth, wind-swept surface"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving on wind-swept gravel",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Wind erosion"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-b-danakil",
-      "siteId": "mars-candidate-b",
-      "rank": 3,
-      "name": "Danakil Depression",
-      "country": "Ethiopia",
-      "lat": 14.2,
-      "lon": 40.3,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 58,
-      "scores": {
-        "terrain": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
           "score": 65,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 45,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 85,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Extremely dry"
-      ],
-      "differences": [
-        "MOCK. Much hotter than Mars"
-      ],
-      "tests": [
-        {
-          "title": "Instrument tests in extreme heat and salt",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "moon-candidate-c-nain",
-      "siteId": "moon-candidate-c",
-      "rank": 1,
-      "name": "Nain anorthosite, Labrador",
-      "country": "Canada",
-      "lat": 56.5,
-      "lon": -61.7,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 68,
-      "scores": {
-        "terrain": {
-          "score": 65,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 85,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 50,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Highland-like rock type"
+        "Slopes match at the same scale (median 0.45° here vs 0.5° at the site)",
+        "Same rock family: mixed sedimentary, like the ancient cratered terrain cut by channels",
+        "Very dry and bare (None mm of rain a year)"
       ],
       "differences": [],
       "tests": [
         {
-          "title": "Sampling highland-type rock",
-          "detail": "MOCK."
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
-      "processes": [],
+      "processes": [
+        "Mixed sedimentary layers"
+      ],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "moon-candidate-c-svalbard",
-      "siteId": "moon-candidate-c",
+      "id": "mars-candidate-c-sedimentary-plains-kunlun-mountains",
+      "siteId": "mars-candidate-c",
       "rank": 2,
-      "name": "Svalbard",
-      "country": "Norway",
-      "lat": 78.6,
-      "lon": 16.5,
-      "radiusKm": 10,
-      "known": true,
+      "name": "Sedimentary plains — Kunlun Mountains",
+      "country": "China",
+      "lat": 36.125,
+      "lon": 87.375,
+      "radiusKm": 12.5,
+      "known": false,
       "knownRef": null,
-      "totalScore": 64,
+      "totalScore": 86,
       "scores": {
         "terrain": {
-          "score": 62,
+          "score": 88,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 0.83°, site 0.5°"
         },
         "mineralogy": {
-          "score": 35,
+          "score": 100,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "Earth: mixed sedimentary (GLiM). Site: ancient cratered terrain cut by channels (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 70,
+          "score": 88,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 55,
+          "score": 64,
           "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 90,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Very low Sun angle",
-        "MOCK. Frozen ground"
+        "Slopes match at the same scale (median 0.83° here vs 0.5° at the site)",
+        "Same rock family: mixed sedimentary, like the ancient cratered terrain cut by channels",
+        "Very dry and bare (60.0 mm of rain a year)"
       ],
-      "differences": [
-        "MOCK. Different rock types"
-      ],
+      "differences": [],
       "tests": [
         {
-          "title": "Solar power at low Sun angles",
-          "detail": "MOCK."
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
-      "processes": [],
+      "processes": [
+        "Mixed sedimentary layers"
+      ],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "moon-candidate-c-dry-valleys",
-      "siteId": "moon-candidate-c",
+      "id": "mars-candidate-c-sedimentary-plains-sahara",
+      "siteId": "mars-candidate-c",
       "rank": 3,
-      "name": "McMurdo Dry Valleys",
-      "country": "Antarctica",
-      "lat": -77.5,
-      "lon": 162.0,
-      "radiusKm": 10,
-      "known": true,
+      "name": "Sedimentary plains — Sahara",
+      "country": "Libya",
+      "lat": 25.875,
+      "lon": 10.875,
+      "radiusKm": 12.5,
+      "known": false,
       "knownRef": null,
-      "totalScore": 63,
+      "totalScore": 86,
       "scores": {
         "terrain": {
-          "score": 58,
+          "score": 93,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 0.48°, site 0.5°"
         },
         "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: mixed sedimentary (GLiM). Site: ancient cratered terrain cut by channels (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
           "score": 40,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 92,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 70,
           "confidence": "medium",
-          "note": "MOCK"
-        },
-        "sun_angle": {
-          "score": 80,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "ice": {
-          "score": 75,
-          "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Extremely dry and cold"
+        "Slopes match at the same scale (median 0.48° here vs 0.5° at the site)",
+        "Same rock family: mixed sedimentary, like the ancient cratered terrain cut by channels",
+        "Very dry and bare (3.0 mm of rain a year)"
       ],
       "differences": [
-        "MOCK. Different rock types"
+        "Mild day-night swing (23.2 K) — far from Mars's hundreds of degrees"
       ],
       "tests": [
         {
-          "title": "Cold-weather equipment testing",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-c-harrat",
-      "siteId": "mars-candidate-c",
-      "rank": 1,
-      "name": "Harrat Khaybar",
-      "country": "Saudi Arabia",
-      "lat": 25.7,
-      "lon": 39.9,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 63,
-      "scores": {
-        "terrain": {
-          "score": 82,
-          "confidence": "high",
-          "note": "MOCK"
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
         },
-        "mineralogy": {
-          "score": 70,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 20,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 90,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 55,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Flat volcanic plain",
-        "MOCK. Very dry"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
         {
-          "title": "Landing hazard detection trials",
-          "detail": "MOCK."
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
       "processes": [
-        "Volcanic plains"
+        "Mixed sedimentary layers"
       ],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "mars-candidate-c-namib",
-      "siteId": "mars-candidate-c",
-      "rank": 2,
-      "name": "Namib gravel plains",
-      "country": "Namibia",
-      "lat": -23.5,
-      "lon": 15.2,
-      "radiusKm": 10,
+      "id": "mars-candidate-d-basalt-plains-al-har-j-al-aswad",
+      "siteId": "mars-candidate-d",
+      "rank": 1,
+      "name": "Basalt plains — Al Harüj al Aswad",
+      "country": "Libya",
+      "lat": 26.625,
+      "lon": 17.625,
+      "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 57,
+      "totalScore": 85,
       "scores": {
         "terrain": {
-          "score": 75,
+          "score": 93,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 0.51°, site 0.23°"
         },
         "mineralogy": {
-          "score": 50,
+          "score": 100,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: lava plains of Amazonis Planitia under a dust and sediment cover (our reading, not a mapped unit)"
         },
         "water_history": {
-          "score": 30,
+          "score": null,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 98,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 38,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.51° here vs 0.23° at the site)",
+        "Same rock family: basic volcanic (basalt), like the lava plains of Amazonis Planitia under a dust and sediment cover",
+        "Very dry and bare (None mm of rain a year)"
+      ],
+      "differences": [
+        "Mild day-night swing (None K) — far from Mars's hundreds of degrees"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
+    },
+    {
+      "id": "mars-candidate-d-basalt-plains-lut-desert",
+      "siteId": "mars-candidate-d",
+      "rank": 2,
+      "name": "Basalt plains — Lut Desert",
+      "country": "Iran",
+      "lat": 33.125,
+      "lon": 57.875,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 82,
+      "scores": {
+        "terrain": {
+          "score": 88,
+          "confidence": "high",
+          "note": "Earth median slope 0.62°, site 0.23°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: lava plains of Amazonis Planitia under a dust and sediment cover (our reading, not a mapped unit)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
         },
         "aridity": {
           "score": 88,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 50,
+          "score": 43,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Smooth, wind-swept surface"
+        "Slopes match at the same scale (median 0.62° here vs 0.23° at the site)",
+        "Same rock family: basic volcanic (basalt), like the lava plains of Amazonis Planitia under a dust and sediment cover",
+        "Very dry and bare (None mm of rain a year)"
       ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
+      "differences": [],
       "tests": [
         {
-          "title": "Rover driving on wind-swept gravel",
-          "detail": "MOCK."
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS pressurized rovers, Black Point, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA ExoMars prototype \"Bridget\", Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
       "processes": [
-        "Wind erosion"
+        "Basaltic lava flows"
       ],
       "image": null,
-      "sources": []
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     },
     {
-      "id": "mars-candidate-c-danakil",
-      "siteId": "mars-candidate-c",
-      "rank": 3,
-      "name": "Danakil Depression",
-      "country": "Ethiopia",
-      "lat": 14.2,
-      "lon": 40.3,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 58,
-      "scores": {
-        "terrain": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 65,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 45,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 85,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Extremely dry"
-      ],
-      "differences": [
-        "MOCK. Much hotter than Mars"
-      ],
-      "tests": [
-        {
-          "title": "Instrument tests in extreme heat and salt",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-d-harrat",
+      "id": "mars-candidate-d-basalt-plains-tibesti-mts",
       "siteId": "mars-candidate-d",
-      "rank": 1,
-      "name": "Harrat Khaybar",
-      "country": "Saudi Arabia",
-      "lat": 25.7,
-      "lon": 39.9,
-      "radiusKm": 10,
+      "rank": 3,
+      "name": "Basalt plains — Tibesti Mts.",
+      "country": "Chad",
+      "lat": 21.125,
+      "lon": 18.375,
+      "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 63,
+      "totalScore": 70,
       "scores": {
         "terrain": {
-          "score": 82,
+          "score": 45,
           "confidence": "high",
-          "note": "MOCK"
+          "note": "Earth median slope 2.19°, site 0.23°"
         },
         "mineralogy": {
-          "score": 70,
+          "score": 100,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: lava plains of Amazonis Planitia under a dust and sediment cover (our reading, not a mapped unit)"
         },
         "water_history": {
-          "score": 20,
+          "score": null,
           "confidence": "low",
-          "note": "MOCK"
+          "note": "No global data we could compare"
         },
         "aridity": {
           "score": 90,
           "confidence": "high",
-          "note": "MOCK"
+          "note": ""
         },
         "temperature": {
-          "score": 55,
+          "score": 44,
           "confidence": "medium",
-          "note": "MOCK"
+          "note": ""
         }
       },
       "similarities": [
-        "MOCK. Flat volcanic plain",
-        "MOCK. Very dry"
+        "Same rock family: basic volcanic (basalt), like the lava plains of Amazonis Planitia under a dust and sediment cover",
+        "Very dry and bare (None mm of rain a year)"
       ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
+      "differences": [],
       "tests": [
         {
-          "title": "Landing hazard detection trials",
-          "detail": "MOCK."
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA PANGAEA, Lanzarote (2017, 2021); NASA/CSA/DLR field mineral instruments, Mauna Kea (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
       "processes": [
-        "Volcanic plains"
+        "Basaltic lava flows"
       ],
       "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-d-namib",
-      "siteId": "mars-candidate-d",
-      "rank": 2,
-      "name": "Namib gravel plains",
-      "country": "Namibia",
-      "lat": -23.5,
-      "lon": 15.2,
-      "radiusKm": 10,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 57,
-      "scores": {
-        "terrain": {
-          "score": 75,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 50,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 30,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 88,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 50,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Smooth, wind-swept surface"
-      ],
-      "differences": [
-        "MOCK. No water-built landforms"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving on wind-swept gravel",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [
-        "Wind erosion"
-      ],
-      "image": null,
-      "sources": []
-    },
-    {
-      "id": "mars-candidate-d-danakil",
-      "siteId": "mars-candidate-d",
-      "rank": 3,
-      "name": "Danakil Depression",
-      "country": "Ethiopia",
-      "lat": 14.2,
-      "lon": 40.3,
-      "radiusKm": 10,
-      "known": true,
-      "knownRef": null,
-      "totalScore": 58,
-      "scores": {
-        "terrain": {
-          "score": 60,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "mineralogy": {
-          "score": 65,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "water_history": {
-          "score": 45,
-          "confidence": "low",
-          "note": "MOCK"
-        },
-        "aridity": {
-          "score": 85,
-          "confidence": "high",
-          "note": "MOCK"
-        },
-        "temperature": {
-          "score": 30,
-          "confidence": "medium",
-          "note": "MOCK"
-        }
-      },
-      "similarities": [
-        "MOCK. Extremely dry"
-      ],
-      "differences": [
-        "MOCK. Much hotter than Mars"
-      ],
-      "tests": [
-        {
-          "title": "Instrument tests in extreme heat and salt",
-          "detail": "MOCK."
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": []
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537"
+      ]
     }
   ]
 }

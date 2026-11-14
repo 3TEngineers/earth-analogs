@@ -83,7 +83,7 @@ export function ReportPanel() {
                       </span>
                     </div>
                     <Meter score={s?.score ?? null} />
-                    <p className="mt-1 text-xs text-ink-muted">{d.description}</p>
+                    <p className="mt-1 text-xs leading-snug text-ink-muted">{s?.note || d.description}</p>
                   </li>
                 )
               })}
