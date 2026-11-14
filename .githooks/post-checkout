@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs after `git switch` / `git checkout` of a branch. If the app's dependencies
+# differ between the old and the new branch, installs them.
+# Arguments from git: previous HEAD, new HEAD, 1 when a branch was checked out.
+
+[ "$3" = "1" ] || exit 0
+
+changed=$(git diff --name-only "$1" "$2" 2>/dev/null)
+
+if echo "$changed" | grep -qE '^app/(package\.json|package-lock\.json)$'; then
+  echo "app/ dependencies differ on this branch: running npm install…"
+  (cd app && npm install --no-audit --no-fund) || echo "npm install failed; run it yourself in app/."
+fi
+
+exit 0

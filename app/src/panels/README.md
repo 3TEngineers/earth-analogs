@@ -20,7 +20,7 @@ Pull `main` (`git switch main && git pull`, then `cd app && npm install`):
 - **When a teammate says they merged something** you depend on — especially changes to `src/state/`, `src/index.css`, `src/types/` or the data files.
 - **Before you create a new branch**, so it starts from the latest `main`.
 
-While you're working on a branch and want a teammate's new work from `main`: `git pull origin main` on your branch. Run `npm install` again whenever `app/package.json` changed.
+While you're working on a branch and want a teammate's new work from `main`: `git pull origin main` on your branch. With the hooks enabled (`git config core.hooksPath .githooks`), `npm install` runs by itself after a pull or branch switch whenever `app/package.json` changed; without them, run it yourself.
 
 ## 1. Set up (once)
 
