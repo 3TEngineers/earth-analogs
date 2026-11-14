@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "landings": [
+    { "name": "Mars 3", "body": "mars", "agency": "USSR", "year": 1971, "lat": -45.04, "lon": -157.98 },
+    { "name": "Viking 1", "body": "mars", "agency": "NASA", "year": 1976, "lat": 22.269, "lon": -47.951 },
+    { "name": "Viking 2", "body": "mars", "agency": "NASA", "year": 1976, "lat": 47.668, "lon": 134.28 },
+    { "name": "Mars Pathfinder", "body": "mars", "agency": "NASA", "year": 1997, "lat": 19.095, "lon": -33.253 },
+    { "name": "Spirit", "body": "mars", "agency": "NASA", "year": 2004, "lat": -14.5719, "lon": 175.4785 },
+    { "name": "Opportunity", "body": "mars", "agency": "NASA", "year": 2004, "lat": -1.9483, "lon": -5.5258 },
+    { "name": "Phoenix", "body": "mars", "agency": "NASA", "year": 2008, "lat": 68.22, "lon": -125.75 },
+    { "name": "Curiosity", "body": "mars", "agency": "NASA", "year": 2012, "lat": -4.59, "lon": 137.44 },
+    { "name": "InSight", "body": "mars", "agency": "NASA", "year": 2018, "lat": 4.5024, "lon": 135.6234 },
+    { "name": "Perseverance", "body": "mars", "agency": "NASA", "year": 2021, "lat": 18.44, "lon": 77.45 },
+    { "name": "Zhurong", "body": "mars", "agency": "CNSA", "year": 2021, "lat": 25.102, "lon": 109.914 }
+  ]
+}

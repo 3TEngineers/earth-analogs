@@ -28,6 +28,11 @@ class Selection(BaseModel):
     note: str
 
 
+class Purpose(BaseModel):
+    text: str
+    sources: list[str]
+
+
 class Site(BaseModel):
     id: str
     body: Body
@@ -43,6 +48,21 @@ class Site(BaseModel):
     limits: list[str]
     image: str | None
     selection: Selection
+    purpose: Purpose | None = None
+
+
+class Landing(BaseModel):
+    name: str
+    body: Body
+    agency: str
+    year: int
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
+
+class LandingsFile(BaseModel):
+    version: int
+    landings: list[Landing]
 
 
 class SitesFile(BaseModel):
