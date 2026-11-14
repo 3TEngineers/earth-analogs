@@ -31,6 +31,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: **Deniz — layout pass.** Landing page: centered title and buttons on screen one, then the page scrolls to a "How we found them" section (Screen → Check → Match, figures from the data); more sections can go below it. The 3D scene is `fixed` behind the page and the document scrolls. Explore page: the site panel is now a **bottom sheet** (40 % of the screen, expands to 85 %, scrolls inside, meant to hold more details and images later); the planet centers above it. Site cards redesigned (two columns, accent dot, "5/5 criteria" summary). Markers are flat beacons with radar rings instead of columns. Lights follow the camera so a selected site is never on the night side. Kmar's files edited while Kmar is away: `SitePanel.tsx`, `SiteCard.tsx`, `SiteList.tsx`.
 - 2026-11-14: Git hooks `post-merge` and `post-checkout` in `.githooks/`: after a pull or branch switch, `npm install` runs in `app/` automatically when its dependencies changed (needs `git config core.hooksPath .githooks`, same as the pre-push hook).
 - 2026-11-14: **Deniz — landing page and 3D scene** (D2–D4 groundwork). Routes `/`, `/explore/:body`, `/about` (React Router). One three.js scene (`app/src/globe/SpaceScene.tsx`, `space/SpaceEngine.ts`, `space/planets.ts`): NASA/USGS textures (Moon LRO, Mars Viking MDIM 2.1 4K + MOLA, Earth Blue Marble) with bump maps, 3D star field, intro push-in, mouse parallax, hover lift; on `/explore/<body>` the planet flies to the center and its sites appear (candidates bright with rings, past landings muted), click a site → camera flies there, Earth phase → Earth with training areas. About page is a placeholder (Kmar). Kmar's `SitePanel` is wired into `ExplorePage`; small edits in Kmar's area: `BodyToggle` now navigates to `/explore/<body>` (the body lives in the URL) and the panel starts below the header (`md:top-16`). See `app/README.md` → Pages and flow.
 - 2026-11-14: D1 (part 2) — **live site https://earth-analogs.vercel.app** (Vercel project under Deniz's account, deployed manually; ask Deniz to redeploy).
@@ -48,7 +49,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## In progress
 
-- Deniz: landing page redesign — short title in the center, small info cards next to the Moon and Mars instead of the big text block.
+- Nothing right now — see Next.
 
 ## Next
 
@@ -57,6 +58,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 - Sadık: B3 — Earth candidate pool for the 7 candidates (coarse global pass, shortlist), then B4–B5.
 - **Kmar: candidate purposes** — for each of the 7 candidates, one or two sentences on *why a mission would go there* (science goal or base role), with paper/NASA sources, in `pipeline/content/purposes.json` (`{"mars-candidate-a": {"text": "...", "sources": ["https://..."]}}`). Only write what a source supports; leave a candidate out rather than guess. `build_sites.py` puts it into `sites.json`.
 - **Kmar: Moon landings list** — every successful lunar landing (Luna, Surveyor, Apollo, Chang'e, Chandrayaan-3, SLIM, IM-1, Blue Ghost 1, IM-2, …) with lat/lon and a source, added to `docs/LANDING_CONSTRAINTS.md` (new section) — Sadık then adds them to `landings.json`. Mars is already in.
+- **Deniz, next in this order:** (1) name-only landing markers (below); (2) the Mars → Earth "journey" arc between a site and its training areas; (3) zoom closer on a selected site with a high-res image of the area; (4) cover Kmar's K4 report panel and the About page (about us + about the project) if Kmar is still away. Redeploy the live site after each merge (manual, see the Vercel decision).
 - **Deniz: name-only landing markers** from `app/public/data/landings.json` on the Moon and Mars globes — just the name, a little larger, not clickable, no zoom.
 - Kmar: K2 — the 7 candidate summaries in `sites.json` are first drafts from the data (names, coordinates, criteria and notes are final); refine the text using `docs/SCREENING_RESULTS.md` and send it to Sadık. The Method page (K5) can take its criteria and validation tables from the same file.
 - Deniz: `sites.json` now has real coordinates — the Moon candidates are within ~1.5° of the pole, worth checking the camera fly-to there.
