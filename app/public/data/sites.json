@@ -1,19 +1,22 @@
 {
   "version": 2,
-  "mock": true,
+  "mock": false,
   "sites": [
     {
       "id": "moon-candidate-a",
       "body": "moon",
-      "name": "South pole candidate A",
+      "name": "de Gerlache rim ridge",
       "mission": "Our candidate: permanent base site",
       "agency": "3TE",
       "year": null,
       "status": "candidate",
-      "lat": -84.5,
-      "lon": 30.0,
-      "summary": "MOCK. A ridge near the lunar south pole picked by our screening for long sunlight, Earth visibility, gentle slopes and nearby permanently shadowed ice.",
-      "processes": ["Impact cratering", "Cold trapping of volatiles in permanent shadow"],
+      "lat": -88.67,
+      "lon": -68.294,
+      "summary": "A well-lit ridge on the rim of de Gerlache crater, about 16 km from the named feature of NASA's de Gerlache Rim 2 candidate region.",
+      "processes": [
+        "Impact cratering",
+        "Cold trapping of volatiles in permanent shadow"
+      ],
       "limits": [
         "Earth's gravity is about 6 times the Moon's",
         "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
@@ -24,12 +27,109 @@
         "goal": "Permanent base site",
         "role": "candidate",
         "criteria": [
-          { "id": "illumination", "label": "Sunlit time", "value": 78, "unit": "%", "rule": ">= 70 % (mock threshold)", "pass": true, "source": "LOLA polar illumination (PGDA)" },
-          { "id": "earth_visibility", "label": "Earth in view", "value": 62, "unit": "%", "rule": ">= 50 % (mock threshold)", "pass": true, "source": "LOLA Earth visibility (PGDA)" },
-          { "id": "slope", "label": "Slope", "value": 5, "unit": "deg", "rule": "<= 8 deg (mock threshold)", "pass": true, "source": "LOLA DEM" },
-          { "id": "ice_distance", "label": "Distance to permanent shadow", "value": 3, "unit": "km", "rule": "<= 5 km (mock threshold)", "pass": true, "source": "PSR map" }
+          {
+            "id": "illumination",
+            "label": "Sunlit time",
+            "value": 53.6,
+            "unit": "%",
+            "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
+            "pass": true,
+            "source": "LOLA average illumination (NASA PGDA)"
+          },
+          {
+            "id": "earth_visibility",
+            "label": "Earth in view",
+            "value": 57.8,
+            "unit": "%",
+            "rule": ">= 50 % (ours)",
+            "pass": true,
+            "source": "LOLA Earth visibility (NASA PGDA)"
+          },
+          {
+            "id": "slope",
+            "label": "Slope",
+            "value": 5.7,
+            "unit": "deg",
+            "rule": "<= 10 deg (ours)",
+            "pass": true,
+            "source": "LOLA slope map, 240 m"
+          },
+          {
+            "id": "ice_distance",
+            "label": "Distance to permanent shadow",
+            "value": 3.9,
+            "unit": "km",
+            "rule": "<= 10 km (ours)",
+            "pass": true,
+            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+          }
         ],
-        "note": "MOCK. Overlaps NASA's Artemis III candidate region Mons Mouton, which supports our criteria."
+        "note": "Passes all four criteria. Nearest NASA Artemis III candidate region: de Gerlache Rim 2 (16.1 km from its named feature)."
+      }
+    },
+    {
+      "id": "moon-candidate-b",
+      "body": "moon",
+      "name": "Shackleton-de Gerlache connecting ridge",
+      "mission": "Our candidate: permanent base site",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": -89.474,
+      "lon": -137.234,
+      "summary": "The ridge between Shackleton and de Gerlache craters, already known in the literature as one of the best-lit places at the south pole. Our screening found it independently.",
+      "processes": [
+        "Impact cratering",
+        "Cold trapping of volatiles in permanent shadow"
+      ],
+      "limits": [
+        "Earth's gravity is about 6 times the Moon's",
+        "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
+        "Permanently shadowed lunar craters reach far colder temperatures than anywhere on Earth"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Permanent base site",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "illumination",
+            "label": "Sunlit time",
+            "value": 52.6,
+            "unit": "%",
+            "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
+            "pass": true,
+            "source": "LOLA average illumination (NASA PGDA)"
+          },
+          {
+            "id": "earth_visibility",
+            "label": "Earth in view",
+            "value": 55.9,
+            "unit": "%",
+            "rule": ">= 50 % (ours)",
+            "pass": true,
+            "source": "LOLA Earth visibility (NASA PGDA)"
+          },
+          {
+            "id": "slope",
+            "label": "Slope",
+            "value": 5.6,
+            "unit": "deg",
+            "rule": "<= 10 deg (ours)",
+            "pass": true,
+            "source": "LOLA slope map, 240 m"
+          },
+          {
+            "id": "ice_distance",
+            "label": "Distance to permanent shadow",
+            "value": 0.3,
+            "unit": "km",
+            "rule": "<= 10 km (ours)",
+            "pass": true,
+            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+          }
+        ],
+        "note": "Passes all four criteria. Nearest NASA Artemis III candidate region: de Gerlache Rim 2 (37.6 km from its named feature)."
       }
     },
     {
@@ -43,7 +143,10 @@
       "lat": -69.373,
       "lon": 32.319,
       "summary": "MOCK. One of the landings closest to the lunar south pole, on old highland terrain lit by a low Sun.",
-      "processes": ["Impact cratering", "Space weathering of regolith"],
+      "processes": [
+        "Impact cratering",
+        "Space weathering of regolith"
+      ],
       "limits": [
         "Earth's gravity is about 6 times the Moon's",
         "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
@@ -54,26 +157,61 @@
         "goal": "Permanent base site",
         "role": "validation",
         "criteria": [
-          { "id": "illumination", "label": "Sunlit time", "value": 52, "unit": "%", "rule": ">= 70 % (mock threshold)", "pass": false, "source": "LOLA polar illumination (PGDA)" },
-          { "id": "earth_visibility", "label": "Earth in view", "value": 100, "unit": "%", "rule": ">= 50 % (mock threshold)", "pass": true, "source": "LOLA Earth visibility (PGDA)" },
-          { "id": "slope", "label": "Slope", "value": 4, "unit": "deg", "rule": "<= 8 deg (mock threshold)", "pass": true, "source": "LOLA DEM" },
-          { "id": "ice_distance", "label": "Distance to permanent shadow", "value": 40, "unit": "km", "rule": "<= 5 km (mock threshold)", "pass": false, "source": "PSR map" }
+          {
+            "id": "illumination",
+            "label": "Sunlit time",
+            "value": 48.3,
+            "unit": "%",
+            "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
+            "pass": false,
+            "source": "LOLA average illumination (NASA PGDA)"
+          },
+          {
+            "id": "earth_visibility",
+            "label": "Earth in view",
+            "value": 100.0,
+            "unit": "%",
+            "rule": ">= 50 % (ours)",
+            "pass": true,
+            "source": "LOLA Earth visibility (NASA PGDA)"
+          },
+          {
+            "id": "slope",
+            "label": "Slope",
+            "value": 0.8,
+            "unit": "deg",
+            "rule": "<= 10 deg (ours)",
+            "pass": true,
+            "source": "LOLA slope map, 240 m"
+          },
+          {
+            "id": "ice_distance",
+            "label": "Distance to permanent shadow",
+            "value": null,
+            "unit": "km",
+            "rule": "<= 10 km (ours) — no permanent shadow found within ~29 km",
+            "pass": false,
+            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+          }
         ],
-        "note": "MOCK. A good short-mission landing site, but too far from the pole for a permanent base: our criteria tell the two apart."
+        "note": "A good landing site — flat and always in view of Earth — but a normal day/night cycle and no permanent shadow nearby: fine for a short mission, not for a permanent base."
       }
     },
     {
       "id": "mars-candidate-a",
       "body": "mars",
-      "name": "Mars candidate A",
+      "name": "Southern Elysium Planitia",
       "mission": "Our candidate: safe landing zone",
       "agency": "3TE",
       "year": null,
       "status": "candidate",
-      "lat": 3.0,
-      "lon": 150.0,
-      "summary": "MOCK. A low, flat, dust-poor plain picked by our screening; not visited by any lander so far.",
-      "processes": ["Volcanic plains", "Wind erosion"],
+      "lat": 0.031,
+      "lon": 167.719,
+      "summary": "A wide, low, flat plain in southern Elysium Planitia, about 220 km from Avernus Colles. Our screening picked it as the most interior point of the largest safe area on Mars.",
+      "processes": [
+        "Volcanic plains",
+        "Wind erosion"
+      ],
       "limits": [
         "Earth's gravity is about 2.6 times Mars gravity",
         "Mars air is about 100 times thinner and mostly CO2",
@@ -84,12 +222,127 @@
         "goal": "Safe landing zone",
         "role": "candidate",
         "criteria": [
-          { "id": "elevation", "label": "Elevation", "value": -2.4, "unit": "km", "rule": "<= -1 km (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "latitude", "label": "Latitude", "value": 3.0, "unit": "deg", "rule": "|lat| <= 30 deg (mock threshold)", "pass": true, "source": "Site coordinates" },
-          { "id": "slope", "label": "Slope", "value": 1.2, "unit": "deg", "rule": "<= 3 deg (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "thermal_inertia", "label": "Thermal inertia (dust)", "value": 280, "unit": "J m-2 K-1 s-1/2", "rule": ">= 100 (mock threshold)", "pass": true, "source": "MGS TES thermal inertia" }
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 799,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 64.8,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 327,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.02,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 35,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
         ],
-        "note": "MOCK. Passes every criterion that all 11 past Mars landings also pass."
+        "note": "Passes every criterion over a 25 km area and lies more than 500 km from any past landing."
+      }
+    },
+    {
+      "id": "mars-candidate-b",
+      "body": "mars",
+      "name": "Chryse-Acidalia plains",
+      "mission": "Our candidate: safe landing zone",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": 28.344,
+      "lon": -24.406,
+      "summary": "Low plains on the boundary between Chryse and Acidalia Planitia, on the same meridian as ESA's Oxia Planum landing site about 600 km to the south.",
+      "processes": [
+        "Outflow-channel deposits",
+        "Wind erosion"
+      ],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Safe landing zone",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 861,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 36.5,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 206,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.13,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 39,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
+        ],
+        "note": "Passes every criterion over a 25 km area and lies more than 500 km from any past landing."
       }
     },
     {
@@ -103,7 +356,10 @@
       "lat": -4.5895,
       "lon": 137.4417,
       "summary": "MOCK. Rover exploring the layered sediments of Mount Sharp inside Gale crater, a former lake basin.",
-      "processes": ["Lake-bed sedimentation", "Wind erosion"],
+      "processes": [
+        "Lake-bed sedimentation",
+        "Wind erosion"
+      ],
       "limits": [
         "Earth's gravity is about 2.6 times Mars gravity",
         "Mars air is about 100 times thinner and mostly CO2",
@@ -114,12 +370,53 @@
         "goal": "Safe landing zone",
         "role": "validation",
         "criteria": [
-          { "id": "elevation", "label": "Elevation", "value": -4.5, "unit": "km", "rule": "<= -1 km (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "latitude", "label": "Latitude", "value": -4.59, "unit": "deg", "rule": "|lat| <= 30 deg (mock threshold)", "pass": true, "source": "Site coordinates" },
-          { "id": "slope", "label": "Slope", "value": 2.0, "unit": "deg", "rule": "<= 3 deg (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "thermal_inertia", "label": "Thermal inertia (dust)", "value": 350, "unit": "J m-2 K-1 s-1/2", "rule": ">= 100 (mock threshold)", "pass": true, "source": "MGS TES thermal inertia" }
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 882,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 60.2,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 319,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 9.77,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": false,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 2743,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": false,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
         ],
-        "note": "MOCK. Past landing: passes our criteria, as it should."
+        "note": "Fails slope at ~4 km scale, relief over ~18 km at our ~4 km scale: the landing ellipse fit between Gale's wall and Mount Sharp thanks to precision-guided entry, which km-scale maps can't see."
       }
     },
     {
@@ -133,7 +430,10 @@
       "lat": 18.4447,
       "lon": 77.4508,
       "summary": "MOCK. Rover exploring an ancient river delta in Jezero crater, searching for signs of past life and caching samples.",
-      "processes": ["River delta sedimentation", "Carbonate formation in lake water"],
+      "processes": [
+        "River delta sedimentation",
+        "Carbonate formation in lake water"
+      ],
       "limits": [
         "Earth's gravity is about 2.6 times Mars gravity",
         "Mars air is about 100 times thinner and mostly CO2",
@@ -144,12 +444,53 @@
         "goal": "Safe landing zone",
         "role": "validation",
         "criteria": [
-          { "id": "elevation", "label": "Elevation", "value": -2.6, "unit": "km", "rule": "<= -1 km (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "latitude", "label": "Latitude", "value": 18.44, "unit": "deg", "rule": "|lat| <= 30 deg (mock threshold)", "pass": true, "source": "Site coordinates" },
-          { "id": "slope", "label": "Slope", "value": 2.5, "unit": "deg", "rule": "<= 3 deg (mock threshold)", "pass": true, "source": "MOLA DEM" },
-          { "id": "thermal_inertia", "label": "Thermal inertia (dust)", "value": 320, "unit": "J m-2 K-1 s-1/2", "rule": ">= 100 (mock threshold)", "pass": true, "source": "MGS TES thermal inertia" }
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 772,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 46.4,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 105,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.58,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 252,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
         ],
-        "note": "MOCK. Past landing: passes our criteria. Also validates the analog step, since NASA has compared Lake Salda to Jezero."
+        "note": "Passes our criteria, as a past landing should."
       }
     }
   ]
