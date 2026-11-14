@@ -53,14 +53,25 @@ const FLY_MS = 1500
 const INTRO_MS = 3200
 /** Mobile: share of the screen height covered by the bottom sheet; the focused planet is centered above it. */
 const SHEET_SHARE = 0.4
-/** Desktop (≥ 768 px): width of the right site panel plus its margin — keep in sync with SitePanel (md:w-[30rem] lg:w-[34rem], right-4). */
+/** Desktop (≥ 768 px): width of the right site panel plus its margin — keep in sync with SitePanel (md:w-[30rem] md:right-6, lg:w-[34rem] lg:right-12). */
 const DESKTOP_MIN = 768
-const panelPx = (w: number) => (w >= 1024 ? 34 : 30) * 16 + 16
+const panelPx = (w: number) => (w >= 1024 ? 34 * 16 + 48 : 30 * 16 + 24)
 /** How far the landing camera drifts with the mouse (world units). */
 const PARALLAX = { x: 70, y: 45 }
 
-/** Story stages on the landing page, one per screen height of scroll. `null` = the floating landing poses. */
-const STORY: ({ planet: PlanetId; side: 1 | -1 } | null)[] = [null, { planet: 'mars', side: 1 }, { planet: 'moon', side: -1 }, { planet: 'earth', side: 1 }, null]
+/**
+ * Story stages on the landing page, one per screen height of scroll.
+ * 'hero' = Earth rising from the bottom edge, the Moon and Mars half off the left and right edges (labels in LandingPage);
+ * a planet = that planet large beside its chapter text; `null` = the floating poses behind the method card (and /about).
+ */
+type Stage = 'hero' | { planet: PlanetId; side: 1 | -1 } | null
+const STORY: Stage[] = ['hero', { planet: 'mars', side: 1 }, { planet: 'moon', side: -1 }, { planet: 'earth', side: 1 }, null]
+/** Hero poses as screen fractions (x, y in -1..1 at depth z = 0) — LandingPage places the Moon/Mars labels to match. */
+const HERO: Record<PlanetId, { x: number; y: number; scale: number; drop?: number }> = {
+  moon: { x: -0.98, y: 0.05, scale: 0.9 },
+  mars: { x: 0.98, y: 0.05, scale: 0.9 },
+  earth: { x: 0, y: -1, scale: 4.1, drop: 170 },
+}
 /** Depth of a featured planet (camera sits at z = 1000) and its size on wide and narrow screens. */
 const FEATURE = { z: 250, scale: 1.9, mobileScale: 1.15 }
 
@@ -213,6 +224,14 @@ export class SpaceEngine {
   private stagePose(stage: number, id: PlanetId) {
     const config = PLANETS[id]
     const step = STORY[stage]
+    if (step === 'hero') {
+      const halfH = Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2)) * LANDING_CAMERA.z
+      const h = HERO[id]
+      // Phones: the Moon and Mars shrink and slip further off the edges, so they don't cover the title.
+      const narrow = this.camera.aspect < 0.9 && id !== 'earth'
+      const x = (narrow ? Math.sign(h.x) * 1.12 : h.x) * halfH * this.camera.aspect
+      return { position: new THREE.Vector3(x, h.y * halfH - (h.drop ?? 0), 0), scale: narrow ? 0.6 : h.scale }
+    }
     if (!step) return { position: new THREE.Vector3(...config.landing.position), scale: config.landing.scale }
     if (step.planet !== id) return { position: new THREE.Vector3(...config.away.position), scale: config.away.scale }
     // Featured: beside the text on wide screens, above it on narrow ones.
@@ -263,7 +282,7 @@ export class SpaceEngine {
       } else if (id === layout.planet) {
         p.to = { position: new THREE.Vector3(0, 0, 0), scale: 1 }
       } else {
-        p.to = { position: new THREE.Vector3(...config.away.position), scale: config.away.scale }
+        p.to = { position: new THREE.Vector3(...config.focusAway), scale: config.away.scale }
       }
     }
 

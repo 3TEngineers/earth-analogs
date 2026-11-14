@@ -6,7 +6,7 @@ import { useData } from '../data/DataProvider'
 
 /**
  * Landing page ("/"), a scroll story over the fixed 3D scene (<SpaceScene>):
- *   screen 0  title and buttons, the three planets floating around them
+ *   screen 0  title and buttons; Earth rises from the bottom edge, the Moon and Mars peek in from the sides
  *   screen 1  Mars slides in large on the right, its text on the left
  *   screen 2  the Moon on the left, text on the right
  *   screen 3  Earth on the right, text on the left
@@ -30,37 +30,63 @@ export function LandingPage() {
     <main ref={root} className="pointer-events-none relative z-10">
       <SiteHeader showBrand={false} />
 
-      <section data-story className="relative flex h-svh flex-col items-center justify-center px-6 text-center">
+      <section data-story className="relative flex h-svh flex-col items-center px-6 pt-[15svh] text-center sm:pt-[17svh]">
         <div className="story-item flex flex-col items-center">
-          <p className={`reveal font-mono text-[11px] tracking-[0.22em] text-ink-muted uppercase sm:text-xs ${glow}`} style={step(0)}>
-            Mars <span className="text-mars">·</span> Moon <span className="text-earth">·</span> Earth
+          <p className={`reveal font-mono text-[11px] tracking-[0.24em] text-ink-muted uppercase sm:text-xs ${glow}`} style={step(0)}>
+            Moon and Mars, rehearsed on Earth
           </p>
-          <h1 className={`reveal mt-4 font-display text-5xl font-semibold tracking-[-0.035em] sm:text-7xl ${glow}`} style={step(1)}>
+          <h1
+            className={`reveal mt-5 font-serif text-[3.4rem] leading-[0.95] tracking-[0.05em] uppercase sm:text-8xl lg:text-[7.5rem] ${glow}`}
+            style={step(1)}
+          >
             Earth Analogs
           </h1>
-          <p className={`reveal mt-5 max-w-lg text-lg leading-snug text-ink/90 sm:text-xl ${glow}`} style={step(2)}>
+          <span className="reveal mt-6 block h-0.5 w-14 rounded-full bg-earth" style={step(2)} aria-hidden="true" />
+          <p className={`reveal mt-6 max-w-xl text-base leading-relaxed text-ink/85 sm:text-lg ${glow}`} style={step(3)}>
             {mars > 0 ? <Fig>{mars}</Fig> : 'New'} landing zones on Mars, {moon > 0 ? <Fig>{moon}</Fig> : 'new'} base
             sites on the Moon, found with real mission limits. Then the places on Earth to rehearse each one.
           </p>
-          <div className="reveal pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" style={step(3)}>
-            <Link to="/explore/mars" className="press rounded-full bg-mars px-6 py-2.5 font-medium text-space hover:bg-mars/90">
+          <div className="reveal pointer-events-auto mt-8 flex flex-wrap justify-center gap-3" style={step(4)}>
+            <Link
+              to="/explore/mars"
+              className="press rounded-full bg-mars px-6 py-2.5 font-medium text-space shadow-[0_0_32px_rgb(224_102_58/0.35)] hover:bg-mars/90"
+            >
               Explore Mars
             </Link>
             <Link
               to="/explore/moon"
-              className="press rounded-full border border-moon/50 bg-space/30 px-6 py-2.5 font-medium text-moon backdrop-blur-sm hover:border-moon hover:bg-moon/10"
+              className="press rounded-full border border-moon/50 bg-space/40 px-6 py-2.5 font-medium text-moon backdrop-blur-sm hover:border-moon hover:bg-moon/10"
             >
               Explore the Moon
             </Link>
           </div>
         </div>
-        <p
-          className="reveal absolute bottom-8 flex flex-col items-center gap-1.5 font-mono text-[11px] tracking-[0.18em] text-ink-muted uppercase"
+
+        {/* Names beside the half-hidden Moon and Mars (engine HERO poses: x = ±0.98, radius ≈ 10.9 % of the screen height). */}
+        <Link
+          to="/explore/moon"
+          className={`reveal pointer-events-auto absolute top-[47.5%] left-[calc(1%+10.9svh+1.25rem)] hidden -translate-y-1/2 font-serif text-xl tracking-[0.2em] text-ink/70 uppercase transition-colors hover:text-moon sm:block ${glow}`}
           style={step(5)}
         >
-          Scroll
-          <ChevronDown className="size-4 animate-bounce motion-reduce:animate-none" aria-hidden="true" />
-        </p>
+          Moon
+        </Link>
+        <Link
+          to="/explore/mars"
+          className={`reveal pointer-events-auto absolute top-[47.5%] right-[calc(1%+10.9svh+1.25rem)] hidden -translate-y-1/2 font-serif text-xl tracking-[0.2em] text-ink/70 uppercase transition-colors hover:text-mars sm:block ${glow}`}
+          style={step(5)}
+        >
+          Mars
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+          aria-label="Scroll to Mars"
+          className="reveal press pointer-events-auto absolute bottom-7 flex size-12 items-center justify-center rounded-full border border-white/15 bg-space/50 text-ink backdrop-blur-md hover:border-white/40"
+          style={step(6)}
+        >
+          <ChevronDown className="size-5 animate-bounce motion-reduce:animate-none" aria-hidden="true" />
+        </button>
       </section>
 
       <Chapter

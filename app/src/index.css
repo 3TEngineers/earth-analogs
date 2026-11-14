@@ -147,23 +147,30 @@ h3 {
   }
 }
 
-/* Panel content swaps (list ↔ site): a short fade-up so the change reads as one motion. */
+/* Panel content swaps (list / site): the column arrives from blur, its .stagger children one after another (--i). */
 .panel-in {
-  animation: panel-in 380ms var(--ease-out) both;
+  animation: blur-in 600ms var(--ease-out) both;
 }
-@keyframes panel-in {
+.stagger {
+  animation: blur-in 800ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+}
+@keyframes blur-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(16px);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
     transform: none;
+    filter: blur(0);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .panel-in {
-    animation: none;
+  .panel-in,
+  .stagger {
+    animation: reveal-fade 300ms ease both;
   }
 }
 
