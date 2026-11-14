@@ -63,6 +63,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Next
 
+- **Sharper planets: 8K textures** (Sadık). The globes still use 2K (Earth, Moon) and 4K (Mars) images, so close-ups are soft. Replace them with 8192 × 4096 versions from the same public-domain sources (NASA Blue Marble, NASA SVS CGI Moon Kit, USGS Viking MDIM 2.1), about 15 MB in total; load the small ones first and swap the large ones in after the scene is ready, and skip them on phones.
 - Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
 - Sadık: B9 — Method notes for Kmar (pointer: `docs/SCREENING_RESULTS.md` + `docs/ANALOG_RESULTS.md`); then images per site/analog if time allows.
