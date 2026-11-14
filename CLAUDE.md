@@ -17,7 +17,7 @@ Shared context for every Claude session on this repo. Three teammates work in pa
 
 ## Working rules
 
-1. **Start every session** by reading `docs/STATUS.md` and pulling `main`.
+1. **Start every session** by pulling `main` and reading `docs/STATUS.md`. Then, without waiting to be asked, tell the teammate in a few lines what changed since their last pull and what their next step is — from the "Next" section of `STATUS.md` and the README in their own area (`app/src/panels/README.md` for Kmar, `app/README.md` for Deniz, `pipeline/README.md` for Sadık). Find out who you are working with from `git config user.name` or by asking once.
 2. **Record progress as you go.** When a piece of work is finished, update `docs/STATUS.md` (what was done, what's next, any decision made and why) in the same PR. If it isn't in STATUS.md, the other two don't know it happened.
 3. **Branches:** never push to `main` directly and never force push. The repo is private on GitHub's free plan, so GitHub does **not** enforce this — a local hook does. Run `git config core.hooksPath .githooks` once after cloning; it then rejects any push to `main`. Branch from an up-to-date `main` as `feat/<short-name>`, `fix/<short-name>` or `docs/<short-name>`.
 4. **Small PRs, merged often.** Open a PR into `main` as soon as something works. No approval is required (so nobody gets blocked overnight), but ask a teammate for a quick look when they're around, then squash-merge.

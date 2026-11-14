@@ -4,6 +4,24 @@ Owner: **Kmar** (`kmarrabid-ai`). This file tells you (and your Claude session) 
 
 Read first: root `CLAUDE.md` (rules), `docs/STATUS.md` (live state), `docs/PROJECT_PLAN.md` (your steps K1–K8), `app/README.md` (stack, shared state API, design tokens).
 
+## 0. Why it's built this way
+
+- **Two people build one screen at the same time.** Deniz builds the globe, you build the panels. If either side called the other's code directly, every change would need both of you and every merge would conflict. So the globe and the panels only share **one state object** (`src/state/`) with a fixed set of actions. You change the state, the globe follows; the globe changes it, your panel follows. You can build and test your part without waiting for Deniz, and the reverse.
+- **The backend isn't done yet, so we work on mock data.** Sadık fixed the shape of the JSON first (`docs/DATA_CONTRACT.md`) and committed fake data in that shape. Build against it now; when the real data lands (Sunday noon) the UI keeps working because the shape doesn't change. That's also why you never edit `public/data/*.json` by hand — the pipeline overwrites it.
+- **One set of design tokens.** Colors and fonts live in one file (`src/index.css`) so the panels and the globe look like one product, and the accent color can follow the body on screen (Moon → Mars → Earth) everywhere at once.
+- **Folders = ownership.** You own `src/panels/` and `src/pages/`, Deniz owns `src/globe/`. Staying in your own folder means you two almost never edit the same file, so merges are painless.
+- **Small PRs, `STATUS.md` updated each time.** We each use our own Claude account and memory isn't shared. The repo is the only shared memory: if it isn't in `STATUS.md`, the other two (and their Claude sessions) don't know it happened.
+
+## When to pull
+
+Pull `main` (`git switch main && git pull`, then `cd app && npm install`):
+
+- **At the start of every work session** and after every team check-in (Sat 13:00 · 18:00 · 23:00, Sun 10:00 · 15:00 · 19:00).
+- **When a teammate says they merged something** you depend on — especially changes to `src/state/`, `src/index.css`, `src/types/` or the data files.
+- **Before you create a new branch**, so it starts from the latest `main`.
+
+While you're working on a branch and want a teammate's new work from `main`: `git pull origin main` on your branch. Run `npm install` again whenever `app/package.json` changed.
+
 ## 1. Set up (once)
 
 Needs Git and Node.js LTS (20.19+).
