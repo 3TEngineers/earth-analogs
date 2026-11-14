@@ -38,3 +38,6 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# Earthdata / OPeNDAP local config (machine-specific paths)
+.dodsrc

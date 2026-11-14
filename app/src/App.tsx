@@ -12,7 +12,7 @@ import { LandingPage } from './pages/LandingPage'
  *
  * Pages:
  *   /               LandingPage  — intro over the floating planets
- *   /explore/:body  ExplorePage  — Moon or Mars in focus + panels, then Earth training areas
+ *   /explore/:body  ExplorePage  — Moon or Mars in focus + panels (SitePanel), then Earth training areas
  *   /about          AboutPage    — team, method, data, AI usage
  */
 export default function App() {
