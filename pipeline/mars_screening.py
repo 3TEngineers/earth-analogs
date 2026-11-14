@@ -44,7 +44,11 @@ MAX_SLOPE_DEG = 2.0  # ours, at ~4 km scale: rover-style landings except Curiosi
 MAX_RELIEF_M = 500.0  # ours, over ~18 km: same landings sit below 260 m. Curiosity fails both at this
 # scale because its ellipse squeezed between Gale's wall and Mount Sharp (precision-guided entry)
 MIN_KM_FROM_PAST_LANDING = 500.0  # ours: candidates must be new places, not next door to a lander
-MIN_KM_BETWEEN_CANDIDATES = 1000.0  # ours: two clearly different regions
+MIN_KM_BETWEEN_CANDIDATES = 1500.0  # ours: clearly different regions, not four spots on one plain
+MIN_SAFE_AREA_KM2 = 40_000.0  # ours: only large safe areas qualify
+MIN_INTERIOR_KM = 40.0  # ours: the pick sits >= 40 km inside the safe area, so a 25 km ellipse fits easily
+CANDIDATE_COUNT = 4
+MOLA_463_URL = "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"
 
 LANDINGS = [  # docs/LANDING_CONSTRAINTS.md §2; "rover" = within the ±30° rover-style rules
     ("Mars 3", -45.04, -157.98, False),
@@ -209,28 +213,61 @@ def screen(grids: Grids, max_slope: float, max_relief: float) -> np.ndarray:
     return ndimage.binary_erosion(ok, structure=np.ones((size, size), bool))
 
 
-def pick_candidates(grids: Grids, safe: np.ndarray, count: int = 2) -> list[tuple[float, float, int]]:
-    """Most interior point of the largest safe areas, away from past landings and each other."""
+def pick_candidates(grids: Grids, safe: np.ndarray, count: int = CANDIDATE_COUNT) -> list[dict]:
+    """Most interior point of the largest safe areas, away from past landings and each other.
+
+    Quality gates: the safe area must be >= MIN_SAFE_AREA_KM2 and the pick >= MIN_INTERIOR_KM from
+    its edge; if fewer than `count` areas qualify, fewer candidates are returned.
+    """
     labels, n = ndimage.label(safe)
     if n == 0:
         return []
     depth = ndimage.distance_transform_edt(safe)
     index = np.arange(1, n + 1)
+    pixel_km = np.radians(180.0 / safe.shape[0]) * MARS_RADIUS_KM
     sizes = ndimage.sum(safe, labels, index=index)
     centres = ndimage.maximum_position(depth, labels, index=index)  # most interior pixel per area
-    picks: list[tuple[float, float, int]] = []
+    picks: list[dict] = []
     for i in np.argsort(sizes)[::-1]:
         row, col = centres[i]
         lat, lon = float(grids.lat[row]), float(grids.lon[col])
-        label_id = i + 1
+        area_km2 = float(sizes[i]) * pixel_km**2 * np.cos(np.radians(lat))
+        interior_km = float(depth[row, col]) * pixel_km
+        if area_km2 < MIN_SAFE_AREA_KM2:
+            break  # sorted by size: nothing smaller qualifies
+        if interior_km < MIN_INTERIOR_KM:
+            continue
         if any(great_circle_km(lat, lon, la, lo) < MIN_KM_FROM_PAST_LANDING for _, la, lo, _ in LANDINGS):
             continue
-        if any(great_circle_km(lat, lon, la, lo) < MIN_KM_BETWEEN_CANDIDATES for la, lo, _ in picks):
+        if any(great_circle_km(lat, lon, p["lat"], p["lon"]) < MIN_KM_BETWEEN_CANDIDATES for p in picks):
             continue
-        picks.append((round(lat, 3), round(lon, 3), int(sizes[label_id - 1])))
+        picks.append({"lat": round(lat, 3), "lon": round(lon, 3), "safe_area_km2": round(area_km2, -3),
+                      "interior_km": round(interior_km)})
         if len(picks) == count:
             break
     return picks
+
+
+def fine_check(sites: list[tuple[str, float, float]]) -> dict[str, dict]:
+    """Second look at 463 m: slope percentiles and relief over a ~25 km window around each site."""
+    import rasterio
+    from pyproj import CRS, Transformer
+    from rasterio.windows import Window
+
+    out = {}
+    with rasterio.open(MOLA_463_URL) as dem:
+        crs = CRS.from_wkt(dem.crs.to_wkt())
+        to_xy = Transformer.from_crs(crs.geodetic_crs, crs, always_xy=True)
+        pixel = abs(dem.transform.a)
+        for name, lat, lon in sites:
+            row, col = dem.index(*to_xy.transform(lon, lat))
+            z = dem.read(1, window=Window(col - 27, row - 27, 54, 54)).astype("float64")
+            gy, gx = np.gradient(z, pixel, pixel * np.cos(np.radians(lat)))
+            slope = np.degrees(np.arctan(np.hypot(gx, gy)))
+            out[name] = {"slope_p50_deg": round(float(np.percentile(slope, 50)), 2),
+                         "slope_p95_deg": round(float(np.percentile(slope, 95)), 2),
+                         "relief_m": round(float(z.max() - z.min()))}
+    return out
 
 
 def main() -> None:
@@ -257,17 +294,31 @@ def main() -> None:
           f"({100 * float((safe * pixel_area).sum()) / (4 * np.pi * MARS_RADIUS_KM ** 2):.1f} % of Mars)")
 
     candidates = []
-    for lat, lon, size in pick_candidates(grids, safe):
-        crit = criteria(site_values(grids, lat, lon), max_slope, max_relief)
-        candidates.append({"lat": lat, "lon": lon, "safe_area_pixels": size, "criteria": crit})
-        print(f"Candidate: {lat:.2f}, {lon:.2f} (safe area {size} px) — all pass: {all(c['pass'] for c in crit)}")
+    for pick in pick_candidates(grids, safe):
+        pick["criteria"] = criteria(site_values(grids, pick["lat"], pick["lon"]), max_slope, max_relief)
+        candidates.append(pick)
+        print(f"Candidate: {pick['lat']:.2f}, {pick['lon']:.2f} (safe area {pick['safe_area_km2']:.0f} km2, "
+              f"{pick['interior_km']} km inside) — all pass: {all(c['pass'] for c in pick['criteria'])}")
+
+    # Second look at 463 m for the candidates and the successful landings, to compare like with like
+    reference = [(v["name"], v["lat"], v["lon"]) for v in validation
+                 if v["name"] in ("Viking 1", "Spirit", "InSight", "Perseverance")]
+    fine = fine_check([(f"candidate {i}", c["lat"], c["lon"]) for i, c in enumerate(candidates)] + reference)
+    for i, c in enumerate(candidates):
+        c["fine_463m"] = fine[f"candidate {i}"]
+    print("\n463 m check (slope p50 / p95, relief over ~25 km):")
+    for name, v in fine.items():
+        print(f"  {name:14s} {v['slope_p50_deg']:5.2f} / {v['slope_p95_deg']:5.2f} deg, {v['relief_m']:5d} m")
 
     np.savez_compressed(OUT / "mars_safe.npz", safe=safe, lat=grids.lat, lon=grids.lon)
     (OUT / "mars_screening.json").write_text(json.dumps(
         {"thresholds": {"max_elevation_m": MAX_ELEVATION_M, "max_abs_lat_deg": MAX_ABS_LAT_DEG,
                         "min_thermal_inertia": MIN_THERMAL_INERTIA, "max_slope_deg": max_slope,
-                        "max_relief_m": max_relief, "ellipse_km": ELLIPSE_KM},
-         "validation": validation, "candidates": candidates}, indent=2, default=bool))
+                        "max_relief_m": max_relief, "ellipse_km": ELLIPSE_KM,
+                        "min_safe_area_km2": MIN_SAFE_AREA_KM2, "min_interior_km": MIN_INTERIOR_KM,
+                        "min_km_between_candidates": MIN_KM_BETWEEN_CANDIDATES},
+         "validation": validation, "candidates": candidates, "reference_463m": {k: fine[k] for k, *_ in reference}},
+        indent=2, default=bool))
     print(f"\nWrote {OUT / 'mars_screening.json'} and mars_safe.npz")
 
 

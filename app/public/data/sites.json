@@ -64,7 +64,7 @@
             "source": "LOLA permanently shadowed regions (NASA PGDA)"
           }
         ],
-        "note": "Passes all four criteria. Nearest NASA Artemis III candidate region: de Gerlache Rim 2 (16.1 km from its named feature)."
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (16.1 km from its named feature), which cross-checks our method against NASA's own choice."
       }
     },
     {
@@ -129,7 +129,72 @@
             "source": "LOLA permanently shadowed regions (NASA PGDA)"
           }
         ],
-        "note": "Passes all four criteria. Nearest NASA Artemis III candidate region: de Gerlache Rim 2 (37.6 km from its named feature)."
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (37.6 km from its named feature), which cross-checks our method against NASA's own choice."
+      }
+    },
+    {
+      "id": "moon-candidate-c",
+      "body": "moon",
+      "name": "Cabeus-Malapert ridge",
+      "mission": "Our candidate: permanent base site",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": -85.488,
+      "lon": -19.049,
+      "summary": "A ridge between the rim of Cabeus crater and Mons Malapert, outside NASA's candidate regions. Cabeus is where NASA's LCROSS impact found water ice in 2009; this spot is the best lit of our lunar candidates and keeps Earth in view most of the time.",
+      "processes": [
+        "Impact cratering",
+        "Cold trapping of volatiles in permanent shadow"
+      ],
+      "limits": [
+        "Earth's gravity is about 6 times the Moon's",
+        "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
+        "Permanently shadowed lunar craters reach far colder temperatures than anywhere on Earth"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Permanent base site",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "illumination",
+            "label": "Sunlit time",
+            "value": 54.2,
+            "unit": "%",
+            "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
+            "pass": true,
+            "source": "LOLA average illumination (NASA PGDA)"
+          },
+          {
+            "id": "earth_visibility",
+            "label": "Earth in view",
+            "value": 92.4,
+            "unit": "%",
+            "rule": ">= 50 % (ours)",
+            "pass": true,
+            "source": "LOLA Earth visibility (NASA PGDA)"
+          },
+          {
+            "id": "slope",
+            "label": "Slope",
+            "value": 4.3,
+            "unit": "deg",
+            "rule": "<= 10 deg (ours)",
+            "pass": true,
+            "source": "LOLA slope map, 240 m"
+          },
+          {
+            "id": "ice_distance",
+            "label": "Distance to permanent shadow",
+            "value": 2.6,
+            "unit": "km",
+            "rule": "<= 10 km (ours)",
+            "pass": true,
+            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+          }
+        ],
+        "note": "Passes all four criteria, 42 km from the nearest NASA Artemis feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and at least as well lit as our candidates next to NASA's regions."
       }
     },
     {
@@ -207,7 +272,7 @@
       "status": "candidate",
       "lat": 0.031,
       "lon": 167.719,
-      "summary": "A wide, low, flat plain in southern Elysium Planitia, about 220 km from Avernus Colles. Our screening picked it as the most interior point of the largest safe area on Mars.",
+      "summary": "A wide, low, flat plain in southern Elysium Planitia, about 220 km from Avernus Colles. The most interior point of the largest safe area on Mars.",
       "processes": [
         "Volcanic plains",
         "Wind erosion"
@@ -268,7 +333,7 @@
             "source": "MOLA MEGDR 16 px/deg"
           }
         ],
-        "note": "Passes every criterion over a 25 km area and lies more than 500 km from any past landing."
+        "note": "Passes every criterion inside a 4330 thousand km2 safe area, 220 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.05 deg, relief 50 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
       }
     },
     {
@@ -342,7 +407,155 @@
             "source": "MOLA MEGDR 16 px/deg"
           }
         ],
-        "note": "Passes every criterion over a 25 km area and lies more than 500 km from any past landing."
+        "note": "Passes every criterion inside a 209 thousand km2 safe area, 85 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.4 deg, relief 62 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
+      }
+    },
+    {
+      "id": "mars-candidate-c",
+      "body": "mars",
+      "name": "Margaritifer Terra lowland",
+      "mission": "Our candidate: safe landing zone",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": -18.594,
+      "lon": -30.969,
+      "summary": "A low, smooth patch in Margaritifer Terra about 130 km from Arda Valles — the only large safe area in the southern hemisphere, and rougher than the other candidates at fine scale.",
+      "processes": [
+        "Outflow channels",
+        "Impact cratering"
+      ],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Safe landing zone",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 730,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 46.2,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 190,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.28,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 69,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
+        ],
+        "note": "Passes every criterion inside a 50 thousand km2 safe area, 41 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 3.82 deg, relief 298 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
+      }
+    },
+    {
+      "id": "mars-candidate-d",
+      "body": "mars",
+      "name": "Western Amazonis Planitia",
+      "mission": "Our candidate: safe landing zone",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": 25.281,
+      "lon": -178.906,
+      "summary": "Smooth lowland plains in western Amazonis Planitia near Phlegra Dorsa, far from every past landing.",
+      "processes": [
+        "Volcanic plains",
+        "Wind erosion"
+      ],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Safe landing zone",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 836,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 39.5,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg"
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 122,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia"
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.13,
+            "unit": "deg",
+            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 53,
+            "unit": "m",
+            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg"
+          }
+        ],
+        "note": "Passes every criterion inside a 46 thousand km2 safe area, 57 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.07 deg, relief 84 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
       }
     },
     {

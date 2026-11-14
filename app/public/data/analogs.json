@@ -1279,6 +1279,525 @@
       "processes": [],
       "image": null,
       "sources": []
+    },
+    {
+      "id": "moon-candidate-c-nain",
+      "siteId": "moon-candidate-c",
+      "rank": 1,
+      "name": "Nain anorthosite, Labrador",
+      "country": "Canada",
+      "lat": 56.5,
+      "lon": -61.7,
+      "radiusKm": 10,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 68,
+      "scores": {
+        "terrain": {
+          "score": 65,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 85,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 50,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 50,
+          "confidence": "medium",
+          "note": "MOCK"
+        },
+        "sun_angle": {
+          "score": 60,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "ice": {
+          "score": 55,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Highland-like rock type"
+      ],
+      "differences": [],
+      "tests": [
+        {
+          "title": "Sampling highland-type rock",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "moon-candidate-c-svalbard",
+      "siteId": "moon-candidate-c",
+      "rank": 2,
+      "name": "Svalbard",
+      "country": "Norway",
+      "lat": 78.6,
+      "lon": 16.5,
+      "radiusKm": 10,
+      "known": true,
+      "knownRef": null,
+      "totalScore": 64,
+      "scores": {
+        "terrain": {
+          "score": 62,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 35,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 70,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 55,
+          "confidence": "medium",
+          "note": "MOCK"
+        },
+        "sun_angle": {
+          "score": 90,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "ice": {
+          "score": 82,
+          "confidence": "high",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Very low Sun angle",
+        "MOCK. Frozen ground"
+      ],
+      "differences": [
+        "MOCK. Different rock types"
+      ],
+      "tests": [
+        {
+          "title": "Solar power at low Sun angles",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "moon-candidate-c-dry-valleys",
+      "siteId": "moon-candidate-c",
+      "rank": 3,
+      "name": "McMurdo Dry Valleys",
+      "country": "Antarctica",
+      "lat": -77.5,
+      "lon": 162.0,
+      "radiusKm": 10,
+      "known": true,
+      "knownRef": null,
+      "totalScore": 63,
+      "scores": {
+        "terrain": {
+          "score": 58,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 40,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 92,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 70,
+          "confidence": "medium",
+          "note": "MOCK"
+        },
+        "sun_angle": {
+          "score": 80,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "ice": {
+          "score": 75,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Extremely dry and cold"
+      ],
+      "differences": [
+        "MOCK. Different rock types"
+      ],
+      "tests": [
+        {
+          "title": "Cold-weather equipment testing",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-c-harrat",
+      "siteId": "mars-candidate-c",
+      "rank": 1,
+      "name": "Harrat Khaybar",
+      "country": "Saudi Arabia",
+      "lat": 25.7,
+      "lon": 39.9,
+      "radiusKm": 10,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 63,
+      "scores": {
+        "terrain": {
+          "score": 82,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 70,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 20,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 90,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 55,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Flat volcanic plain",
+        "MOCK. Very dry"
+      ],
+      "differences": [
+        "MOCK. No water-built landforms"
+      ],
+      "tests": [
+        {
+          "title": "Landing hazard detection trials",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [
+        "Volcanic plains"
+      ],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-c-namib",
+      "siteId": "mars-candidate-c",
+      "rank": 2,
+      "name": "Namib gravel plains",
+      "country": "Namibia",
+      "lat": -23.5,
+      "lon": 15.2,
+      "radiusKm": 10,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 57,
+      "scores": {
+        "terrain": {
+          "score": 75,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 50,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 30,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 88,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 50,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Smooth, wind-swept surface"
+      ],
+      "differences": [
+        "MOCK. No water-built landforms"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving on wind-swept gravel",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [
+        "Wind erosion"
+      ],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-c-danakil",
+      "siteId": "mars-candidate-c",
+      "rank": 3,
+      "name": "Danakil Depression",
+      "country": "Ethiopia",
+      "lat": 14.2,
+      "lon": 40.3,
+      "radiusKm": 10,
+      "known": true,
+      "knownRef": null,
+      "totalScore": 58,
+      "scores": {
+        "terrain": {
+          "score": 60,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 65,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 45,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 85,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 30,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Extremely dry"
+      ],
+      "differences": [
+        "MOCK. Much hotter than Mars"
+      ],
+      "tests": [
+        {
+          "title": "Instrument tests in extreme heat and salt",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-d-harrat",
+      "siteId": "mars-candidate-d",
+      "rank": 1,
+      "name": "Harrat Khaybar",
+      "country": "Saudi Arabia",
+      "lat": 25.7,
+      "lon": 39.9,
+      "radiusKm": 10,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 63,
+      "scores": {
+        "terrain": {
+          "score": 82,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 70,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 20,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 90,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 55,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Flat volcanic plain",
+        "MOCK. Very dry"
+      ],
+      "differences": [
+        "MOCK. No water-built landforms"
+      ],
+      "tests": [
+        {
+          "title": "Landing hazard detection trials",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [
+        "Volcanic plains"
+      ],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-d-namib",
+      "siteId": "mars-candidate-d",
+      "rank": 2,
+      "name": "Namib gravel plains",
+      "country": "Namibia",
+      "lat": -23.5,
+      "lon": 15.2,
+      "radiusKm": 10,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 57,
+      "scores": {
+        "terrain": {
+          "score": 75,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 50,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 30,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 88,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 50,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Smooth, wind-swept surface"
+      ],
+      "differences": [
+        "MOCK. No water-built landforms"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving on wind-swept gravel",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [
+        "Wind erosion"
+      ],
+      "image": null,
+      "sources": []
+    },
+    {
+      "id": "mars-candidate-d-danakil",
+      "siteId": "mars-candidate-d",
+      "rank": 3,
+      "name": "Danakil Depression",
+      "country": "Ethiopia",
+      "lat": 14.2,
+      "lon": 40.3,
+      "radiusKm": 10,
+      "known": true,
+      "knownRef": null,
+      "totalScore": 58,
+      "scores": {
+        "terrain": {
+          "score": 60,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "mineralogy": {
+          "score": 65,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "water_history": {
+          "score": 45,
+          "confidence": "low",
+          "note": "MOCK"
+        },
+        "aridity": {
+          "score": 85,
+          "confidence": "high",
+          "note": "MOCK"
+        },
+        "temperature": {
+          "score": 30,
+          "confidence": "medium",
+          "note": "MOCK"
+        }
+      },
+      "similarities": [
+        "MOCK. Extremely dry"
+      ],
+      "differences": [
+        "MOCK. Much hotter than Mars"
+      ],
+      "tests": [
+        {
+          "title": "Instrument tests in extreme heat and salt",
+          "detail": "MOCK."
+        }
+      ],
+      "processes": [],
+      "image": null,
+      "sources": []
     }
   ]
 }

@@ -36,10 +36,15 @@ MARS_LIMITS = [
 MARS_CONTEXT = [
     ("mars-candidate-a", "Southern Elysium Planitia", ["Volcanic plains", "Wind erosion"],
      "A wide, low, flat plain in southern Elysium Planitia, about 220 km from Avernus Colles. "
-     "Our screening picked it as the most interior point of the largest safe area on Mars."),
+     "The most interior point of the largest safe area on Mars."),
     ("mars-candidate-b", "Chryse-Acidalia plains", ["Outflow-channel deposits", "Wind erosion"],
      "Low plains on the boundary between Chryse and Acidalia Planitia, on the same meridian as "
      "ESA's Oxia Planum landing site about 600 km to the south."),
+    ("mars-candidate-c", "Margaritifer Terra lowland", ["Outflow channels", "Impact cratering"],
+     "A low, smooth patch in Margaritifer Terra about 130 km from Arda Valles — the only large safe area "
+     "in the southern hemisphere, and rougher than the other candidates at fine scale."),
+    ("mars-candidate-d", "Western Amazonis Planitia", ["Volcanic plains", "Wind erosion"],
+     "Smooth lowland plains in western Amazonis Planitia near Phlegra Dorsa, far from every past landing."),
 ]
 MOON_CONTEXT = [
     ("moon-candidate-a", "de Gerlache rim ridge", ["Impact cratering", "Cold trapping of volatiles in permanent shadow"],
@@ -48,7 +53,12 @@ MOON_CONTEXT = [
     ("moon-candidate-b", "Shackleton-de Gerlache connecting ridge", ["Impact cratering", "Cold trapping of volatiles in permanent shadow"],
      "The ridge between Shackleton and de Gerlache craters, already known in the literature as one of the "
      "best-lit places at the south pole. Our screening found it independently."),
+    ("moon-candidate-c", "Cabeus-Malapert ridge", ["Impact cratering", "Cold trapping of volatiles in permanent shadow"],
+     "A ridge between the rim of Cabeus crater and Mons Malapert, outside NASA's candidate regions. Cabeus is "
+     "where NASA's LCROSS impact found water ice in 2009; this spot is the best lit of our lunar candidates and "
+     "keeps Earth in view most of the time."),
 ]
+FINE_REFERENCE = "InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m"
 
 
 def clean(criteria: list[dict]) -> list[dict]:
@@ -81,8 +91,14 @@ def main() -> None:
 
     sites = []
     for ctx, result in zip(MOON_CONTEXT, moon["candidates"]):
-        note = (f"Passes all four criteria. Nearest NASA Artemis III candidate region: {result['nearest_artemis']} "
-                f"({result['km_to_artemis_feature']} km from its named feature).")
+        if result["group"] == "best overall":
+            note = (f"Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's "
+                    f"{result['nearest_artemis']} region ({result['km_to_artemis_feature']} km from its named feature), "
+                    "which cross-checks our method against NASA's own choice.")
+        else:
+            note = (f"Passes all four criteria, {result['km_to_artemis_feature']:.0f} km from the nearest NASA Artemis "
+                    "feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and "
+                    "at least as well lit as our candidates next to NASA's regions.")
         sites.append(candidate_site(ctx, result, "moon", "Permanent base site", note))
 
     ch3 = copy.deepcopy(old_sites["chandrayaan-3"])
@@ -93,7 +109,11 @@ def main() -> None:
     sites.append(ch3)
 
     for ctx, result in zip(MARS_CONTEXT, mars["candidates"]):
-        note = "Passes every criterion over a 25 km area and lies more than 500 km from any past landing."
+        fine = result["fine_463m"]
+        note = (f"Passes every criterion inside a {result['safe_area_km2'] / 1000:.0f} thousand km2 safe area, "
+                f"{result['interior_km']} km from its edge, and more than 500 km from any past landing. "
+                f"Second look at 463 m: 95 % of slopes below {fine['slope_p95_deg']} deg, relief {fine['relief_m']} m "
+                f"over 25 km (landings for comparison: {FINE_REFERENCE}).")
         sites.append(candidate_site(ctx, result, "mars", "Safe landing zone", note))
 
     for site_id, name in [("curiosity", "Curiosity"), ("perseverance", "Perseverance")]:
@@ -114,10 +134,14 @@ def main() -> None:
 
     # Keep the app working until real analogs land (B8): every candidate gets 3 mock analogs.
     analogs = json.loads((DATA / "analogs.json").read_text(encoding="utf-8"))
+    site_ids = {s["id"] for s in sites}
+    analogs["analogs"] = [a for a in analogs["analogs"] if a["siteId"] in site_ids]  # drop candidates that went away
     have = {a["siteId"] for a in analogs["analogs"]}
-    for new_id, template in [("moon-candidate-b", "moon-candidate-a"), ("mars-candidate-b", "mars-candidate-a")]:
-        if new_id in have:
+    for site in sites:
+        new_id = site["id"]
+        if new_id in have or site["status"] != "candidate":
             continue
+        template = f"{site['body']}-candidate-a"
         for a in [a for a in analogs["analogs"] if a["siteId"] == template]:
             clone = copy.deepcopy(a)
             clone["siteId"] = new_id

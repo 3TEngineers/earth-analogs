@@ -39,7 +39,10 @@ SOURCES = {
 
 MOON_RADIUS_M = 1737400.0
 PIXEL_M = 240.0
-HALF_EXTENT_M = 250_000.0  # ~82 deg S from the pole
+# The whole 75 S product (~75 deg S at the edges). 250 km + 854 x 240 m, so pixel boundaries match the
+# first 250 km run exactly — the best-lit ridges are within a few % of each other and a shifted grid
+# reorders them.
+HALF_EXTENT_M = 250_000.0 + 854 * 240.0
 
 # Thresholds: sunlit is anchored to published values; the rest are ours
 # ours: the best published spots are lit ~85-95 % of the time, but that is 2-10 m above ground on a
@@ -53,6 +56,11 @@ MAX_PSR_KM = 10.0  # ours: ice within a short traverse
 # ridges, so 3 x 3 (~720 m) left almost nothing.
 PAD_PX = 2
 MIN_KM_BETWEEN_CANDIDATES = 30.0
+FAR_FROM_ARTEMIS_KM = 40.0  # ours: "outside NASA's regions" = > 40 km from every named feature
+FAR_MIN_KM_APART = 30.0
+# Only search the polar lighting regime. Flat ground is lit ~20 % of the time at 86-90 S but ~40 % at
+# 78-82 S (an ordinary day/night cycle with ~2-week nights), so 50 % is exceptional only near the pole.
+POLAR_LAT = -84.0
 
 ARTEMIS = [  # docs/LANDING_CONSTRAINTS.md §3 — feature centres, not exact regions
     ("Peak near Cabeus B", -82.40, -53.00),
@@ -205,25 +213,43 @@ def main() -> None:
         return {"sunlit": float(np.nanmedian(sunlit[window])), "earth": float(np.nanmedian(earth[window])),
                 "slope": float(np.nanmedian(slope[window])), "psr_km": float(np.nanmin(psr_km[window]))}
 
-    # Candidates: the best-lit passing spots, far enough apart
-    score = np.where(safe, sunlit + 0.25 * earth, -np.inf)
-    order = np.argsort(score, axis=None)[::-1]
+    # Two groups of candidates:
+    #   best overall  — best-lit passing spots (these land next to NASA's regions: a cross-check)
+    #   away from NASA — best-lit passing spots > 75 km from every Artemis feature (a new proposal)
+    km_to_artemis = np.min([great_circle_km(lat, lon, a[1], a[2]) for a in ARTEMIS], axis=0)
+    groups = [("best overall", np.where(safe, sunlit + 0.25 * earth, -np.inf), MIN_KM_BETWEEN_CANDIDATES),
+              # ranked on the 3 x 3 mean so a single lucky pixel can't win
+              ("away from NASA", np.where(safe & (km_to_artemis > FAR_FROM_ARTEMIS_KM) & (lat <= POLAR_LAT),
+                                          ndimage.uniform_filter(np.nan_to_num(sunlit), size=3), -np.inf),
+               FAR_MIN_KM_APART)]
     candidates = []
-    for flat in order:
-        if not np.isfinite(score.flat[flat]):
-            break
-        row, col = np.unravel_index(flat, score.shape)
-        la, lo = float(lat[row, col]), float(lon[row, col])
-        if any(great_circle_km(la, lo, c["lat"], c["lon"]) < MIN_KM_BETWEEN_CANDIDATES for c in candidates):
-            continue
-        nearest = min(ARTEMIS, key=lambda a: great_circle_km(la, lo, a[1], a[2]))
-        candidates.append({"lat": round(la, 3), "lon": round(lo, 3), "criteria": criteria(values_at(row, col)),
-                           "nearest_artemis": nearest[0],
-                           "km_to_artemis_feature": round(float(great_circle_km(la, lo, nearest[1], nearest[2])), 1)})
-        print(f"Candidate: {la:.3f}, {lo:.3f} — nearest Artemis region: {nearest[0]} "
-              f"({candidates[-1]['km_to_artemis_feature']} km)")
-        if len(candidates) == 2:
-            break
+    for group, score, min_apart in groups:
+        picked = 0
+        for flat in np.argsort(score, axis=None)[::-1]:
+            if not np.isfinite(score.flat[flat]):
+                break
+            row, col = np.unravel_index(flat, score.shape)
+            la, lo = float(lat[row, col]), float(lon[row, col])
+            if any(great_circle_km(la, lo, c["lat"], c["lon"]) < min_apart for c in candidates):
+                continue
+            crit = criteria(values_at(row, col))
+            if not all(c["pass"] for c in crit):
+                continue  # quality gate: the ~720 m neighbourhood must pass too, not just one pixel
+            if group == "away from NASA":
+                # quality gate: at least as well lit as our weakest best-overall candidate
+                weakest = min(c["criteria"][0]["value"] for c in candidates if c["group"] == "best overall")
+                if crit[0]["value"] < weakest:
+                    break  # sorted by light: nothing further down qualifies either
+            nearest = min(ARTEMIS, key=lambda a: great_circle_km(la, lo, a[1], a[2]))
+            candidates.append({"lat": round(la, 3), "lon": round(lo, 3), "group": group,
+                               "criteria": crit, "nearest_artemis": nearest[0],
+                               "km_to_artemis_feature": round(float(great_circle_km(la, lo, nearest[1], nearest[2])), 1)})
+            print(f"Candidate ({group}): {la:.3f}, {lo:.3f} — nearest Artemis region: {nearest[0]} "
+                  f"({candidates[-1]['km_to_artemis_feature']} km), "
+                  + ", ".join(f"{c['id']}={c['value']}" for c in candidates[-1]["criteria"]))
+            picked += 1
+            if picked == 2:
+                break
 
     # Validation: does each Artemis region contain ground that passes our criteria?
     print("\nValidation — Artemis III regions (passing ground within 25 km of the named feature):")
