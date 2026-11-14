@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "mock": true,
+  "sites": [
+    {
+      "id": "chandrayaan-3",
+      "body": "moon",
+      "name": "Chandrayaan-3",
+      "mission": "Chandrayaan-3",
+      "agency": "ISRO",
+      "year": 2023,
+      "status": "past",
+      "lat": -69.373,
+      "lon": 32.319,
+      "summary": "MOCK. One of the landings closest to the lunar south pole, on old highland terrain lit by a low Sun.",
+      "processes": ["Impact cratering", "Space weathering of regolith"],
+      "limits": [
+        "Earth's gravity is about 6 times the Moon's",
+        "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
+        "Surface radiation on the Moon is far higher"
+      ],
+      "image": null
+    },
+    {
+      "id": "mons-mouton",
+      "body": "moon",
+      "name": "Mons Mouton (Artemis candidate)",
+      "mission": "Artemis III candidate region",
+      "agency": "NASA",
+      "year": null,
+      "status": "candidate",
+      "lat": -84.5,
+      "lon": 30.0,
+      "summary": "MOCK. Candidate region for a future crewed landing near the lunar south pole. Coordinates approximate.",
+      "processes": ["Impact cratering", "Cold trapping of volatiles in permanent shadow"],
+      "limits": [
+        "Earth's gravity is about 6 times the Moon's",
+        "The Moon has no atmosphere; Earth sites cannot reproduce vacuum",
+        "Permanently shadowed lunar craters reach far colder temperatures than anywhere on Earth"
+      ],
+      "image": null
+    },
+    {
+      "id": "curiosity",
+      "body": "mars",
+      "name": "Curiosity (Gale crater)",
+      "mission": "Mars Science Laboratory",
+      "agency": "NASA",
+      "year": 2012,
+      "status": "past",
+      "lat": -4.5895,
+      "lon": 137.4417,
+      "summary": "MOCK. Rover exploring the layered sediments of Mount Sharp inside Gale crater, a former lake basin.",
+      "processes": ["Lake-bed sedimentation", "Wind erosion"],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null
+    },
+    {
+      "id": "perseverance",
+      "body": "mars",
+      "name": "Perseverance (Jezero crater)",
+      "mission": "Mars 2020",
+      "agency": "NASA",
+      "year": 2021,
+      "status": "past",
+      "lat": 18.4447,
+      "lon": 77.4508,
+      "summary": "MOCK. Rover exploring an ancient river delta in Jezero crater, searching for signs of past life and caching samples.",
+      "processes": ["River delta sedimentation", "Carbonate formation in lake water"],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null
+    }
+  ]
+}
