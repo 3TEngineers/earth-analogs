@@ -3,40 +3,33 @@ import type { Selection } from '../types/data'
 import { pretty } from './format'
 
 /**
- * Criteria from site.selection, one open row each: what was measured, the value, the rule and the data source.
- * Past landings may fail some rows on purpose: that shows the rules tell sites apart.
- * The section title is set by the caller (MissionCard).
+ * The rules a site was tested against, one row each: pass or fail, what was measured, the limit, the value and the
+ * data it comes from. Past landings may fail some rows on purpose: that shows the rules tell sites apart.
  */
 export function SelectionChecklist({ selection }: { selection: Selection }) {
   return (
-    <div>
-      <ul className="divide-y divide-white/10">
-        {selection.criteria.map((c) => (
-          <li key={c.id} className="grid grid-cols-[1.25rem_1fr_auto] gap-x-3 py-4">
-            <StatusIcon pass={c.pass} />
-            <div className="min-w-0">
-              <p className="text-[15px] leading-snug text-ink md:text-base">{c.label}</p>
-              <p className="mt-1 text-[13px] leading-snug text-ink/60">Rule {pretty(c.rule)}</p>
-              <p className="mt-0.5 font-mono text-[11px] text-ink-muted/80">{pretty(c.source)}</p>
-            </div>
-            <p className="text-right font-mono text-base leading-snug text-ink tabular-nums md:text-lg">
-              {c.value === null ? (
-                <span className="text-sm text-ink-muted">No data</span>
-              ) : (
-                <>
-                  {c.value}
-                  <span className="block text-[11px] text-ink-muted">{pretty(c.unit)}</span>
-                </>
-              )}
-            </p>
-          </li>
-        ))}
-      </ul>
-
-      {selection.note && (
-        <p className="mt-4 border-l-2 border-accent/60 pl-4 text-sm leading-relaxed text-ink/70">{pretty(selection.note)}</p>
-      )}
-    </div>
+    <ul className="divide-y divide-line">
+      {selection.criteria.map((c) => (
+        <li key={c.id} className="grid grid-cols-[1.25rem_1fr_auto] gap-x-3 py-3.5 first:pt-0">
+          <StatusIcon pass={c.pass} />
+          <div className="min-w-0">
+            <p className="leading-snug text-ink">{c.label}</p>
+            <p className="mt-1 text-[0.8rem] leading-snug text-ink-muted">Limit {pretty(c.rule)}</p>
+            <p className="mt-0.5 font-mono text-[11px] text-ink-muted/70">{pretty(c.source)}</p>
+          </div>
+          <p className="text-right font-display text-xl leading-tight font-semibold tabular-nums">
+            {c.value === null ? (
+              <span className="font-sans text-sm font-normal text-ink-muted">No data</span>
+            ) : (
+              <>
+                {c.value}
+                <span className="block font-mono text-[11px] font-normal text-ink-muted">{pretty(c.unit)}</span>
+              </>
+            )}
+          </p>
+        </li>
+      ))}
+    </ul>
   )
 }
 

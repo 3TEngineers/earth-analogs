@@ -18,7 +18,7 @@ Maps (also for the slides):
 
 | Criterion | Rule | Basis |
 |---|---|---|
-| Air to slow down | Elevation ≤ −1 km, shown as estimated surface pressure ≥ 677 Pa (`610 Pa × exp(−h / 11.1 km)`) | MSL |
+| Air to slow down | Elevation ≤ −1 km, shown as estimated surface pressure ≥ 668 Pa (`610 Pa × exp(−h / 11.1 km)`) | MSL |
 | Winter sun | \|latitude\| ≤ 30°, shown as winter noon Sun elevation ≥ 34.8° (`90° − |lat| − 25.19°`) | MSL, Mars 2020 |
 | Not dust-covered | TES thermal inertia ≥ 100 J m⁻² K⁻¹ s⁻½ | Mars 2020 |
 | Slope | ≤ 2° at ~4 km scale | **Ours** — MOLA can't see the metre-scale slopes missions used |

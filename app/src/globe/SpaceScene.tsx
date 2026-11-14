@@ -1,21 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { useAppState } from '../state/AppState'
 import { useData } from '../data/DataProvider'
+import { placeOf } from '../panels/format'
+import { useAppState } from '../state/AppState'
 import { useSelection } from '../state/useSelection'
 import type { Body } from '../types/data'
+import { sceneStore } from './sceneStore'
+import { PLANETS, type PlanetId } from './space/planets'
 import { SpaceEngine, type Layout, type Marker } from './space/SpaceEngine'
-import type { PlanetId } from './space/planets'
+import { BACKDROP_STAGE } from './space/story'
+
+/** Space kept free under the fixed header when a planet is in focus (px). */
+const HEADER_PX = 64
 
 /**
- * The one 3D scene behind every page (Deniz). It never unmounts, so moving from the landing
- * page to /explore/mars is a single continuous animation: Mars flies to the center, the other
- * planets drift away, the landing sites appear.
+ * The one 3D scene behind every page. It never unmounts, so moving from the landing page to /explore/mars is a
+ * single continuous animation: Mars flies to the center, the other planets drift away, the landing sites appear.
  *
- *   /, /about            → landing: Moon, Earth, Mars float behind the text (on "/", scrolling features one at a time)
+ *   /                    → story: the planets follow the page scroll; the first screen links a site to its Earth match
+ *   /calculations, /about→ story, parked on the quiet backdrop stage
  *   /explore/:body       → focus on that body; markers = its sites (candidates bright, validation sites muted)
  *                          plus every other past landing from landings.json as a name-only tag
- *   phase "earth"        → focus on Earth; markers = the selected site's training areas
+ *        phase "earth"   → focus on Earth; markers = the selected site's training areas
+ *   /earth, /earth/:id   → focus on Earth; markers = all training areas, coloured by the body they stand in for
  */
 export function SpaceScene() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -26,26 +33,36 @@ export function SpaceScene() {
   const { phase, selectSite, selectAnalog } = useAppState()
   const { sitesForBody, site, analogs, analog } = useSelection()
   const data = useData()
-  // Stable reference: a fresh [] on every render would rebuild every marker on every render.
+  // Stable references: a fresh [] on every render would rebuild every marker on every render.
   const landings = useMemo(() => (data.status === 'ready' ? data.landings.landings : []), [data])
+  const allSites = useMemo(() => (data.status === 'ready' ? data.sites.sites : []), [data])
+  const allAnalogs = useMemo(() => (data.status === 'ready' ? data.analogs.analogs : []), [data])
 
   const body = pathname.match(/^\/explore\/(moon|mars)$/)?.[1] as Body | undefined
+  const earthRoute = pathname.match(/^\/earth(?:\/([^/]+))?$/)
+  const onEarthPage = earthRoute !== null
+  const earthId = earthRoute?.[1] ?? null
+  const earthPick = useMemo(() => allAnalogs.find((a) => a.id === earthId) ?? null, [allAnalogs, earthId])
 
   // Latest handlers for the engine's events, without recreating the engine.
-  const handlers = useRef({ navigate, selectSite, selectAnalog })
+  const onMarker = (planet: PlanetId, id: string) => {
+    if (planet === 'earth') {
+      if (body) selectAnalog(id)
+      else navigate(`/earth/${id}`)
+    } else if (body) selectSite(id, planet)
+    else navigate(`/explore/${planet}?site=${id}`)
+  }
+  const handlers = useRef({ navigate, onMarker })
   useEffect(() => {
-    handlers.current = { navigate, selectSite, selectAnalog }
-  }, [navigate, selectSite, selectAnalog])
+    handlers.current = { navigate, onMarker }
+  })
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
     const engine = new SpaceEngine(container, {
-      onPlanetClick: (planet) => handlers.current.navigate(`/explore/${planet}`),
-      onMarkerClick: (planet, id) => {
-        if (planet === 'earth') handlers.current.selectAnalog(id)
-        else handlers.current.selectSite(id, planet)
-      },
+      onPlanetClick: (planet) => handlers.current.navigate(PLANETS[planet].href),
+      onMarkerClick: (planet, id) => handlers.current.onMarker(planet, id),
       onHover: setHover,
       // Pages fade their text in once the planets are there (see .reveal in index.css).
       onReady: () => {
@@ -60,18 +77,41 @@ export function SpaceScene() {
   }, [])
 
   const layout = useMemo<Layout>(() => {
-    if (!body) return { kind: 'landing' }
+    if (onEarthPage) return { kind: 'focus', planet: 'earth', target: earthPick ? { lat: earthPick.lat, lon: earthPick.lon } : null }
+    if (!body) return { kind: 'story' }
     if (phase === 'earth') return { kind: 'focus', planet: 'earth', target: analog ? { lat: analog.lat, lon: analog.lon } : null }
     return { kind: 'focus', planet: body, target: phase === 'site' && site ? { lat: site.lat, lon: site.lon } : null }
-  }, [body, phase, site, analog])
+  }, [onEarthPage, earthPick, body, phase, site, analog])
 
-  const markers = useMemo<{ planet: PlanetId | null; list: Marker[] }>(() => {
-    if (!body) return { planet: null, list: [] }
+  const markers = useMemo<{ sets: Partial<Record<PlanetId, Marker[]>>; labelled: PlanetId | null }>(() => {
+    const bodyOf = (siteId: string) => allSites.find((s) => s.id === siteId)?.body ?? 'mars'
+    const candidates = (b: Body): Marker[] =>
+      allSites
+        .filter((s) => s.body === b && s.selection.role === 'candidate')
+        .map((s) => ({ id: s.id, lat: s.lat, lon: s.lon, label: s.name, emphasis: 'strong', active: false }))
+    const areas = (activeId: string | null): Marker[] =>
+      allAnalogs.map((a) => ({
+        id: a.id,
+        lat: a.lat,
+        lon: a.lon,
+        label: placeOf(a.name),
+        emphasis: 'strong',
+        active: a.id === activeId,
+        color: PLANETS[bodyOf(a.siteId)].accent,
+      }))
+
+    if (onEarthPage) return { sets: { earth: areas(earthPick?.id ?? null) }, labelled: 'earth' }
+    if (!body) return { sets: { mars: candidates('mars'), moon: candidates('moon'), earth: areas(null) }, labelled: null }
     if (phase === 'earth') {
-      return {
-        planet: 'earth',
-        list: analogs.map((a) => ({ id: a.id, lat: a.lat, lon: a.lon, label: `#${a.rank} ${a.name}`, emphasis: 'strong', active: a.id === analog?.id })),
-      }
+      const list: Marker[] = analogs.map((a) => ({
+        id: a.id,
+        lat: a.lat,
+        lon: a.lon,
+        label: `${a.rank} · ${placeOf(a.name)}`,
+        emphasis: 'strong',
+        active: a.id === analog?.id,
+      }))
+      return { sets: { earth: list }, labelled: 'earth' }
     }
     const siteMarkers: Marker[] = sitesForBody.map((s) => ({
       id: s.id,
@@ -87,8 +127,8 @@ export function SpaceScene() {
     const landingMarkers: Marker[] = landings
       .filter((l) => l.body === body && !sitesForBody.some((s) => near(s, l)))
       .map((l) => ({ id: `landing:${l.name}`, lat: l.lat, lon: l.lon, label: `${l.name} · ${l.year}`, emphasis: 'landing', active: false }))
-    return { planet: body, list: [...siteMarkers, ...landingMarkers] }
-  }, [body, phase, analogs, analog, sitesForBody, site, landings])
+    return { sets: { [body]: [...siteMarkers, ...landingMarkers] }, labelled: body }
+  }, [onEarthPage, earthPick, body, phase, analogs, analog, sitesForBody, site, landings, allSites, allAnalogs])
 
   // Compare by value so re-renders with equal content don't restart the animation.
   const layoutKey = JSON.stringify(layout)
@@ -97,22 +137,23 @@ export function SpaceScene() {
   }, [layoutKey])
 
   useEffect(() => {
-    engineRef.current?.setMarkers(markers.planet, markers.list)
+    engineRef.current?.setMarkers(markers.sets, markers.labelled)
   }, [markers])
 
-  // Landing page: the scroll position (in screen heights) drives the planet story; other pages stay at stage 0.
+  // Scroll story, the landing pair and the panel insets come from the pages through the scene store.
+  const onLanding = pathname === '/'
   useEffect(() => {
     const engine = engineRef.current
     if (!engine) return
-    if (pathname !== '/') {
-      engine.setStory(0)
-      return
+    const apply = () => {
+      const s = sceneStore.get()
+      engine.setStory(onLanding ? s.stage : BACKDROP_STAGE)
+      engine.setPair(onLanding ? s.pair : null)
+      engine.setInsets({ ...s.insets, top: Math.max(s.insets.top, HEADER_PX) })
     }
-    const onScroll = () => engine.setStory(window.scrollY / window.innerHeight)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [pathname])
+    apply()
+    return sceneStore.subscribe(apply)
+  }, [onLanding])
 
   return (
     <div ref={containerRef} className="fixed inset-0" role="img" aria-label="3D view of the Moon, Earth and Mars">

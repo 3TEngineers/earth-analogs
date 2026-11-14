@@ -10,16 +10,16 @@ export interface PlanetConfig {
   bump: string
   bumpScale: number
   atmosphere: { color: string; altitude: number } | null
-  /** Accent used for markers on this planet (matches the CSS body accent). */
+  /** Accent used for markers on this planet (matches the CSS body colors in index.css). */
   accent: string
-  /** Where the planet floats on the landing page, behind the text (world units, globe radius = 100). */
-  landing: { position: [number, number, number]; scale: number; spin: number }
-  /** Where it waits while another planet is featured in the landing story: far away and small. */
-  away: { position: [number, number, number]; scale: number }
-  /** Same on the explore page: kept on the left, so it never sits behind the site text on the right. */
-  focusAway: [number, number, number]
-  /** Clickable on the landing page (Earth is reached through a site's training areas). */
-  clickable: boolean
+  /** Turn rate while it floats in the story (radians per second). */
+  spin: number
+  /** Where it waits while another body is in focus (world units, globe radius = 100): far away, never behind a panel. */
+  focusAway: { position: [number, number, number]; scale: number }
+  /** Direction the camera looks from when the body first comes into focus (the Moon is seen from below: its sites are at the south pole). */
+  focusFrom: [number, number, number]
+  /** Where a click on the planet leads from the landing page. */
+  href: string
 }
 
 /**
@@ -37,11 +37,11 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     bump: assetUrl('textures/moon-bump.jpg'),
     bumpScale: 6,
     atmosphere: null,
-    accent: '#c9d1dc',
-    landing: { position: [-470, 190, -120], scale: 0.5, spin: 0.05 },
-    away: { position: [-1700, 900, -2200], scale: 0.3 },
-    focusAway: [-1700, 900, -2200],
-    clickable: true,
+    accent: '#cfd4dc',
+    spin: 0.05,
+    focusAway: { position: [-1700, 900, -2200], scale: 0.3 },
+    focusFrom: [0, -0.9, 0.45],
+    href: '/explore/moon',
   },
   earth: {
     id: 'earth',
@@ -49,12 +49,12 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     texture: assetUrl('textures/earth.jpg'),
     bump: assetUrl('textures/earth-bump.jpg'),
     bumpScale: 4,
-    atmosphere: { color: '#3fd0e8', altitude: 0.16 },
-    accent: '#3fd0e8',
-    landing: { position: [-380, -420, -520], scale: 0.95, spin: 0.04 },
-    away: { position: [1500, -1100, -2600], scale: 0.35 },
-    focusAway: [-1600, -1000, -2600],
-    clickable: false,
+    atmosphere: { color: '#56c7ee', altitude: 0.16 },
+    accent: '#56c7ee',
+    spin: 0.04,
+    focusAway: { position: [-1600, -1000, -2600], scale: 0.35 },
+    focusFrom: [0, 0.25, 1],
+    href: '/earth',
   },
   mars: {
     id: 'mars',
@@ -62,12 +62,12 @@ export const PLANETS: Record<PlanetId, PlanetConfig> = {
     texture: assetUrl('textures/mars.jpg'),
     bump: assetUrl('textures/mars-bump.jpg'),
     bumpScale: 5,
-    atmosphere: { color: '#e0663a', altitude: 0.08 },
-    accent: '#e0663a',
-    landing: { position: [500, 120, -200], scale: 0.75, spin: 0.06 },
-    away: { position: [1800, 1000, -2000], scale: 0.3 },
-    focusAway: [-500, 1250, -2600],
-    clickable: true,
+    atmosphere: { color: '#e56f3e', altitude: 0.08 },
+    accent: '#e56f3e',
+    spin: 0.06,
+    focusAway: { position: [-500, 1250, -2600], scale: 0.3 },
+    focusFrom: [0, 0.25, 1],
+    href: '/explore/mars',
   },
 }
 

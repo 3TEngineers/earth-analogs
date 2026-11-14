@@ -65,6 +65,16 @@ FINE_REFERENCE = "InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49
 PURPOSES = json.loads((Path(__file__).resolve().parent / "content" / "purposes.json").read_text(encoding="utf-8"))
 
 
+# Past landings used for validation: one plain sentence each (the mock-era text carried a "MOCK." prefix).
+VALIDATION_SUMMARY = {
+    "chandrayaan-3": "India's 2023 lander, one of the landings closest to the lunar south pole, on old highland "
+                     "terrain lit by a low Sun.",
+    "curiosity": "NASA rover exploring the layered sediments of Mount Sharp inside Gale crater, a former lake basin.",
+    "perseverance": "NASA rover exploring an ancient river delta in Jezero crater, searching for signs of past life "
+                    "and caching samples.",
+}
+
+
 def clean(criteria: list[dict]) -> list[dict]:
     """Make criteria valid JSON: infinite distances become null with pass false."""
     out = []
@@ -108,6 +118,7 @@ def main() -> None:
 
     ch3 = copy.deepcopy(old_sites["chandrayaan-3"])
     ch3["purpose"] = None
+    ch3["summary"] = VALIDATION_SUMMARY["chandrayaan-3"]
     ch3["selection"] = {"goal": "Permanent base site", "role": "validation",
                         "criteria": clean(moon["chandrayaan3"]["criteria"]),
                         "note": "A good landing site — flat and always in view of Earth — but a normal day/night cycle "
@@ -125,6 +136,7 @@ def main() -> None:
     for site_id, name in [("curiosity", "Curiosity"), ("perseverance", "Perseverance")]:
         site = copy.deepcopy(old_sites[site_id])
         site["purpose"] = None
+        site["summary"] = VALIDATION_SUMMARY[site_id]
         check = next(v for v in mars["validation"] if v["name"] == name)
         failed = [c["label"].lower() for c in check["criteria"] if c["pass"] is False]
         site["selection"] = {
