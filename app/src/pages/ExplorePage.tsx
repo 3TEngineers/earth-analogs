@@ -33,7 +33,7 @@ export default function ExplorePage() {
   if (!isValid) return <Navigate to="/" replace />
 
   return (
-    <main className="pointer-events-none relative z-10 h-full">
+    <main className="pointer-events-none fixed inset-0 z-10">
       <SiteHeader />
       {data.status === 'ready' && data.sites.mock && (
         <p className="absolute top-12 left-4 font-mono text-xs text-different">Mock data</p>

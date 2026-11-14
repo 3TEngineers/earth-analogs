@@ -49,8 +49,8 @@ const INTRO_CAMERA = new THREE.Vector3(0, 260, 3400)
 const BASE_FOV = 45
 const FLY_MS = 1500
 const INTRO_MS = 3200
-/** Width reserved for the side panel on wide screens; the focused planet is centered in the rest. */
-const PANEL_WIDTH = 400
+/** Share of the screen height covered by the bottom sheet; the focused planet is centered in the space above it. */
+const SHEET_SHARE = 0.4
 /** How far the landing camera drifts with the mouse (world units). */
 const PARALLAX = { x: 70, y: 45 }
 
@@ -131,12 +131,14 @@ export class SpaceEngine {
 
     // Key light from the upper left, a cool rim light from behind, a low fill so night sides aren't flat black.
     this.scene.add(new THREE.AmbientLight(0x9fb4d9, 0.35))
+    // Lights ride with the camera, so whatever spot we fly to is lit from the upper left, never on the night side.
+    this.scene.add(this.camera)
     const sun = new THREE.DirectionalLight(0xfff4e6, 2.6)
-    sun.position.set(-900, 500, 800)
-    this.scene.add(sun)
+    sun.position.set(-700, 450, 300)
+    this.camera.add(sun)
     const rim = new THREE.DirectionalLight(0x6fb8ff, 1.4)
-    rim.position.set(700, 200, -900)
-    this.scene.add(rim)
+    rim.position.set(600, 150, -1200)
+    this.camera.add(rim)
 
     this.createStars()
     for (const id of PLANET_IDS) this.createPlanet(id)
@@ -187,17 +189,19 @@ export class SpaceEngine {
           const m = d as PointDatum
           return m.active ? '#ffffff' : m.emphasis === 'strong' ? accent : '#8a94a6'
         })
-        .pointAltitude((d) => ((d as PointDatum).active ? 0.08 : (d as PointDatum).emphasis === 'strong' ? 0.04 : 0.015))
-        .pointRadius((d) => ((d as PointDatum).emphasis === 'strong' ? 1.1 : 0.7))
+        // Flat beacons, not columns: a small bright disc on the surface, with radar-style rings for candidates.
+        .pointAltitude(0.003)
+        .pointRadius((d) => ((d as PointDatum).active ? 0.9 : (d as PointDatum).emphasis === 'strong' ? 0.6 : 0.4))
         .ringsData(data.filter((m) => m.active || m.emphasis === 'strong'))
         .ringColor((d: object) => {
           const m = d as PointDatum
           const rgb = m.active ? '255,255,255' : hexToRgb(accent)
           return (t: number) => `rgba(${rgb},${1 - t})`
         })
-        .ringMaxRadius((d) => ((d as PointDatum).active ? 6 : 3))
-        .ringPropagationSpeed(2)
-        .ringRepeatPeriod((d) => ((d as PointDatum).active ? 900 : 1600))
+        .ringMaxRadius((d) => ((d as PointDatum).active ? 5 : 2.5))
+        .ringPropagationSpeed((d) => ((d as PointDatum).active ? 2.5 : 1.2))
+        .ringRepeatPeriod((d) => ((d as PointDatum).active ? 700 : 2200))
+        .ringAltitude(0.002)
     }
   }
 
@@ -257,7 +261,7 @@ export class SpaceEngine {
       .globeImageUrl(config.texture)
       .bumpImageUrl(config.bump)
       .showAtmosphere(config.atmosphere !== null)
-      .pointResolution(16)
+      .pointResolution(32)
       .ringLat((d) => (d as PointDatum).lat)
       .ringLng((d) => (d as PointDatum).lon)
       .pointLat((d) => (d as PointDatum).lat)
@@ -389,10 +393,10 @@ export class SpaceEngine {
     this.updateViewOffset()
   }
 
-  /** On wide screens in focus mode, center the planet in the area left of the side panel. */
+  /** In focus mode, center the planet in the area above the bottom sheet. */
   private updateViewOffset() {
     const { clientWidth: w, clientHeight: h } = this.container
-    if (this.layout.kind === 'focus' && w >= 768) this.camera.setViewOffset(w, h, PANEL_WIDTH / 2, 0, w, h)
+    if (this.layout.kind === 'focus') this.camera.setViewOffset(w, h, 0, (h * SHEET_SHARE) / 2, w, h)
     else this.camera.clearViewOffset()
     this.camera.updateProjectionMatrix()
   }
