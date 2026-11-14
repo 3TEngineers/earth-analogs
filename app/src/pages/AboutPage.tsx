@@ -6,7 +6,7 @@ import { SiteHeader } from '../components/SiteHeader'
  */
 export function AboutPage() {
   return (
-    <main className="relative h-full overflow-y-auto px-4 pt-20 pb-12">
+    <main className="relative z-10 h-full overflow-y-auto bg-space/70 px-4 pt-20 pb-12 backdrop-blur-sm">
       <SiteHeader />
       <article className="mx-auto max-w-2xl space-y-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">About the project</h1>

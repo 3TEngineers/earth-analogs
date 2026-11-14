@@ -2,7 +2,7 @@
 
 Web application that presents the results. Owners: Deniz (`src/globe/`) and Kmar (`src/panels/`, `src/pages/`). Plan and steps: [`docs/PROJECT_PLAN.md`](../docs/PROJECT_PLAN.md).
 
-Stack: React + TypeScript + Vite, Tailwind CSS v4, `react-globe.gl`, Lucide icons, deployed on Vercel.
+Stack: React + TypeScript + Vite, Tailwind CSS v4, React Router, three.js + `three-globe` (one shared 3D scene), Lucide icons, deployed on Vercel.
 
 ## Run it
 
@@ -31,13 +31,27 @@ npm run lint     # oxlint
 
 | Route | File | What happens | Owner |
 |---|---|---|---|
-| `/` | `src/pages/LandingPage.tsx` | Star field, small Moon / Earth / Mars (`src/globe/PlanetLineup.tsx`), intro text, key numbers counted from the data. Clicking the Moon or Mars flies it to the center and grows it (`LAUNCH_MS`), then opens `/explore/<body>`. Earth is decoration. | Layout + planets: Deniz. Text: Kmar |
-| `/explore/moon`, `/explore/mars` | `src/pages/ExplorePage.tsx` | The URL sets `body` in the shared state; the rest (`site` → `earth`) is the shared state. Loaded lazily, so three.js isn't downloaded on the landing page. Leaving the page resets the selection. Unknown bodies redirect to `/`. | Globe: Deniz. Panels: Kmar |
+| `/` | `src/pages/LandingPage.tsx` | Intro text, buttons and key numbers (counted from the data) over the 3D Moon, Earth and Mars floating behind. Clicking the Moon or Mars (planet or button) opens `/explore/<body>`. Earth is decoration here. | Layout: Deniz. Text: Kmar |
+| `/explore/moon`, `/explore/mars` | `src/pages/ExplorePage.tsx` | The URL sets `body` in the shared state; the rest (`site` → `earth`) is the shared state. Leaving the page resets the selection. Unknown bodies redirect to `/`. | Globe: Deniz. Panels: Kmar |
 | `/about` | `src/pages/AboutPage.tsx` | Team, method, NASA data, references, AI usage. | Kmar |
 
 Shared layout pieces: `src/components/StarField.tsx` (background on every page) and `src/components/SiteHeader.tsx` (top bar).
 
-Planned (Deniz, D2–D4): NASA textures on the small planets and the globes; the landing planet hands over seamlessly to the 3D globe at the same size and spot.
+### The 3D scene (`src/globe/`, Deniz)
+
+One three.js scene sits behind every page and never unmounts, so page changes are one continuous animation:
+
+| Where | Scene |
+|---|---|
+| `/`, `/about` | **landing** — Moon, Earth and Mars float behind the text and spin slowly |
+| `/explore/<body>` | **focus** — that body flies to the center (left of the side panel on wide screens), the others drift far away; the user can drag to orbit. Its sites are markers: our candidates bright with pulsing rings, past landings muted |
+| site selected | the camera flies to the site |
+| `phase: 'earth'` | **focus on Earth** — markers are the site's training areas; the camera flies to the selected one |
+
+- `SpaceScene.tsx` — React side: turns the route + shared state into a layout and markers.
+- `space/SpaceEngine.ts` — three.js side: planets (`three-globe`), lights, camera, orbit controls, tweens, clicks and hover.
+- `space/planets.ts` — per-planet textures, colors, landing/away positions.
+- Textures (`public/textures/`, public domain): Moon — NASA SVS CGI Moon Kit (LRO); Mars — USGS Viking color mosaic + MOLA elevation; Earth — NASA Blue Marble (via three-globe examples). Credit them on the About page.
 
 ## Structure
 
