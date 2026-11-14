@@ -7,7 +7,8 @@ Shared context for every Claude session on this repo. Three teammates work in pa
 - **Event:** NASA Space Apps Challenge 2026, 14–15 November 2026 (48 hours).
 - **Team:** 3TE (GitHub org `3TEngineers`), three computer engineering students.
 - **Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars* — full brief in `docs/CHALLENGE.md`.
-- **Our approach:** not final yet. The current direction and every decision live in `docs/STATUS.md`.
+- **Our approach:** interactive website — pick a Moon/Mars landing site, fly to its Earth analogs, see where they match, where they don't and what could be tested there. Full plan in `docs/PROJECT_PLAN.md`; decisions in `docs/STATUS.md`.
+- **Data contract:** `docs/DATA_CONTRACT.md`. The pipeline writes `app/public/data/*.json`; the app only reads them.
 
 ## Language
 
@@ -29,11 +30,12 @@ Shared context for every Claude session on this repo. Three teammates work in pa
 
 | Area | Folder | Owner |
 |---|---|---|
-| Data pipeline (download, process, features) | `pipeline/` | TBD |
-| Science, analysis, report, presentation | `docs/`, `notebooks/` | TBD |
-| Web app | `app/` | TBD |
+| Backend: data, scoring, JSON output | `pipeline/`, `notebooks/` | Sadık (`SadikBoraErteni`) |
+| Frontend: globes and animation | `app/src/globe/` | Deniz (`DenizASL4N`) |
+| Frontend: panels, pages, content, slides | `app/src/panels/`, `app/src/pages/`, site text in `docs/` | Kmar (GitHub username TBD) |
+| Shared contract | `docs/DATA_CONTRACT.md`, `app/src/types/data.ts`, `pipeline/schema.py`, `app/public/data/` | Change only by agreement |
 
-Fill in names once the split is agreed and record it in `docs/STATUS.md`.
+Each person's step-by-step tasks (B0–B9, D1–D7, K1–K8) are in `docs/PROJECT_PLAN.md`.
 
 ## Data rules
 
