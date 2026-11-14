@@ -23,7 +23,8 @@ export interface PlanetConfig {
 /**
  * Texture sources (all public domain):
  * - Moon: NASA SVS CGI Moon Kit (LRO LROC color, LOLA elevation) — https://svs.gsfc.nasa.gov/4720
- * - Mars: USGS Viking colorized mosaic and MOLA elevation, via solarviews.com/cap/mars/marscyl1.htm
+ * - Mars: USGS Viking MDIM 2.1 color mosaic (4096 px, slightly warmed) and MOLA elevation, from the USGS
+ *   Astrogeology map server (planetarymaps.usgs.gov, layers MDIM21_color and MOLA_bw)
  * - Earth: NASA Blue Marble and topography, as shipped with three-globe's examples
  */
 export const PLANETS: Record<PlanetId, PlanetConfig> = {
