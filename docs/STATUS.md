@@ -27,6 +27,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## Done
 
+- 2026-11-14: K3b — `docs/LANDING_CONSTRAINTS.md`: published landing constraints for Pathfinder, MER, Phoenix, MSL, InSight and Mars 2020; the 11 Mars landings with coordinates; the 9 Artemis III regions (feature-centre coordinates); lunar base-site criteria. Section 5 has notes for B2: not all 11 landings can pass one latitude rule, and MSL's slope limit is < 30° at 2–5 **m**, not km.
 - 2026-11-14: New direction written up (`PROJECT_PLAN.md`, `PROJECT_HISTORY.md` §12); data contract v2 with `selection`; mock data now has one Moon and one Mars candidate (5 sites, 15 analogs), validated with `pipeline/schema.py`; app builds and lints.
 - 2026-11-14: D1 (part 1) — app scaffold in `app/`: Vite + React + TypeScript, Tailwind v4, `react-globe.gl`, Lucide. Shared UI state (`src/state/`), data loading (`src/data/`), proposed design tokens (`src/index.css`), placeholder globe with site/analog points and fly-to, temporary state panel. Runs on mock data; build and lint pass. See `app/README.md`.
 - 2026-11-14: `docs/PROJECT_HISTORY.md` — full step-by-step history of the decisions so far. Kmar (`kmarrabid-ai`) joined with write access.
@@ -42,7 +43,7 @@ Open question to verify before relying on it: the south pole is highland (anorth
 - Everyone runs `git config core.hooksPath .githooks` in their clone (blocks pushes to `main`).
 - Everyone creates a free NASA Earthdata Login account.
 - Sadık: B1 — confirm data access for the datasets in `docs/DATA_SOURCES.md`, now including MGS TES thermal inertia and PGDA lunar illumination / Earth visibility. Then B2 (screening).
-- **Kmar: K3b first (needed by Sadık for B2)** — published landing/base constraints and the Artemis III regions with coordinates, with sources, in `docs/LANDING_CONSTRAINTS.md`.
+- Sadık: read `docs/LANDING_CONSTRAINTS.md` §5 before setting B2 thresholds (validation of all 11 landings, slope scale).
 - Deniz: D2 — NASA textures, bump maps, atmosphere, idle rotation. D3 now shows candidates highlighted and past landings muted (`site.selection.role`).
 - Deniz + Kmar: agree on the design tokens in `app/src/index.css` (proposal: per-body accent colors, glass panels, Space Grotesk / Inter / JetBrains Mono).
 - **Kmar: start with `app/src/panels/README.md`** — setup, what already exists, the shared state API, exact specs and "done" for K1–K4, layout and design tokens. Next: K1 (site list + mission card) and K2 (site summaries); K3 (known analogs + test mapping) is needed by Sadık Saturday evening.
