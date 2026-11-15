@@ -104,6 +104,7 @@ class Analog(BaseModel):
     radiusKm: float
     known: bool
     knownRef: str | None
+    knownName: str | None = None  # the published analog it is, or the one whose region it lies in ("…, 135 km away")
     totalScore: float = Field(ge=0, le=100)
     scores: dict[str, DimensionScore]
     similarities: list[str]

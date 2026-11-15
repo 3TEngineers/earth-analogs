@@ -65,7 +65,7 @@ export function CalculationsPage() {
             <p className="eyebrow text-earth">What we did</p>
             <h2 className="mt-3 font-display text-2xl leading-tight font-semibold">Start from the maps and choose the sites ourselves</h2>
             <p className="mt-3 leading-relaxed text-ink/90">
-              We applied published mission limits to the whole of Mars and to the Moon&apos;s south pole, and kept what passed:
+              We applied published mission limits to the whole of Mars and to the Moon&apos;s south pole, and kept what passed:{' '}
               {nMars} landing zones and {nMoon} base sites that are ours. Known sites became the test of our rules, not the starting point.
             </p>
           </div>
@@ -186,17 +186,19 @@ export function CalculationsPage() {
         <Section id="match" n="Step 3 · Match" accent="var(--color-earth)" title="Ranking all land on Earth" onDetails={() => setDetail('match')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             Earth&apos;s land is cut into cells of about 25 km. Each cell gets a score from 0 to 100 on every dimension, and the
-            weighted total decides the ranking for a site. The three best places, at least 500 km apart, become its training
-            areas.
+            weighted total decides the ranking for a site. The three best places that are bare, inland and at least 500 km
+            apart become its training areas.
           </p>
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <Weights
               world="For a Mars site"
               parts={[
                 { label: 'Terrain', share: 30 },
-                { label: 'Rock type', share: 25 },
-                { label: 'Dryness', share: 25 },
-                { label: 'Temperature', share: 20 },
+                { label: 'Rock type', share: 20 },
+                { label: 'Dryness', share: 20 },
+                { label: 'Surface brightness', share: 10 },
+                { label: 'Temperature', share: 10 },
+                { label: 'Thin air', share: 10 },
               ]}
             />
             <Weights
@@ -213,16 +215,18 @@ export function CalculationsPage() {
           </div>
           <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
             <Measure term="Terrain">How steep the ground is across 25 km, compared at the same map scale on both worlds.</Measure>
-            <Measure term="Rock type">The rock family we expect at the site against a global rock map of Earth.</Measure>
-            <Measure term="Dryness">Yearly rainfall and how bare the ground is, from satellites.</Measure>
+            <Measure term="Rock type">The rock of the unit mapped at the site against a global rock map of Earth.</Measure>
+            <Measure term="Dryness">Rainfall averaged over 23 years and how bare the ground is, from satellites.</Measure>
             <Measure term="Temperature">Day-to-night swing of the surface temperature, and cold.</Measure>
+            <Measure term="Surface brightness (Mars)">How dark the ground is from orbit: dark rock and gravel, not bright sand or salt.</Measure>
+            <Measure term="Thin air (Mars)">Elevation. High ground has thinner air and stronger UV, though still far from Mars.</Measure>
             <Measure term="Low Sun (Moon)">How low the Sun stays in the sky, from latitude.</Measure>
             <Measure term="Frozen ground (Moon)">Mean surface temperature below freezing.</Measure>
           </dl>
           <Figure
             className="mt-6"
-            value="Top 1.7 %"
-            label="of Earth's land on climate alone: that is where our method puts five published Mars analog sites (Qaidam, Atacama, McMurdo Dry Valleys, Lut, Namib). It was never told they exist."
+            value="Top 1.6 %"
+            label="of Earth's land on climate alone: that is where our method puts five published Mars analog sites (Qaidam, Atacama, McMurdo Dry Valleys, Lut, Namib). It was never told they exist, and three of our 15 Mars areas fell inside those deserts on their own."
           />
         </Section>
 
@@ -233,9 +237,9 @@ export function CalculationsPage() {
             values, well-known places, and the raw data computed again from scratch.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <Figure value="100+" label="checks passed" />
+            <Figure value="159" label="checks passed" />
             <Figure value="1" label="warning, about map resolution; it does not change a result" />
-            <Figure value="0" label="failed, after we fixed the 15 errors the audit and our own review turned up" />
+            <Figure value="0" label="failed, after we fixed the 24 errors the audit and our own review turned up" />
           </div>
           <ul className="mt-6 grid gap-x-8 gap-y-2 text-[0.95rem] leading-relaxed text-ink/85 sm:grid-cols-2">
             <Tick>Elevation under 7 Mars landers: within 56 m of the published values</Tick>
@@ -243,7 +247,9 @@ export function CalculationsPage() {
             <Tick>All 37 known analog sites fall in the country their source names</Tick>
             <Tick>Every rule value of all {nMars + nMoon} sites recomputes exactly from the raw data</Tick>
             <Tick>The Mars zones come out the same wherever the map is cut</Tick>
-            <Tick>Rainfall, temperature, slopes and rock type tested at known places</Tick>
+            <Tick>Rainfall, temperature, slopes, brightness and rock type tested at known places</Tick>
+            <Tick>Every Earth map tested for being shifted, flipped or mirrored</Tick>
+            <Tick>All 24 training areas looked at from orbit: on land and bare</Tick>
           </ul>
         </Section>
 
@@ -253,11 +259,19 @@ export function CalculationsPage() {
           <h2 className="headline mt-3 text-3xl sm:text-4xl">What this study cannot tell you</h2>
           <ul className="mt-6 grid gap-x-10 gap-y-4 border-l-2 border-different/70 pl-5 leading-relaxed text-ink/85 md:grid-cols-2">
             <li>This is a first screening at kilometre scale on Mars and 240 m on the Moon. Real site selection uses metre-scale images and takes years.</li>
-            <li>Rock type on Earth comes from a coarse map, and the rock family at each site is our reading of its geology.</li>
+            <li>
+              Rock type on Earth comes from a coarse map (about 50 km), so a place mapped as basalt can be mostly sand on the
+              surface. On Mars we take the unit drawn on the USGS geologic map; naming its rock is our step.
+            </li>
             <li>Water history on Mars, such as old lakes and deltas, is not scored: no global dataset lets us compare it.</li>
-            <li>The lunar ridges are steeper than the polar places we found on Earth, so terrain matches for the Moon are weak. The reports say so.</li>
+            <li>
+              The lunar ridges are steeper than almost any cold, dry, bare place on Earth, so Moon matches are weak (totals
+              47–62 against 77–88 for Mars). Two Moon areas were picked for rock and slopes and are nowhere near a pole; we
+              allow one such place per site. Even 80° N has a far higher summer Sun than the lunar pole. The reports say so.
+            </li>
             <li>No place on Earth has lower gravity, a vacuum, Mars&apos; thin CO₂ air or space radiation. Every report lists this.</li>
-            <li>Rainfall is from one year of satellite data, which reads too high in the driest deserts; we treat anything under 100 mm a year as fully dry.</li>
+            <li>Satellite rainfall reads too high in the driest deserts, so we treat anything under 100 mm a year as fully dry.</li>
+            <li>The Mars elevation map is filled in between orbit tracks at its finest scale, so Mars looks a little smoother than it is.</li>
           </ul>
           <div className="mt-12 flex flex-wrap gap-3">
             <Link to="/explore/mars" className="press inline-flex items-center gap-2 rounded-full bg-mars px-6 py-3 font-display font-semibold text-space hover:bg-mars/90">
@@ -357,7 +371,7 @@ export function CalculationsPage() {
           <SiteTable sites={candidates('moon')} />
         </Detail>
         <Detail title="Data">
-          <p>NASA PGDA products from the LOLA laser altimeter: average illumination, Earth visibility and permanently shadowed regions at 120 m, and the LOLA slope map at 240 m, all compared on a 240 m grid.</p>
+          <p>NASA PGDA products from the LOLA laser altimeter: average illumination, Earth visibility and permanently shadowed regions at 120 m, and the LOLA slope map at 240 m, all compared on a 240 m grid. The slope map has no value where no laser track crossed a pixel (29 % of it); those pixels are left out, and ground with no measurement cannot pass.</p>
         </Detail>
       </Drawer>
 
@@ -435,27 +449,48 @@ export function CalculationsPage() {
       <Drawer open={detail === 'match'} onClose={() => setDetail(null)} eyebrow="Step 3 · Match" title="How a place on Earth gets its score">
         <Detail title="First pass: climate, everywhere">
           <p>
-            All land on a 0.25° grid, from 2023 satellite data: rainfall (GPM IMERG), vegetation and land cover (MODIS), and
-            surface temperature by day and night (MODIS). Water is left out (a cell must be at least 90 % land on two independent maps), and so are ice sheets; ice-free ground such as the Antarctic Dry
-            Valleys stays in. The 40 best cells per world, at least 300 km apart, go on to the next pass together with every
-            published analog site.
+            All land on a 0.25° grid, from satellite data: rainfall averaged over June 2000 – May 2023 (GPM IMERG), and for
+            2023 vegetation, land cover, ground brightness and surface temperature by day and night (MODIS). Water is left
+            out (a cell must be at least 90 % land on two independent maps), and so are ice sheets; ice-free ground such as
+            the Antarctic Dry Valleys stays in. The 100 best cells per world, at least 200 km apart, go on to the next pass
+            together with every published analog site.
           </p>
         </Detail>
         <Detail title="Second pass: each site">
           <ul className="list-disc space-y-1.5 pl-5">
             <li>
-              Terrain: all slopes inside a 25 km window at the site (MOLA 463 m or LOLA 240 m) against the same on Earth
-              (Copernicus DEM, resampled to the same pixel size). The two distributions are compared with the Wasserstein
-              distance W, and the score is exp(−W / 3°).
+              Terrain: all slopes inside a 25 km window at the site (MOLA 463 m or LOLA 240 m elevation) against the same on
+              Earth (Copernicus DEM, averaged to the same pixel size and measured the same way). The two distributions are
+              compared with the Wasserstein distance W, and the score is exp(−W / 3°).
             </li>
-            <li>Rock type: the expected rock family at the site against the GLiM global lithological map (Hartmann and Moosdorf, 2012).</li>
-            <li>Because the climate pass found almost no basalt or anorthosite, the 15 best-climate cells of each expected rock class are added.</li>
+            <li>Rock type: the rock class at the site against the GLiM global lithological map (Hartmann and Moosdorf, 2012).</li>
+            <li>Because the climate pass found almost no basalt or anorthosite, the 40 best-climate cells of each expected rock class are added.</li>
+            <li>Surface brightness (Mars): albedo from the TES instrument at the site against MODIS albedo on Earth, without snow. A difference of 0.20 scores 0.</li>
+            <li>Thin air (Mars): mean elevation of the window. 5,000 m scores 100; the air there is still about 90 times denser than on Mars.</li>
+            <li>A place with any score missing gets no total, so a gap in the data never helps it.</li>
           </ul>
+        </Detail>
+        <Detail title="The rock at each Mars zone">
+          <p>Read from the USGS global geologic map of Mars (Tanaka et al., 2014) at the zone&apos;s coordinates.</p>
+          <Table
+            head={['Zone', 'Mapped unit', 'Rock we look for on Earth']}
+            rows={[
+              ['A · Southern Utopia Planitia', 'AHv, Amazonian and Hesperian volcanic', 'Basalt'],
+              ['B · Northern Elysium Planitia', 'AHv', 'Basalt'],
+              ['C · Western Isidis Planitia', 'eHv, Early Hesperian volcanic', 'Basalt'],
+              ['D · Chryse–Acidalia plains', 'lHt, Late Hesperian transition', 'Mixed sediments'],
+              ['E · Eastern Meridiani Planum', 'HNhu, where Opportunity landed', 'Sandstone, as Opportunity found'],
+            ]}
+          />
+          <p>For the Moon it is the anorthosite-rich highland crust of the south pole.</p>
         </Detail>
         <Detail title="Choosing three, writing the report">
           <ul className="list-disc space-y-1.5 pl-5">
-            <li>Sites take turns picking their best remaining place, so no place serves two sites of the same world.</li>
+            <li>A training area must be at least 90 % land, under 25 % permanent ice and bare all year (vegetation index at most 0.30).</li>
+            <li>No place serves two sites of the same world. When two sites want the same place, it goes to the one it fits better.</li>
             <li>A site&apos;s three places are at least 500 km apart.</li>
+            <li>A Moon site takes at most one place outside the polar regions (below 60° latitude), so most of its list has a low Sun.</li>
+            <li>A place within 50 km of a published analog site, or in the same named desert within 400 km, is marked as known. At least one of the three must be new.</li>
             <li>A dimension that scores 70 or more becomes a &quot;similar&quot; line and a suggested test; 40 or less becomes a &quot;different&quot; line.</li>
           </ul>
         </Detail>
@@ -466,11 +501,16 @@ export function CalculationsPage() {
               ['Qaidam Basin, China', 'top 0.1 %'],
               ['Atacama, Chile', 'top 0.3 %'],
               ['McMurdo Dry Valleys, Antarctica', 'top 1.0 %'],
-              ['Lut Desert, Iran', 'top 1.2 %'],
-              ['Namib Desert, Namibia', 'top 1.7 %'],
-              ['Haughton crater, Canada (for the Moon)', 'top 0.3 %'],
+              ['Lut Desert, Iran', 'top 1.1 %'],
+              ['Namib Desert, Namibia', 'top 1.6 %'],
+              ['Haughton crater, Canada (for the Moon)', 'top 0.4 %'],
             ]}
           />
+          <p>
+            Three of our 15 Mars areas lie in the Lut, the Atacama and the Qaidam Basin, 140 to 300 km from the spots the
+            papers used; their reports are marked as known regions. The published spots themselves rank in the middle of
+            our final lists, mostly because the rock map calls them loose sediment.
+          </p>
           <p>It does not find Lake Salda as a match for Jezero crater: that likeness is in carbonate minerals and a lake delta, and no global dataset we have covers those.</p>
         </Detail>
       </Drawer>
@@ -484,8 +524,8 @@ export function CalculationsPage() {
               ['Inputs', '37 analog coordinates against country borders; 7 Artemis features against the USGS Gazetteer'],
               ['Mars data', 'Published elevations of 7 landing sites; a second elevation map around Gale crater; dust in Tharsis, Arabia and Amazonis, none on Syrtis Major; each mission against its own limits'],
               ['Moon data', 'Shackleton crater floor in shadow; total shadowed area against Mazarico et al. (2011); the 12° slope where IM-1 tipped over'],
-              ['Earth data', 'Rainfall at six known places, temperature at Dome Fuji, salt flats flat, Alps steep, basalt in Iceland'],
-              ['Outputs', 'Every sentence in a report agrees with its score; no missing values'],
+              ['Earth data', 'Rainfall at eight known places, temperature at Dome Fuji, salt flats flat, Alps steep, basalt in Iceland, a sand sea bright and a lava field dark; every map against the coastline or another map, shifted and flipped'],
+              ['Outputs', 'Every sentence in a report agrees with its score; every total is the weighted sum of its scores; every area inland, bare and free of ice; no missing values'],
             ]}
           />
         </Detail>
@@ -517,6 +557,27 @@ export function CalculationsPage() {
             <li>
               On the Moon any speck of permanent shadow counted as ice within reach. Now only shadowed areas of 1 km² or
               more count. The three ridges stayed the same.
+            </li>
+          </ul>
+        </Detail>
+        <Detail title="Errors found on the last day, on the Earth side">
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              The rock expected at two Mars zones was a guess (basin sediments). The USGS geologic map draws lava plains
+              there, so both are now matched to basalt.
+            </li>
+            <li>
+              Earth slopes were read from one elevation tile, which cut the 25 km window at the tile edge and made Arctic
+              ground look up to 40 % steeper than it is. The window is now put together from every tile it touches.
+            </li>
+            <li>A place with a missing score ranked above one with a known mismatch. Now every score must exist.</li>
+            <li>Rain came from a single year, vegetation and temperature from four months. Now 23 years and 12 months.</li>
+            <li>Areas inside the Atacama, the Qaidam Basin and the Lut were called new. They are now marked as known regions.</li>
+            <li>Sites picked their places in list order, and some Moon areas were green tundra or glaciers. Both fixed.</li>
+            <li>
+              The Moon slope map has no value in 29 % of its cells, and those were read as 45° cliffs. No unsafe ground
+              passed because of it, and the three ridges did not change, but the passing area was 19 km² and is 63 km². For
+              the terrain match, lunar slopes are now computed from the elevation map the same way as on Earth.
             </li>
           </ul>
         </Detail>

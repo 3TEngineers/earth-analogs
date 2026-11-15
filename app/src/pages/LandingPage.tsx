@@ -15,10 +15,10 @@ const PAIR_MS = 8000
  * Landing page ("/"): what the project is, told in one scroll over the fixed 3D scene.
  *   0 hero      the question, what an analog is, and a live pair: one of our sites linked to its match on Earth
  *   1 brief     the whole method in three steps
- *   2 mars      step 1 on Mars: the planet screened, 4 zones kept
+ *   2 mars      step 1 on Mars: the planet screened, 5 zones kept
  *   3 moon      step 1 on the Moon: 3 ridges at the south pole (the Moon tips its pole toward the viewer)
  *   4 check     step 2: the same rules run on real landings
- *   5 earth     step 3: 21 training areas
+ *   5 earth     step 3: 24 training areas
  *   6 doors     where to go next
  * Each section carries data-stage with the number above; the scene blends the planet poses of globe/space/story.ts
  * from the scroll position between section centres, so sections may be any height.
@@ -30,9 +30,9 @@ export function LandingPage() {
   const sites = useMemo(() => (data.status === 'ready' ? data.sites.sites : []), [data])
   const analogs = useMemo(() => (data.status === 'ready' ? data.analogs.analogs : []), [data])
   const count = (body: Body) => sites.filter((s) => s.body === body && s.selection.role === 'candidate').length
-  const mars = count('mars') || 4
+  const mars = count('mars') || 5
   const moon = count('moon') || 3
-  const areas = analogs.length || 21
+  const areas = analogs.length || 24
   const root = useStory()
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
@@ -181,7 +181,7 @@ export function LandingPage() {
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           We scored all land on Earth against each site: slopes measured at the same map scale, rock type, rainfall, bare
           ground and temperature, and for the Moon a low Sun and frozen ground. The result is {areas} places, from basalt
-          plains in the Sahara to the tundra of Victoria Island in the Arctic.
+          plains in the Sahara to the bare ground of Victoria Island in the Arctic.
         </p>
         <p className="story-item mt-6 border-l-2 border-different/80 pl-4 text-[0.95rem] leading-relaxed text-ink/80" style={step(3)}>
           No place on Earth has lower gravity, a vacuum, Mars&apos; thin air or space radiation. Every match says where it stops.

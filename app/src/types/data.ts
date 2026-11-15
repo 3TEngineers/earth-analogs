@@ -102,8 +102,11 @@ export interface Analog {
   lat: number;
   lon: number;
   radiusKm: number;
+  /** true = a published analog site, or a spot in the same named region as one (see knownName). */
   known: boolean;
   knownRef: string | null;
+  /** The published analog it is, or the one whose region it lies in with the distance. null for new places. */
+  knownName?: string | null;
   totalScore: number;
   scores: Record<string, DimensionScore>;
   similarities: string[];

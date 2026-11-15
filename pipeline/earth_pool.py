@@ -3,18 +3,22 @@
 Climate and surface features are about the same for every candidate on one body, so B3 builds a
 Mars-like pool and a Moon-like pool; B4 ranks each pool per candidate on terrain and minerals.
 
-Features on a 0.25 deg land grid, from 2023:
-  - precipitation, mm/yr     GPM IMERG monthly (12 months)
-  - vegetation, max NDVI     MODIS MOD13C2 (Jan, Apr, Jul, Oct)
-  - day-night LST swing, K   MODIS MOD11C3 (same months)
+Features on a 0.25 deg land grid:
+  - precipitation, mm/yr     GPM IMERG V07 Final climatology, June 2000 - May 2023 (one year is too noisy for
+                             deserts: Death Valley got a year's rain in a day in 2023). South of 80 S, where the
+                             climatology is empty, the 12 months of 2023 fill in
+  - vegetation, max NDVI     MODIS MOD13C2, all 12 months of 2023 (four months missed the green peak in places)
+  - day-night LST swing, K   MODIS MOD11C3, all 12 months of 2023
   - mean LST, K              MODIS MOD11C3 — below 273 K means frozen ground most of the year
   - snow/ice and barren %    MODIS MCD12C1 land cover — drops ice sheets (ice, not rock). A cell counts
                              as exposed ground if >= 10 % barren or < 50 % snow/ice: the McMurdo Dry
                              Valleys are 88 % "ice" and 12 % barren at 0.05 deg, and must stay in
                              (their warmest month is only ~263 K, so a temperature rule drops them too)
+  - albedo                   MODIS MCD43C3 white-sky shortwave albedo, snow-free, median of four dates in 2023
+                             (15 Jan, 15 Apr, 15 Jul, 15 Oct): how dark or bright the bare ground is
   - latitude                 low Sun for the lunar pole
 
-Downloads (Earthdata Login, ~900 MB) go to data/raw/earth/. Run from the repo root:
+Inputs: pipeline/fetch_earth.py (Earthdata Login) and docs/DATA_SOURCES.md. Run from the repo root:
     pipeline/.venv/Scripts/python pipeline/earth_pool.py
 """
 
@@ -33,8 +37,10 @@ OUT = ROOT / "data" / "interim"
 EARTH_RADIUS_KM = 6371.0
 
 CELL_DEG = 0.25
-POOL_SIZE = 40  # cells per body
-POOL_MIN_KM_APART = 300.0  # ours: pool entries come from different regions
+# The pool is what B4 measures terrain and rock on, so it must be wide: with 40 cells 300 km apart (first version)
+# terrain and rock could only reorder a thin sample of the world's deserts.
+POOL_SIZE = 100  # cells per body
+POOL_MIN_KM_APART = 200.0  # ours: pool entries come from different places
 # A training area must be inland, not a coastal strip. Two independent sources must agree (ours):
 MAX_WATER_PCT = 10.0  # MODIS land cover, IGBP water class (sea ice included)
 MIN_LAND_PCT = 90.0  # Natural Earth 10 m country polygons
@@ -78,16 +84,28 @@ def load_features() -> dict[str, np.ndarray]:
             for f in sorted((RAW / "MOD13C2").glob("*.hdf"))]
     day, night = np.array(day), np.array(night)
 
-    precip = None
+    year = None  # 2023 alone: only used where the climatology has no value
     for f in sorted((RAW / "GPM_3IMERGM").glob("*.HDF5")):
         month = int(re.search(r"\.2023(\d\d)01-", f.name).group(1))
         with h5py.File(f, "r") as h5:
             rate = h5["Grid/precipitation"][0].astype("float64")  # (lon 3600, lat 1800), mm/hr, lat ascending
         rate[rate < 0] = np.nan
         mm = rate.T[::-1] * 24 * calendar.monthrange(2023, month)[1]  # to (lat desc, lon), mm per month
-        precip = mm if precip is None else precip + mm
+        year = mm if year is None else year + mm
+    import rasterio
+    with rasterio.open(next((RAW / "imerg_clim").glob("IMERG-Final.CLIM.*.tif"))) as src:
+        clim = src.read(1).astype("float64")  # 1800 x 3600, mm/yr, row 0 = 90 N, col 0 = 180 W; missing = -9999.9
+    clim[clim < 0] = np.nan
+    precip = np.where(np.isfinite(clim), clim, year)
     # 0.1 deg -> 0.05 deg by repetition, then the same 0.25 deg blocks as MODIS
     precip = block_mean(np.repeat(np.repeat(precip, 2, axis=0), 2, axis=1), k)
+    precip_2023 = block_mean(np.repeat(np.repeat(year, 2, axis=0), 2, axis=1), k)
+
+    albedo = []
+    for f in sorted((RAW / "MCD43C3").glob("*.hdf")):
+        white_sky = read_modis(f, "Albedo_WSA_shortwave", 0.001, 32767)
+        white_sky[read_modis(f, "Percent_Snow", 1.0, 255) > 0] = np.nan  # the ground, not the snow on it
+        albedo.append(block_mean(white_sky, k))
 
     cover = SD(str(next((RAW / "MCD12C1").glob("*.hdf"))), SDC.READ)
     percent = cover.select("Land_Cover_Type_1_Percent")
@@ -103,6 +121,8 @@ def load_features() -> dict[str, np.ndarray]:
             "snow_ice_pct": snow_ice,
             "barren_pct": barren,
             "precip_mm": precip,
+            "precip_2023_mm": precip_2023,
+            "albedo": np.nanmedian(np.array(albedo), axis=0),
             "ndvi_max": np.nanmax(np.array(ndvi), axis=0),
             "swing_k": np.nanmean(day - night, axis=0),
             "mean_lst_k": np.nanmean((day + night) / 2, axis=0),

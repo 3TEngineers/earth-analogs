@@ -302,9 +302,9 @@
       "status": "candidate",
       "lat": 27.719,
       "lon": 126.719,
-      "summary": "Smooth lowland plains in the south of Utopia Planitia, about 900 km east of where China's Zhurong rover landed. The point deepest inside the largest safe area on Mars.",
+      "summary": "Smooth lowland plains in the south of Utopia Planitia, about 900 km east of where China's Zhurong rover landed. The point deepest inside the largest safe area on Mars. The USGS geologic map draws the same lava-plain unit here as in Elysium Planitia.",
       "processes": [
-        "Lowland plains deposits",
+        "Volcanic plains",
         "Wind erosion"
       ],
       "limits": [
@@ -484,9 +484,9 @@
       "status": "candidate",
       "lat": 10.719,
       "lon": 81.844,
-      "summary": "The flat floor of the Isidis impact basin, in its western part: about 500 km from Jezero crater, where Perseverance landed, and from the place where Beagle 2 came down in 2003.",
+      "summary": "The flat floor of the Isidis impact basin, in its western part: about 500 km from Jezero crater, where Perseverance landed, and from the place where Beagle 2 came down in 2003. The USGS geologic map draws it as Early Hesperian lava plains.",
       "processes": [
-        "Impact basin fill",
+        "Volcanic plains",
         "Wind erosion"
       ],
       "limits": [

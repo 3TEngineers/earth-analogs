@@ -24,8 +24,9 @@ pipeline/.venv/bin/python -m pip install -r pipeline/requirements.txt       # ma
 | `content/past_landings.json` | Why each past mission went where it did, and why a rule it fails did not matter for it — every statement with a source |
 | `content/purposes.json` | Why a mission would go to each of **our** candidates (Kmar; empty until written) |
 | `make_maps.py` | Draws the screening maps into `docs/images/` (for the team and the slides) |
-| `earth_pool.py` | B3: global 0.25° Earth land grid (precipitation, vegetation, temperature, land cover) and a Mars-like and a Moon-like pool of Earth candidates → `data/interim/earth_pool.json` |
-| `earth_ranking.py` | B4: per-candidate ranking of the Earth pools on terrain (slope distributions) and rock type (GLiM) → `data/interim/earth_rankings.json` |
+| `fetch_earth.py` | Downloads the Earth inputs of B3 (MODIS, GPM; ~4 GB, Earthdata Login) into `data/raw/earth/` |
+| `earth_pool.py` | B3: global 0.25° Earth land grid (precipitation, vegetation, temperature, land cover, albedo) and a Mars-like and a Moon-like pool of Earth candidates → `data/interim/earth_pool.json` |
+| `earth_ranking.py` | B4: per-candidate ranking of the Earth pools on terrain (slope distributions), rock type (USGS Mars geologic map vs GLiM) and, for Mars, surface brightness and elevation → `data/interim/earth_rankings.json` |
 | `build_analogs.py` | B5+B7+B8: 3 training areas per candidate, report text, writes `app/public/data/analogs.json` |
 | `audit.py` | Data accuracy audit: checks every output against independent references, see `docs/AUDIT.md`. Run after the chain; expect 0 FAIL. `audit.py mars moon` runs only those sections (no Earth files needed) |
 | `requirements.txt` | Python dependencies |

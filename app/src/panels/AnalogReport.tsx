@@ -63,7 +63,7 @@ export function AnalogReport({ site, analog, siblings, dimensions, onSelect, bac
       <header className="mt-5 grid grid-cols-[1fr_auto] items-start gap-x-5">
         <div className="min-w-0">
           <p className="stagger eyebrow text-earth" style={step(0)}>
-            Earth · Training area {analog.rank} of {siblings.length} · {analog.known ? 'Known analog site' : 'New place'}
+            Earth · Training area {analog.rank} of {siblings.length} · {analog.known ? 'Published analog region' : 'New place'}
           </p>
           <h2 className="stagger headline mt-2.5 text-[2rem] sm:text-[2.5rem]" style={step(1)}>
             {placeOf(analog.name)}
@@ -92,6 +92,20 @@ export function AnalogReport({ site, analog, siblings, dimensions, onSelect, bac
         </p>
         {action}
       </div>
+
+      {analog.known && analog.knownName && (
+        <p className="stagger mt-2.5 text-[0.85rem] leading-relaxed text-ink-muted" style={step(3)}>
+          Not a new find: this spot lies in a region scientists already use as an analog (
+          {analog.knownRef ? (
+            <a href={analog.knownRef} target="_blank" rel="noreferrer" className="text-ink/85 underline decoration-white/25 underline-offset-4 hover:text-ink">
+              {analog.knownName}
+            </a>
+          ) : (
+            <span className="text-ink/85">{analog.knownName}</span>
+          )}
+          ).
+        </p>
+      )}
 
       <div className="stagger mt-5" style={step(4)}>
         <Tabs

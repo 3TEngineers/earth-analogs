@@ -35,15 +35,18 @@ MARS_LIMITS = [
 # Context for each candidate, in screening order (deepest inside safe ground first). Names follow the
 # USGS Gazetteer feature each point lies in. Summaries are first drafts from the data; Kmar refines them.
 MARS_CONTEXT = [
-    ("mars-candidate-a", "Southern Utopia Planitia", ["Lowland plains deposits", "Wind erosion"],
+    # processes follow the unit the USGS global geologic map (SIM 3292) draws at each point, see earth_ranking.py
+    ("mars-candidate-a", "Southern Utopia Planitia", ["Volcanic plains", "Wind erosion"],
      "Smooth lowland plains in the south of Utopia Planitia, about 900 km east of where China's Zhurong rover "
-     "landed. The point deepest inside the largest safe area on Mars."),
+     "landed. The point deepest inside the largest safe area on Mars. The USGS geologic map draws the same "
+     "lava-plain unit here as in Elysium Planitia."),
     ("mars-candidate-b", "Northern Elysium Planitia", ["Volcanic plains", "Wind erosion"],
      "Lava plains in the north of Elysium Planitia, west of the Cerberus Fossae fractures and about 1,500 km "
      "from InSight's landing site."),
-    ("mars-candidate-c", "Western Isidis Planitia", ["Impact basin fill", "Wind erosion"],
+    ("mars-candidate-c", "Western Isidis Planitia", ["Volcanic plains", "Wind erosion"],
      "The flat floor of the Isidis impact basin, in its western part: about 500 km from Jezero crater, where "
-     "Perseverance landed, and from the place where Beagle 2 came down in 2003."),
+     "Perseverance landed, and from the place where Beagle 2 came down in 2003. The USGS geologic map draws "
+     "it as Early Hesperian lava plains."),
     ("mars-candidate-d", "Chryse-Acidalia plains", ["Outflow-channel deposits", "Wind erosion"],
      "Low plains on the boundary between Chryse and Acidalia Planitia, on the same meridian as "
      "ESA's Oxia Planum landing site about 600 km to the south."),
