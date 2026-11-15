@@ -42,10 +42,10 @@ def mars_map() -> Path:
     for name, lat, lon, _ in mars.LANDINGS:
         ax.plot(lon, lat, marker="^", ms=8, color=LANDING, mec="black", mew=0.8)
         ax.annotate(name, (lon, lat), xytext=(5, -11), textcoords="offset points", color="white", fontsize=8)
-    for name, lat, lon in mars.OTHER_TOUCHDOWNS:  # reached the surface, no working mission
+    for name, lat, lon in mars.OTHER_TOUCHDOWNS:
         ax.plot(lon, lat, marker="x", ms=7, color=LANDING, mew=1.5)
         ax.annotate(name, (lon, lat), xytext=(5, 5), textcoords="offset points", color="white", fontsize=7)
-    for name, lat, lon, _ in mars.OTHER_SITES:  # chosen by an agency, not flown yet
+    for name, lat, lon, _ in mars.OTHER_SITES:
         ax.plot(lon, lat, marker="D", ms=7, color="#7FDBFF", mec="black")
         ax.annotate(f"{name} (ESA, future)", (lon, lat), xytext=(6, -12), textcoords="offset points",
                     color="#7FDBFF", fontsize=8)
@@ -73,7 +73,6 @@ def mars_map() -> Path:
 def moon_map() -> Path:
     crs, transform, size, layers = moon.load_layers()
     psr = np.nan_to_num(layers["psr"]) > 0.5
-    # the passing ground exactly as moon_screening.py found it (shadow only counts from 1 km2 up)
     safe = np.load(ROOT / "data" / "interim" / "moon_safe.npz")["safe"]
     half_km = moon.HALF_EXTENT_M / 1000
     extent = (-half_km, half_km, -half_km, half_km)
@@ -86,12 +85,10 @@ def moon_map() -> Path:
     fig, ax = plt.subplots(figsize=(11, 11), dpi=110)
     im = ax.imshow(100 * layers["sunlit"], extent=extent, cmap="magma", vmin=0, vmax=70)
     ax.imshow(np.where(psr, 1.0, np.nan), extent=extent, cmap=ListedColormap(["#1E90FF"]), alpha=0.35)
-    # Polar lighting zone: only inside this circle is 50 % sunlight exceptional
     polar_r = abs(xy(moon.POLAR_LAT, 0)[1])
     ax.add_patch(plt.Circle((0, 0), polar_r, fill=False, ls="--", lw=1.2, ec="white", alpha=0.8))
     ax.annotate(f"{abs(moon.POLAR_LAT):.0f} S — polar lighting zone", (0, polar_r), xytext=(0, 6),
                 textcoords="offset points", ha="center", color="white", fontsize=9)
-    # Passing patches are tiny (a few hundred metres) — draw a ring around each so they show
     labels, n = ndimage.label(safe)
     for r, c in ndimage.center_of_mass(safe, labels, range(1, n + 1)):
         x, y = transform * (c + 0.5, r + 0.5)
@@ -100,7 +97,7 @@ def moon_map() -> Path:
         x, y = xy(lat, lon)
         ax.plot(x, y, marker="s", ms=9, mfc="none", mec="#7FDBFF", mew=1.5)
         ax.annotate(name, (x, y), xytext=(7, -12), textcoords="offset points", color="#7FDBFF", fontsize=8)
-    for name, lat, lon in moon.POLAR_LANDINGS:  # real landings inside the map
+    for name, lat, lon in moon.POLAR_LANDINGS:
         x, y = xy(lat, lon)
         ax.plot(x, y, marker="^", ms=8, color=LANDING, mec="black", mew=0.8)
         ax.annotate(name, (x, y), xytext=(6, 5), textcoords="offset points", color="white", fontsize=8)
@@ -123,7 +120,6 @@ def moon_map() -> Path:
     fig.savefig(out)
     plt.close(fig)
 
-    # Zoom on the pole, where the near-NASA candidates sit
     ax_zoom = 60
     fig, ax = plt.subplots(figsize=(10, 10), dpi=110)
     ax.imshow(100 * layers["sunlit"], extent=extent, cmap="magma", vmin=0, vmax=70)

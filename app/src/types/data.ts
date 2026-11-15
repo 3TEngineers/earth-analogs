@@ -1,10 +1,7 @@
-// Types for the files the pipeline writes into app/public/data.
-// Keep in sync with docs/DATA_CONTRACT.md and pipeline/schema.py.
 
 export type Body = 'moon' | 'mars';
 export type Confidence = 'high' | 'medium' | 'low';
 
-/** One landing/base criterion checked for a site, e.g. elevation ≤ -1 km. */
 export interface Criterion {
   id: string;
   label: string;
@@ -13,20 +10,14 @@ export interface Criterion {
   rule: string;
   pass: boolean | null;
   source: string;
-  /** Past landings only: why a rule the site fails did not matter for that mission. */
   why?: string | null;
 }
 
-/**
- * Why a site is on the list. Candidates are sites we found; past landings
- * are run through the same criteria to validate them ("validation").
- */
 export interface Selection {
   goal: string;
   role: 'candidate' | 'validation';
   criteria: Criterion[];
   note: string;
-  /** Past landings only: the limits the mission's own team set, checked with our data. */
   missionRules?: Criterion[];
 }
 
@@ -45,7 +36,6 @@ export interface Site {
   limits: string[];
   image: string | null;
   selection: Selection;
-  /** Candidates: why a mission would go there. Past landings: why the mission went there. With sources; null until written. */
   purpose: Purpose | null;
 }
 
@@ -54,7 +44,6 @@ export interface Purpose {
   sources: string[];
 }
 
-/** Past landings shown on the globes as name-only markers (no card, no fly-to). */
 export interface Landing {
   name: string;
   body: Body;
@@ -102,10 +91,8 @@ export interface Analog {
   lat: number;
   lon: number;
   radiusKm: number;
-  /** true = a published analog site, or a spot in the same named region as one (see knownName). */
   known: boolean;
   knownRef: string | null;
-  /** The published analog it is, or the one whose region it lies in with the distance. null for new places. */
   knownName?: string | null;
   totalScore: number;
   scores: Record<string, DimensionScore>;

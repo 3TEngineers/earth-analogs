@@ -8,12 +8,6 @@ import { candidateLetter, placeOf } from '../panels/format'
 import { SidePanel } from '../panels/ui'
 import type { Analog, Body, Site } from '../types/data'
 
-/**
- * Earth page ("/earth", "/earth/<training area id>"): every training area we found, on one globe.
- * <SpaceScene> shows Earth with all areas as markers, coloured by the world they stand in for (Mars or the Moon).
- * The panel lists them under the site each one belongs to; picking one opens its report and flies the globe there.
- * The selection lives in the URL, so a report can be linked to.
- */
 export function EarthPage() {
   const { analogId } = useParams()
   const navigate = useNavigate()

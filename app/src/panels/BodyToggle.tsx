@@ -7,7 +7,6 @@ const bodies: { id: Body; label: string }[] = [
   { id: 'moon', label: 'Moon' },
 ]
 
-/** Mars | Moon switch for phones, where the header links sit behind the menu. The body lives in the URL (/explore/<body>). */
 export function BodyToggle() {
   const { body } = useAppState()
   const navigate = useNavigate()

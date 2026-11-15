@@ -1,17 +1,5 @@
 @import 'tailwindcss';
 
-/*
- * Shared design tokens. Use them through Tailwind classes:
- * bg-space, bg-panel, text-ink, text-ink-muted, text-accent, border-line, text-similar, text-different,
- * text-moon / text-mars / text-earth, font-display, font-sans, font-mono.
- *
- * Type: Jost for headings and names (a Futura descendant; Futura is the face on the Apollo 11 plaque),
- * IBM Plex Sans for reading text, IBM Plex Mono for coordinates, values and units.
- *
- * The accent follows the body on screen: AppStateProvider sets data-body="moon|mars|earth" on <html>.
- * A section can also pin its own accent with style="--body-accent: var(--color-mars)".
- */
-
 :root {
   --body-accent: #cfd4dc;
 }
@@ -46,7 +34,6 @@
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* Motion tokens (Emil Kowalski's curves): enter/settle → out, on-screen moves → in-out. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -80,7 +67,6 @@ p {
   outline-offset: 2px;
 }
 
-/* Small caps label above a heading or a group: Jost, spaced, like the lettering on a mission plaque. */
 @utility eyebrow {
   font-family: var(--font-display);
   font-size: 0.75rem;
@@ -90,7 +76,6 @@ p {
   text-transform: uppercase;
 }
 
-/* Headline: Jost, tight. Size comes from the text-* class next to it. */
 @utility headline {
   font-family: var(--font-display);
   font-weight: 600;
@@ -98,7 +83,6 @@ p {
   line-height: 1.04;
 }
 
-/* Dark glass for panels and cards that sit over the 3D scene. */
 @utility glass {
   background-color: var(--color-panel);
   border: 1px solid var(--color-line);
@@ -106,14 +90,12 @@ p {
   box-shadow: 0 24px 70px rgb(0 0 0 / 0.45);
 }
 
-/* Text straight on the sky: a soft dark halo keeps it readable where a planet or stars pass behind it. */
 @utility on-sky {
   text-shadow:
     0 1px 2px rgb(4 6 11 / 0.9),
     0 2px 26px rgb(4 6 11 / 0.95);
 }
 
-/* Add to elements whose accent color should fade when the body changes. */
 .accent-transition {
   transition:
     color 600ms ease,
@@ -121,10 +103,6 @@ p {
     border-color 600ms ease;
 }
 
-/*
- * Entrance: text arrives once the planets are in view (SpaceScene sets data-scene-ready on <html>).
- * Stagger with style="--i: 0|1|2…" (70 ms apart). Hidden until ready, so text never sits on an empty sky.
- */
 .reveal {
   opacity: 0;
 }
@@ -152,7 +130,6 @@ p {
   }
 }
 
-/* Loader line: visible until the scene is ready, then fades away. */
 .scene-loader {
   transition: opacity 400ms var(--ease-out);
 }
@@ -160,7 +137,6 @@ p {
   opacity: 0;
 }
 
-/* Tactile buttons and links: lift on hover (fine pointers only), press down on click. */
 .press {
   transition:
     transform 160ms var(--ease-out),
@@ -178,7 +154,6 @@ p {
   }
 }
 
-/* Panel content swaps (list / site / tab): the block arrives from blur, its .stagger children one after another (--i). */
 .panel-in {
   animation: blur-in 550ms var(--ease-out) both;
 }
@@ -199,10 +174,6 @@ p {
   }
 }
 
-/*
- * Landing story: each [data-stage] section gets data-in-view while it is on screen (LandingPage).
- * Its .story-item children arrive from blur and leave the same way, staggered with style="--i: 0|1|2…".
- */
 .story-item {
   opacity: 0;
   transform: translateY(22px);
@@ -219,7 +190,6 @@ p {
   filter: blur(0);
 }
 
-/* The pair card on the first screen: its text swaps with a quick fade each time the pair changes. */
 .pair-swap {
   animation: reveal-fade 500ms ease both;
 }
@@ -233,7 +203,6 @@ p {
   }
 }
 
-/* Side drawer (calculation details): slides in from the right over a dimmed page. */
 dialog.drawer {
   margin: 0 0 0 auto;
   height: 100dvh;
@@ -275,7 +244,6 @@ dialog.drawer::backdrop {
   .press:hover {
     transform: none;
   }
-  /* Reduced, not removed: keep the fade, drop the movement and blur. */
   :root[data-scene-ready] .reveal {
     animation: reveal-fade 400ms ease both;
   }

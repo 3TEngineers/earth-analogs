@@ -31,21 +31,14 @@ DATA = ROOT / "app" / "public" / "data"
 INTERIM = ROOT / "data" / "interim"
 NE = ROOT / "data" / "raw" / "earth" / "naturalearth"
 
-MIN_ANALOG_KM_APART = 500.0  # ours: three clearly different places
-MIN_KM_FROM_OTHER_CANDIDATES = 300.0  # ours: an Earth place serves one candidate per body, so the
-# reports don't show the same three places
-KNOWN_MATCH_KM = 50.0  # KNOWN_ANALOGS.md: coordinates are often proxies
-# A place in the same named desert or basin as a published analog is not "new", even 200 km from the spot the
-# paper used: Atacama and Qaidam are whole regions. Same Natural Earth region and within this distance (ours).
+MIN_ANALOG_KM_APART = 500.0
+MIN_KM_FROM_OTHER_CANDIDATES = 300.0
+KNOWN_MATCH_KM = 50.0
 KNOWN_REGION_KM = 400.0
-# What a training area must be, on top of B3's land mask (ours). Known analogs are ranked without these rules.
-MAX_PICK_ICE_PCT = 25.0  # at least three quarters free of permanent snow and ice (MODIS land cover)
-MAX_PICK_NDVI = 0.30  # bare or sparsely vegetated all year: green tundra is no stand-in for the Moon or Mars
-MIN_PICK_LAND_SHARE = 0.90  # inland, measured on the Natural Earth 10 m coastline itself (not its raster)
-# Moon: at most one of a site's three areas may lie outside the polar regions (ours). The low Sun is only a 20 %
-# score, so a place with the right rock and slopes can win without it (the Tibetan Plateau, the Peruvian Andes);
-# one such place shows that trade-off, but most of the list must have a low Sun.
-MOON_POLAR_LAT = 60.0  # where the "Low Sun" score starts to rise above 0
+MAX_PICK_ICE_PCT = 25.0
+MAX_PICK_NDVI = 0.30
+MIN_PICK_LAND_SHARE = 0.90
+MOON_POLAR_LAT = 60.0
 MOON_MAX_NON_POLAR = 1
 SIMILAR, DIFFERENT = 70, 40
 
@@ -84,7 +77,7 @@ DATA_SOURCES = {
               "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
               "https://doi.pangaea.de/10.1594/PANGAEA.788537"],
 }
-ALWAYS_DIFFERENT = {  # NASA NSSDC fact sheets: Mars 6.36 mb surface pressure, 3.71 m/s2; Moon 1.62 m/s2
+ALWAYS_DIFFERENT = {
     "mars": "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), "
             "0.38 g gravity and no global magnetic field to block radiation",
     "moon": "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity "
@@ -207,7 +200,7 @@ class Namer:
     def __call__(self, lat: float, lon: float, rock: str | None, median_slope: float | None = None) -> tuple[str, str]:
         point = Point(lon, lat)
         countries = self.countries[self.countries.contains(point)]
-        if countries.empty:  # small islands fall between polygons: nearest country within ~1 degree
+        if countries.empty:
             distance = self.countries.geometry.distance(point)
             countries = self.countries[distance <= 1.0].assign(d=distance).sort_values("d")
         country = next(iter(countries["NAME"]), None)
@@ -245,11 +238,10 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
                 f"Ground much {'brighter' if here > there else 'darker'} than at the site (albedo {here:.2f} vs {there:.2f})")
     if dim == "altitude":
         elevation = entry.get("elevation_m") or 0
-        pressure = round(100 * float(np.exp(-elevation / 8434.0)))  # scale height of Earth's lower atmosphere
+        pressure = round(100 * float(np.exp(-elevation / 8434.0)))
         return (f"High ground at {elevation:,} m: air pressure about {pressure} % of sea level, and stronger UV" if good else
                 f"Low ground at {elevation:,} m: air pressure about {pressure} % of sea level, against under 1 % on Mars")
     if dim == "sun_angle":
-        # highest Sun of the year: 90 - latitude + Earth's axial tilt (23.44 deg); about 1.5 deg at the lunar pole
         top = 90.0 - abs(entry["lat"]) + 23.44
         return (f"The Sun stays low at {abs(entry['lat']):.0f}° latitude (never above about {top:.0f}°), with long shadows" if good else
                 f"The Sun climbs to about {min(top, 90.0):.0f}° here; at the lunar pole it stays within about 1.5° of the horizon")
@@ -300,9 +292,8 @@ def key_words(name: str) -> set[str]:
 
 def candidate_entries(rank: dict, known: list[dict], grid, namer: "Namer") -> list[dict]:
     seen, entries = set(), []
-    for e in rank["ranked"]:  # dedupe: a cell can be in both the climate and the rock pool
+    for e in rank["ranked"]:
         key = (round(e["lat"], 2), round(e["lon"], 2))
-        # "complete": every score exists, so missing data never helps a place (earth_ranking.py)
         if e.get("complete") and key not in seen and fit_to_train(e, grid, namer.land):
             seen.add(key)
             entries.append(e)
@@ -355,7 +346,7 @@ def pick_best_pairs(sites: list[dict], rankings: dict, known: dict, grid, namer:
             sid, e = max(offers, key=lambda o: o[1]["total"])
             picks[sid].append(e)
             waiting.remove(sid)
-    for s in sites:  # contract: at least one new candidate per site
+    for s in sites:
         ps = picks[s["id"]]
         if ps and all(p["known_match"] or p["known_region"] for p in ps):
             new = next((e for e in entries[s["id"]] if not e["known_match"] and not e["known_region"] and all(
@@ -389,9 +380,9 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
         different = [d for d in dims if scores[d]["score"] is not None and scores[d]["score"] <= DIFFERENT]
         test_list = []
         for d in similar:
-            if d == "temperature":  # temperature tests are weak evidence (KNOWN_ANALOGS §3)
+            if d == "temperature":
                 continue
-            if d == "aridity" and body == "moon":  # the aridity tests are about life detection, a Mars goal
+            if d == "aridity" and body == "moon":
                 continue
             if d in tests:
                 wording, examples = tests[d]

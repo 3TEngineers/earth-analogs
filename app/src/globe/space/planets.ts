@@ -1,40 +1,22 @@
 import { assetUrl } from '../../data/assetUrl'
 
-/** The three bodies in the shared 3D scene. */
 export type PlanetId = 'moon' | 'earth' | 'mars'
 
 export interface PlanetConfig {
   id: PlanetId
   label: string
   texture: string
-  /** 8192 × 4096 version, swapped in once the scene is running (desktop only, see SpaceEngine.loadSharpTextures). */
   sharpTexture: string
   bump: string
   bumpScale: number
   atmosphere: { color: string; altitude: number } | null
-  /** Accent used for markers on this planet (matches the CSS body colors in index.css). */
   accent: string
-  /** Turn rate while it floats in the story (radians per second). */
   spin: number
-  /** Where it waits while another body is in focus (world units, globe radius = 100): far away, never behind a panel. */
   focusAway: { position: [number, number, number]; scale: number }
-  /** Direction the camera looks from when the body first comes into focus (the Moon is seen from below: its sites are at the south pole). */
   focusFrom: [number, number, number]
-  /** Where a click on the planet leads from the landing page. */
   href: string
 }
 
-/**
- * Texture sources (all public domain):
- * - Moon: NASA SVS CGI Moon Kit (LRO LROC color, LOLA elevation) — https://svs.gsfc.nasa.gov/4720
- * - Mars: USGS Viking MDIM 2.1 color mosaic (4096 px, slightly warmed) and MOLA elevation, from the USGS
- *   Astrogeology map server (planetarymaps.usgs.gov, layers MDIM21_color and MOLA_bw)
- * - Earth: NASA Blue Marble and topography, as shipped with three-globe's examples
- * 8K versions (textures/*-8k.jpg, built by pipeline/fetch_textures.py):
- * - Moon: the same kit's lroc_color_poles_8k.tif, tone matched to moon.jpg
- * - Mars: USGS MDIM21_color at 8192 × 4096, tone matched to mars.jpg
- * - Earth: NASA GIBS BlueMarble_ShadedRelief_Bathymetry at 8192 × 4096
- */
 export const PLANETS: Record<PlanetId, PlanetConfig> = {
   moon: {
     id: 'moon',

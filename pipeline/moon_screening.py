@@ -31,59 +31,42 @@ OUT = ROOT / "data" / "interim"
 PGDA = "https://pgda.gsfc.nasa.gov/data/MoonIllumination"
 LOLA_POLAR = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img"
 SOURCES = {
-    "sunlit": f"{PGDA}/AVGVISIB_75S_120M_201608.TIF",  # fraction of time lit, 0-1
-    "earth": f"{PGDA}/AVGVISIB_75S_120M_201608_EARTH.TIF",  # fraction of time Earth in view, 0-1
-    "psr": f"{PGDA}/LPSR_75S_120M_201608.TIF",  # 1 = permanently shadowed
-    "slope": f"{LOLA_POLAR}/ldsm_75s_240m.lbl",  # slope, degrees
+    "sunlit": f"{PGDA}/AVGVISIB_75S_120M_201608.TIF",
+    "earth": f"{PGDA}/AVGVISIB_75S_120M_201608_EARTH.TIF",
+    "psr": f"{PGDA}/LPSR_75S_120M_201608.TIF",
+    "slope": f"{LOLA_POLAR}/ldsm_75s_240m.lbl",
 }
 
-SLOPE_MISSING = 0  # stored value of a slope-map pixel with no measurement (not in the label; found by counting)
+SLOPE_MISSING = 0
 MOON_RADIUS_M = 1737400.0
 PIXEL_M = 240.0
-# The whole 75 S product (~75 deg S at the edges). 250 km + 854 x 240 m, so pixel boundaries match the
-# first 250 km run exactly — the best-lit ridges are within a few % of each other and a shifted grid
-# reorders them.
 HALF_EXTENT_M = 250_000.0 + 854 * 240.0
 
-# Thresholds: sunlit is anchored to published values; the rest are ours
-# ours: the best published spots are lit ~85-95 % of the time, but that is 2-10 m above ground on a
-# 20 m terrain model. PGDA is at the surface and we average it to 240 m, so its peak is ~72 % and
-# 50 % already means the top ~1 % of the south-pole grid.
 MIN_SUNLIT = 0.50
-MIN_EARTH = 0.50  # ours: Earth in view at least half the time
-MAX_SLOPE_DEG = 10.0  # ours. For scale: ISRO built the Chandrayaan-3 lander for slopes up to 12 deg
-MAX_PSR_KM = 10.0  # ours: ice within a short traverse
-# ours: only shadowed areas of at least 1 km2 count as a place to look for ice. On the 240 m grid a single
-# shadowed 120 m cell marks its whole pixel, and thousands of such specks would make "distance to shadow"
-# pass almost anywhere near the pole. Patches are sized on the 120 m map itself (shadow_distance_km):
-# 51,562 patches, 2,306 of them >= 1 km2.
+MIN_EARTH = 0.50
+MAX_SLOPE_DEG = 10.0
+MAX_PSR_KM = 10.0
 MIN_PSR_KM2 = 1.0
-# 2 x 2 pixels (~480 m) must pass: room for a landing pad and a base. Well-lit ground is on narrow
-# ridges, so 3 x 3 (~720 m) left almost nothing.
 PAD_PX = 2
 MIN_KM_BETWEEN_CANDIDATES = 30.0
-FAR_FROM_ARTEMIS_KM = 40.0  # ours: "outside NASA's regions" = > 40 km from every named feature
+FAR_FROM_ARTEMIS_KM = 40.0
 FAR_MIN_KM_APART = 30.0
-# Only search the polar lighting regime. Flat ground is lit ~20 % of the time at 86-90 S but ~40 % at
-# 78-82 S (an ordinary day/night cycle with ~2-week nights), so 50 % is exceptional only near the pole.
 POLAR_LAT = -84.0
 
-ARTEMIS = [  # docs/LANDING_CONSTRAINTS.md §3 — feature centres, not exact regions
-    ("Peak near Cabeus B", -82.259, -54.585),  # USGS Gazetteer 8058 (audit: KNOWN list had -82.40, -53.00)
-    ("Haworth", -87.45, -5.17),  # USGS Gazetteer 14502 (audit: Wikipedia value -86.9, -4.0 was 17 km off)
+ARTEMIS = [
+    ("Peak near Cabeus B", -82.259, -54.585),
+    ("Haworth", -87.45, -5.17),
     ("Malapert Massif", -85.98, -1.67),
     ("Mons Mouton (and Plateau)", -84.60, 31.00),
     ("Nobile Rim 1 and 2", -85.28, 53.27),
     ("de Gerlache Rim 2", -88.48, -88.34),
     ("Slater Plain", -88.08, 111.29),
 ]
-ARTEMIS_RADIUS_KM = 25.0  # regions sit near, not on, the named feature
+ARTEMIS_RADIUS_KM = 25.0
 
-# Robotic landers that reached the south polar region, as a check on real landing sites. They were built
-# for about one lunar day, so they needed a safe spot in daylight, not year-round light or ice.
 POLAR_LANDINGS = [
-    ("IM-1 Odysseus", -80.13, 1.44),  # NASA/LRO: 80.13 S, 1.44 E, on a 12 deg slope; tipped over (2024)
-    ("IM-2 Athena", -84.7906, 29.1957),  # LROC: Mons Mouton; ended on its side in a small crater (2025)
+    ("IM-1 Odysseus", -80.13, 1.44),
+    ("IM-2 Athena", -84.7906, 29.1957),
 ]
 
 
@@ -118,7 +101,7 @@ def read_layer(path: Path, crs, transform: Affine, size: int, resampling: Resamp
     """One layer on the target grid. `missing` is a stored value that means "no measurement" where the label
     does not declare one."""
     with rasterio.open(path) as src:
-        scale, offset = src.scales[0] or 1.0, src.offsets[0] or 0.0  # all layers are scaled int16
+        scale, offset = src.scales[0] or 1.0, src.offsets[0] or 0.0
         gaps = {} if missing is None else {"src_nodata": missing, "nodata": -32768}
         with WarpedVRT(src, crs=crs, transform=transform, width=size, height=size, resampling=resampling,
                        **gaps) as vrt:
@@ -156,12 +139,8 @@ def load_layers():
     layers = {
         "sunlit": read_layer(paths["sunlit"], crs, transform, size, Resampling.average),
         "earth": read_layer(paths["earth"], crs, transform, size, Resampling.average),
-        "psr": read_layer(paths["psr"], crs, transform, size, Resampling.max),  # any shadow: maps and the audit
+        "psr": read_layer(paths["psr"], crs, transform, size, Resampling.max),
         "shadow_km": shadow_distance_km(paths["psr"], crs, transform, size),
-        # The slope map stores 0 in the 29 % of its pixels no laser track crossed, and with its scaling 0 reads as
-        # exactly 45 deg. Those pixels are left out of the average; a pixel with no measurement at all stays empty
-        # and cannot pass. (Until the 15 Nov Earth audit they counted as 45 deg slopes: no unsafe ground passed,
-        # but measured ground next to a gap failed.)
         "slope": read_layer(paths["slope"], crs, transform, size, Resampling.average, missing=SLOPE_MISSING),
     }
     return crs, transform, size, layers
@@ -219,7 +198,7 @@ def check_point_65s(lat: float, lon: float) -> dict:
         with rasterio.open(path) as src:
             row, col = to_pixel(src.crs, src.transform, lat, lon)
             scale, offset = src.scales[0] or 1.0, src.offsets[0] or 0.0
-            half = 125 if name == "psr" else 1  # psr: 60 km window to find the nearest useful shadow
+            half = 125 if name == "psr" else 1
             from rasterio.windows import Window
             data = src.read(1, window=Window(col - half, row - half, 2 * half + 1, 2 * half + 1), masked=True)
             data = data.astype("float32") * scale + offset
@@ -236,7 +215,7 @@ def check_point_65s(lat: float, lon: float) -> dict:
         row, col = dem.index(x, y)
         z = dem.read(1, window=Window(col - 2, row - 2, 5, 5)).astype("float64") * (dem.scales[0] or 1.0)
         dy = abs(dem.transform.e)
-        dx = abs(dem.transform.a) * np.cos(np.radians(lat))  # equirectangular: x pixels shrink with latitude
+        dx = abs(dem.transform.a) * np.cos(np.radians(lat))
         gy, gx = np.gradient(z, dy, dx)
         values["slope"] = float(np.median(np.degrees(np.arctan(np.hypot(gx, gy)))))
     return values
@@ -264,12 +243,8 @@ def main() -> None:
         return {"sunlit": float(np.nanmedian(sunlit[window])), "earth": float(np.nanmedian(earth[window])),
                 "slope": float(np.nanmedian(slope[window])), "psr_km": float(psr_km[row, col])}
 
-    # Two groups of candidates:
-    #   best overall  — best-lit passing spots (these land next to NASA's regions: a cross-check)
-    #   away from NASA — best-lit passing spots > 75 km from every Artemis feature (a new proposal)
     km_to_artemis = np.min([great_circle_km(lat, lon, a[1], a[2]) for a in ARTEMIS], axis=0)
     groups = [("best overall", np.where(safe, sunlit + 0.25 * earth, -np.inf), MIN_KM_BETWEEN_CANDIDATES),
-              # ranked on the 3 x 3 mean so a single lucky pixel can't win
               ("away from NASA", np.where(safe & (km_to_artemis > FAR_FROM_ARTEMIS_KM) & (lat <= POLAR_LAT),
                                           ndimage.uniform_filter(np.nan_to_num(sunlit), size=3), -np.inf),
                FAR_MIN_KM_APART)]
@@ -285,12 +260,11 @@ def main() -> None:
                 continue
             crit = criteria(values_at(row, col))
             if not all(c["pass"] for c in crit):
-                continue  # quality gate: the median over the ~720 m neighbourhood must pass too, not just one pixel
+                continue
             if group == "away from NASA":
-                # quality gate: at least as well lit as our weakest best-overall candidate
                 weakest = min(c["criteria"][0]["value"] for c in candidates if c["group"] == "best overall")
                 if crit[0]["value"] < weakest:
-                    break  # sorted by light: nothing further down qualifies either
+                    break
             nearest = min(ARTEMIS, key=lambda a: great_circle_km(la, lo, a[1], a[2]))
             candidates.append({"lat": round(la, 3), "lon": round(lo, 3), "group": group,
                                "criteria": crit, "nearest_artemis": nearest[0],
@@ -302,7 +276,6 @@ def main() -> None:
             if picked == 2:
                 break
 
-    # Validation: does each Artemis region contain ground that passes our criteria?
     print("\nValidation — Artemis III regions (passing ground within 25 km of the named feature):")
     validation = []
     for name, la, lo in ARTEMIS:

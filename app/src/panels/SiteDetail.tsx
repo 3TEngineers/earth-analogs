@@ -11,10 +11,6 @@ import { GroupTitle, PassBadge, SidePanel, Tabs } from './ui'
 
 type Tab = 'overview' | 'rules' | 'earth'
 
-/**
- * One site (`site` phase): what it is, why it passed (or, for a past landing, where it fails), and where on Earth
- * to rehearse it. The report is split over three tabs so the panel stays short; the jump to Earth stays in view.
- */
 export function SiteDetail({ site }: { site: Site }) {
   const { reset, selectSite, showAnalogs } = useAppState()
   const { analogs, sitesForBody } = useSelection()
@@ -26,7 +22,6 @@ export function SiteDetail({ site }: { site: Site }) {
   const missionRules = site.selection.missionRules ?? []
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
-  // Step through the body's sites without going back to the list.
   const position = sitesForBody.findIndex((s) => s.id === site.id)
   const neighbour = (d: number) => sitesForBody[(position + d + sitesForBody.length) % sitesForBody.length]
   const go = (d: number) => {
@@ -199,7 +194,6 @@ export function SiteDetail({ site }: { site: Site }) {
   )
 }
 
-/** A short, readable name for a source link: the site it is on. */
 function sourceName(url: string): string {
   try {
     const host = new URL(url).hostname.replace(/^www\./, '')

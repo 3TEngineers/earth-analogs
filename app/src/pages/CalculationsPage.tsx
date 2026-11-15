@@ -9,13 +9,6 @@ import type { Site } from '../types/data'
 
 type DetailId = 'mars' | 'moon' | 'check' | 'match' | 'audit'
 
-/**
- * Calculations page ("/calculations"): how the sites were found and matched, in the order it was done.
- * The page itself stays light: one idea per section, a figure or a small diagram, no formulas.
- * Each section has a "Details" button that opens a drawer with the thresholds, formulas, data and tables.
- * Facts follow docs/SCREENING_RESULTS.md, docs/ANALOG_RESULTS.md and docs/AUDIT.md — keep them in sync;
- * per-site values are read from sites.json.
- */
 export function CalculationsPage() {
   const [detail, setDetail] = useState<DetailId | null>(null)
   const data = useData()
@@ -27,7 +20,6 @@ export function CalculationsPage() {
 
   return (
     <main className="relative z-10 min-h-svh px-6 pt-28 pb-24 sm:px-10">
-      {/* Veil over the 3D scene, the size of the screen (a blur as tall as the page is costly to paint). */}
       <div className="fixed inset-0 -z-10 bg-space/75 backdrop-blur-[6px]" aria-hidden="true" />
       <SiteHeader />
       <article className="mx-auto max-w-5xl">
@@ -51,7 +43,6 @@ export function CalculationsPage() {
           <FlowStep n={4} href="#audit" title="Audit" text="Compare every number with an independent reference." />
         </ol>
 
-        {/* What sets the project apart */}
         <section className="stagger mt-16 grid gap-5 md:grid-cols-2" style={step(4)}>
           <div className="rounded-2xl border border-line p-6">
             <p className="eyebrow text-ink-muted">The usual way</p>
@@ -71,7 +62,6 @@ export function CalculationsPage() {
           </div>
         </section>
 
-        {/* Step 1 — Mars */}
         <Section id="screen" n="Step 1 · Mars" accent="var(--color-mars)" title="Five rules for a safe landing" onDetails={() => setDetail('mars')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             Each rule stands for something a lander needs. A place counts only if all five hold across a 25 km square, the size
@@ -113,7 +103,6 @@ export function CalculationsPage() {
           </div>
         </Section>
 
-        {/* Step 1 — Moon */}
         <Section id="moon" n="Step 1 · Moon" accent="var(--color-moon)" title="Four rules for a permanent base" onDetails={() => setDetail('moon')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             A base stays for years, so it needs power, a radio link, level ground and water. We searched the south pole beyond
@@ -140,7 +129,6 @@ export function CalculationsPage() {
           </div>
         </Section>
 
-        {/* Step 2 — the check */}
         <Section id="check" n="Step 2 · Check" accent="var(--color-ink)" title="The same rules on real missions" onDetails={() => setDetail('check')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             If the rules are sound, they should accept the places where landings worked, and each rejection should have a
@@ -183,7 +171,6 @@ export function CalculationsPage() {
           </div>
         </Section>
 
-        {/* Step 3 — matching */}
         <Section id="match" n="Step 3 · Match" accent="var(--color-earth)" title="Ranking all land on Earth" onDetails={() => setDetail('match')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             Earth&apos;s land is cut into cells of about 25 km. Each cell gets a score from 0 to 100 on every dimension, and the
@@ -231,7 +218,6 @@ export function CalculationsPage() {
           />
         </Section>
 
-        {/* Step 4 — audit */}
         <Section id="audit" n="Step 4 · Audit" accent="var(--color-similar)" title="Every number, checked twice" onDetails={() => setDetail('audit')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             Before the results went on this site, a separate script compared them with things we did not produce: published
@@ -254,7 +240,6 @@ export function CalculationsPage() {
           </ul>
         </Section>
 
-        {/* Limits */}
         <section className="mt-20">
           <p className="eyebrow text-different">Where it stops</p>
           <h2 className="headline mt-3 text-3xl sm:text-4xl">What this study cannot tell you</h2>
@@ -690,7 +675,6 @@ function Outcome({ pass = false, names, children }: { pass?: boolean; names: str
   )
 }
 
-/** The weight of each dimension in the total, drawn to scale. */
 function Weights({ world, parts }: { world: string; parts: { label: string; share: number }[] }) {
   return (
     <div className="rounded-2xl border border-line p-5">
@@ -763,7 +747,6 @@ function Table({ head, rows }: { head: string[]; rows: string[][] }) {
   )
 }
 
-/** Our sites with the value of every rule, straight from sites.json. */
 function SiteTable({ sites }: { sites: Site[] }) {
   if (sites.length === 0) return null
   const criteria = sites[0].selection.criteria

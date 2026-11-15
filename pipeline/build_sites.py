@@ -32,10 +32,7 @@ MARS_LIMITS = [
     "Surface radiation on Mars is far higher",
 ]
 
-# Context for each candidate, in screening order (deepest inside safe ground first). Names follow the
-# USGS Gazetteer feature each point lies in. Summaries are first drafts from the data; Kmar refines them.
 MARS_CONTEXT = [
-    # processes follow the unit the USGS global geologic map (SIM 3292) draws at each point, see earth_ranking.py
     ("mars-candidate-a", "Southern Utopia Planitia", ["Volcanic plains", "Wind erosion"],
      "Smooth lowland plains in the south of Utopia Planitia, about 900 km east of where China's Zhurong rover "
      "landed. The point deepest inside the largest safe area on Mars. The USGS geologic map draws the same "
@@ -68,15 +65,11 @@ MOON_CONTEXT = [
 ]
 FINE_REFERENCE = "InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m"
 
-# Why each past mission went where it did, and why a rule it fails did not matter for it (sourced).
 PAST = json.loads((Path(__file__).resolve().parent / "content" / "past_landings.json").read_text(encoding="utf-8"))
 
-# "Why would a mission go there?" per candidate, with sources — written by Kmar in
-# pipeline/content/purposes.json ({"mars-candidate-a": {"text": "...", "sources": ["https://..."]}, ...}).
 PURPOSES = json.loads((Path(__file__).resolve().parent / "content" / "purposes.json").read_text(encoding="utf-8"))
 
 
-# Past landings used for validation: one plain sentence each (the mock-era text carried a "MOCK." prefix).
 VALIDATION_SUMMARY = {
     "chandrayaan-3": "India's 2023 lander, one of the landings closest to the lunar south pole, on old highland "
                      "terrain lit by a low Sun.",
@@ -184,9 +177,6 @@ def main() -> None:
     LandingsFile.model_validate(landings_file)
     (DATA / "landings.json").write_text(json.dumps(landings_file, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    # Training areas belong to a place, not to an id. Keep the ones whose site is still where it was
-    # (within 10 km), under the site's new id; drop the rest. A candidate left without training areas
-    # needs earth_ranking.py and build_analogs.py to be run again.
     analogs = json.loads((DATA / "analogs.json").read_text(encoding="utf-8"))
     radius_km = {"mars": 3389.5, "moon": 1737.4}
     new_id_of = {}

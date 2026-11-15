@@ -1,28 +1,15 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from 'react'
 import type { Body } from '../types/data'
 
-/**
- * Shared UI state between the globe (Deniz, src/globe/) and the panels (Kmar, src/panels/).
- * Both sides read the same state and change it only through the actions below,
- * so a click in the site list and a click on the globe do exactly the same thing.
- *
- * Flow:  browse ──selectSite──▶ site ──showAnalogs──▶ earth
- *          ▲                     │  ◀──backToSite─────┘
- *          └────────reset────────┘
- */
-
-/** What the user is looking at. */
 export type Phase =
-  | 'browse' // rotating Moon or Mars, no site selected
-  | 'site' // a landing site is selected, globe zoomed to it
-  | 'earth' // Earth globe with the selected site's analogs
+  | 'browse'
+  | 'site'
+  | 'earth'
 
-/** The body currently drawn on the globe. */
 export type DisplayBody = Body | 'earth'
 
 export interface AppState {
   phase: Phase
-  /** Moon or Mars tab chosen by the user (kept while on Earth, for "back"). */
   body: Body
   siteId: string | null
   analogId: string | null
@@ -56,17 +43,11 @@ function reducer(state: AppState, action: Action): AppState {
 }
 
 export interface AppActions {
-  /** Switch the Moon | Mars tab. Clears any selection. */
   setBody: (body: Body) => void
-  /** Select a landing site; the globe flies to it. */
   selectSite: (siteId: string, body: Body) => void
-  /** Go to the Earth globe for the selected site. Pass the rank-1 analog id to focus it. */
   showAnalogs: (analogId: string | null) => void
-  /** Focus another analog while on Earth. */
   selectAnalog: (analogId: string) => void
-  /** Return from Earth to the selected landing site. */
   backToSite: () => void
-  /** Clear the selection and go back to the rotating body. */
   reset: () => void
 }
 
@@ -80,12 +61,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState)
   const displayBody: DisplayBody = state.phase === 'earth' ? 'earth' : state.body
 
-  // Drives the accent color tokens in index.css.
   useEffect(() => {
     document.documentElement.dataset.body = displayBody
   }, [displayBody])
 
-  // Actions never change identity, so they are safe in effect dependency lists.
   const actions = useMemo<AppActions>(
     () => ({
       setBody: (body) => dispatch({ type: 'setBody', body }),

@@ -1,13 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { Insets, Pair } from './space/SpaceEngine'
 
-/**
- * What pages tell the 3D scene besides the route and the shared selection (state/AppState):
- *   stage   landing page: how far the scroll story has come (LandingPage)
- *   pair    landing page: the site ↔ Earth pair the first screen is showing
- *   insets  explore and Earth pages: screen space covered by panels, so the planet sits in the free area
- * A tiny store instead of React state: the scroll position changes every frame and should not re-render anything.
- */
 interface SceneState {
   stage: number
   pair: Pair | null
@@ -40,7 +33,6 @@ export const sceneStore = {
     state = { ...state, pair }
     emit()
   },
-  /** Each panel reports its own edge under a key; the scene gets the largest value per side. null removes the part. */
   setInset(key: string, part: Partial<Insets> | null) {
     if (part) insetParts.set(key, part)
     else insetParts.delete(key)
@@ -53,7 +45,6 @@ export const sceneStore = {
   },
 }
 
-/** True from Tailwind's md breakpoint up (768 px): panels dock to the side there, and sit in a bottom sheet below it. */
 export function useIsDesktop() {
   const [desktop, setDesktop] = useState(() => window.matchMedia('(min-width: 768px)').matches)
   useEffect(() => {
@@ -65,17 +56,9 @@ export function useIsDesktop() {
   return desktop
 }
 
-/**
- * Reports how much of the screen the returned ref's element covers, measured from one edge, to the 3D scene.
- * Put the ref on an element that is not itself animated with transforms.
- * `hold` keeps the last value (a bottom sheet pulled up to full height should not shrink the planet to nothing);
- * `active: false` withdraws the report (the element is not rendered at this screen size).
- */
 export function useSceneInset<T extends HTMLElement>(name: string, edge: keyof Insets, options: { hold?: boolean; active?: boolean } = {}) {
   const { hold = false, active = true } = options
   const ref = useRef<T>(null)
-  // One key per mounted panel, not per name: when one panel replaces another (Earth list -> one training area),
-  // the old panel's late cleanup must not delete the new panel's report, or the planet re-centres on the full screen.
   const key = `${name}:${useId()}`
   useLayoutEffect(() => {
     const el = ref.current
@@ -96,7 +79,6 @@ export function useSceneInset<T extends HTMLElement>(name: string, edge: keyof I
       window.removeEventListener('resize', measure)
     }
   }, [key, edge, hold, active])
-  // The part is removed only when the panel goes away, not on every re-measure.
   useEffect(() => () => sceneStore.setInset(key, null), [key])
   return ref
 }

@@ -19,7 +19,7 @@ import earthaccess
 
 RAW = Path(__file__).resolve().parent.parent / "data" / "raw" / "earth"
 YEAR = ("2023-01-01", "2023-12-31")
-PRODUCTS = [  # short name, version, expected files
+PRODUCTS = [
     ("MOD11C3", "061", 12),
     ("MOD13C2", "061", 12),
     ("MCD12C1", "061", 1),
