@@ -32,7 +32,7 @@ export function SiteDock() {
   const kind = isMoon ? 'base sites' : 'landing zones'
   const intro = isMoon
     ? `${candidates.length} ridges near the south pole have long sunlight, Earth in view for radio and permanent shadow close by. Pick one to see why it passed, and where on Earth to rehearse it.`
-    : `${candidates.length} low, flat, firm plains pass every landing rule we took from past Mars missions. Pick one to see why it passed, and where on Earth to rehearse it.`
+    : `${candidates.length} low, flat, firm plains pass all five landing rules, four of them taken from past Mars missions. Pick one to see why it passed, and where on Earth to rehearse it.`
 
   if (!desktop) {
     return (

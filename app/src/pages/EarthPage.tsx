@@ -63,7 +63,7 @@ export function EarthPage() {
         <p className="eyebrow text-accent">Earth · the rehearsal ground</p>
         <h1 className="headline mt-2.5 text-[2rem] sm:text-[2.5rem]">{analogs.length || 24} places to rehearse</h1>
         <p className="mt-3 leading-relaxed text-ink/90">
-          Each place stands in for one of our {sites.length || 7} sites: three per site, at least 500 km apart. Pick one to see
+          Each place stands in for one of our {sites.length || 8} sites: three per site, at least 500 km apart. Pick one to see
           how close the match is, what a crew can test there, and where the likeness stops.
         </p>
 

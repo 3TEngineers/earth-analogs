@@ -134,6 +134,19 @@ def audit_mars():
                   not (v["thermal_inertia"] < 100 and v["albedo"] > 0.25),
                   f"thermal inertia {v['thermal_inertia']:.0f}, albedo {v['albedo']:.2f}")
 
+    # --- final review, 15 Nov: the candidates on a second elevation product. The USGS 463 m DEM is a separate
+    # file from the 16 px/deg grid the screening reads; over the 26 km landing square it must give the same
+    # height and no ground above the -1 km limit.
+    with rasterio.open(m.MOLA_463_URL) as dem:
+        half = int(13000 / abs(dem.transform.a))
+        for s in sites:
+            if s["body"] == "mars" and s["status"] == "candidate":
+                r, c = dem.index(*to_xy.transform(s["lon"], s["lat"]))
+                z = dem.read(1, window=Window(c - half, r - half, 2 * half, 2 * half)).astype("float64")
+                ours = m.site_values(grids, s["lat"], s["lon"])["elevation_m"]
+                check("mars", f"{s['id']} elevation on the USGS 463 m DEM (26 km square)", abs(float(np.median(z)) - ours) < 60 and z.max() <= m.MAX_ELEVATION_M,
+                      f"median {np.median(z):.0f} m, highest {z.max():.0f} m; screening grid {ours:.0f} m")
+
     # every candidate's criteria reproduce from the raw grids
     for s in sites:
         if s["body"] == "mars" and s["status"] == "candidate":
@@ -168,10 +181,21 @@ def audit_moon():
         area = float((psr[within_80] > 0.5).sum() * (abs(src.transform.a) / 1000) ** 2)
     check("moon", "PSR area south of 80° S vs Mazarico 2011 (16,055 km²)", abs(area - 16055) / 16055 < 0.25,
           f"ours {area:,.0f} km² at 120 m (2016 product; their 2011 maps were 240 m)")
-    # our 240 m grid uses max-resampling for PSR: how much does that inflate it?
-    grid_psr_km2 = float((np.nan_to_num(layers["psr"]) > 0.5).sum() * 0.0576)
-    check("moon", "PSR inflation from 240 m max-resampling (whole 75° S grid)", None,
-          f"{grid_psr_km2:,.0f} km² on our grid — only used for 'distance to shadow', which it can shorten by ≤ 0.24 km")
+    # --- final review, 15 Nov: east and west are not swapped. Near the pole most checks cannot tell (a mirror
+    # image keeps Shackleton, the near side and the far side in place). Two places can: the LCROSS impact site in
+    # Cabeus (84.675 S, 48.725 W; NASA) is permanently shadowed, the same point mirrored to 48.725 E is lit ground;
+    # and Mons Mouton (84.6 S, 31 E) is a mountain, the same point mirrored to 31 W is not.
+    lcross, mirror = at("psr", -84.675, -48.725), at("psr", -84.675, 48.725)
+    check("moon", "east and west are not swapped: LCROSS impact site in Cabeus is permanently shadowed, its mirror point is not",
+          lcross > 0.5 and mirror < 0.5, f"PSR {lcross:.0f} at 48.7° W, {mirror:.0f} at 48.7° E; sunlit there {100 * at('sunlit', -84.675, 48.725):.0f} %")
+    with rasterio.open(RAW / "moon" / "ldem_75s_240m.lbl") as dem:
+        def height(lat, lon):  # south polar stereographic written out here, not taken from the pipeline
+            rho = 2 * 1737400.0 * np.tan(np.radians(90 + lat) / 2)
+            col, row = ~dem.transform * (rho * np.sin(np.radians(lon)), rho * np.cos(np.radians(lon)))
+            return float(dem.read(1, window=((int(row), int(row) + 1), (int(col), int(col) + 1)))[0, 0]) * dem.scales[0]
+        mouton, other = height(-84.6, 31.0), height(-84.6, -31.0)
+    check("moon", "east and west are not swapped: Mons Mouton is a mountain", mouton > 4000 and other < 1000,
+          f"{mouton:,.0f} m at 31° E, {other:,.0f} m at 31° W (LOLA elevation)")
     # --- added 15 Nov ---
     # Slope map vs a real event: NASA's orbiter found the IM-1 lander on a 12 deg slope (80.13 S, 1.44 E)
     r, c = mo.to_pixel(crs, transform, -80.13, 1.44)
@@ -192,17 +216,28 @@ def audit_moon():
     d = float(great_circle_km(blat, blon, -89.67, 129.78, r=1737.4))
     check("moon", "best-lit pixel lies on the rim or ridges next to Shackleton crater", d <= 30,
           f"{100 * float(layers['sunlit'][best]):.0f} % at {blat:.2f}, {blon:.2f}: {d:.0f} km from the crater centre")
-    # "Distance to shadow" only counts shadowed areas of >= 1 km2: recompute it for every candidate
-    useful = mo.useful_shadow(np.nan_to_num(layers["psr"]) > 0.5, mo.PIXEL_M)
+    # "Distance to shadow" only counts shadowed areas of >= 1 km2. Recomputed by another route (final review,
+    # 15 Nov): patches labelled on the 120 m map itself, the site placed with the projection written out by hand,
+    # and the nearest shadowed pixel found with a k-d tree instead of a distance transform.
     from scipy import ndimage
-    shadow_km = ndimage.distance_transform_edt(~useful) * mo.PIXEL_M / 1000.0
+    from scipy.spatial import cKDTree
+    with rasterio.open(RAW / "moon" / "LPSR_75S_120M_201608.TIF") as src:
+        shadow = (src.read(1).astype("float32") * src.scales[0] + src.offsets[0]) > 0.5
+        labels, n = ndimage.label(shadow)
+        km2 = ndimage.sum(shadow, labels, index=np.arange(1, n + 1)) * (abs(src.transform.a) / 1000.0) ** 2
+        rows, cols = np.nonzero(np.isin(labels, np.flatnonzero(km2 >= mo.MIN_PSR_KM2) + 1))
+        xs, ys = src.transform * (cols + 0.5, rows + 0.5)
+    tree = cKDTree(np.column_stack([xs, ys]))
+    check("moon", "permanent shadow on the 120 m map: patches of at least 1 km²", 1500 < int((km2 >= mo.MIN_PSR_KM2).sum()) < 3500,
+          f"{n:,} patches, {int((km2 >= mo.MIN_PSR_KM2).sum()):,} of them ≥ 1 km²")
     sites = json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]
     for s in sites:
         if s["body"] == "moon" and s["status"] == "candidate":
-            r, c = mo.to_pixel(crs, transform, s["lat"], s["lon"])
-            km = round(float(np.nanmin(shadow_km[r - 1:r + 2, c - 1:c + 2])), 1)
+            rho = 2 * 1737400.0 * np.tan(np.radians(90 + s["lat"]) / 2)
+            km = float(tree.query([rho * np.sin(np.radians(s["lon"])), rho * np.cos(np.radians(s["lon"]))])[0]) / 1000.0
             shown = next(x["value"] for x in s["selection"]["criteria"] if x["id"] == "ice_distance")
-            check("moon", f"{s['id']} distance to a shadowed area >= 1 km² recomputed", km == shown, f"recomputed {km} km, JSON {shown} km")
+            check("moon", f"{s['id']} distance to a shadowed area >= 1 km² recomputed at 120 m", abs(km - shown) <= 0.3,
+                  f"recomputed {km:.1f} km, JSON {shown} km")
     for s in sites:
         if s["body"] == "moon" and s["status"] == "candidate":
             r, c = mo.to_pixel(crs, transform, s["lat"], s["lon"])

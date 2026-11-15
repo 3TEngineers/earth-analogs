@@ -93,8 +93,8 @@ export function LandingPage() {
           <ol className="mt-12 grid gap-5 md:grid-cols-3">
             <BriefStep n={1} i={2} title="Find new places to land" figure={`${mars + moon}`} unit="sites of our own">
               Most analog studies start from places where spacecraft have already landed. We started from the maps: all of
-              Mars and the Moon&apos;s south pole, filtered with safety rules taken from real missions. {mars} zones on Mars and{' '}
-              {moon} ridges on the Moon passed.
+              Mars, filtered with landing limits that real missions published, and the Moon&apos;s south pole, filtered with
+              our own rules for a base. {mars} zones on Mars and {moon} ridges on the Moon passed.
             </BriefStep>
             <BriefStep n={2} i={3} title="Check the rules against history" figure="21" unit="real sites tested">
               The same rules ran on the 11 past Mars landings, the 7 named features of NASA&apos;s Artemis III regions and the
@@ -154,8 +154,9 @@ export function LandingPage() {
           </h2>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             <Proof i={2} figure="6 of 11" title="past Mars landings pass every rule">
-              The other five went where they did on purpose: three aimed for high latitudes, and Curiosity and Perseverance
-              landed beside the mountain and the delta they came to study. Every landing passes its own mission&apos;s limits.
+              Three of the other five landed far from the equator; Phoenix went north on purpose, to reach ice. Curiosity
+              and Perseverance landed beside the mountain and the delta they came to study. All seven landings whose own
+              published limits we found pass them.
             </Proof>
             <Proof i={3} figure="16 km" title="from one of our lunar ridges to a NASA feature">
               Our screening never used NASA&apos;s Artemis III regions. Two of our three ridges still came out near one: 16 km
