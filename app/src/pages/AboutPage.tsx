@@ -40,17 +40,18 @@ export function AboutPage() {
 
         <div className="stagger" style={step(4)}>
           <Section title="The team">
-            <ul className="grid gap-4 md:grid-cols-[1fr_1fr_0.72fr]">
-              <Person name="Sadık Bora Erteni" role="Method, data and site" href="https://www.linkedin.com/in/sadik-bora-erteni/">
-                Screening Mars and the lunar south pole, matching every site to Earth and auditing the results; the structure
-                and content of the site&apos;s pages.
+            <ul className="grid gap-4 md:grid-cols-3">
+              <Person name="Sadık Bora Erteni" role="Data science and engineering" href="https://www.linkedin.com/in/sadik-bora-erteni/">
+                Designed and built the analysis pipeline: the screening of Mars and the lunar south pole, the global Earth
+                matching and the scoring model. Led the data-accuracy audits and shaped the structure and content of the site.
               </Person>
-              <Person name="Deniz Aslan" role="Method, data and site" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
-                The 3D scene with the Moon, Earth and Mars and the design of the site; the full re-check of the Mars and Moon
-                screening that chose the final landing zones.
+              <Person name="Deniz Aslan" role="Software engineering and validation" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
+                Designed and built the interactive 3D experience of the Moon, Earth and Mars and the interface around it. Led
+                the full re-validation of the Mars and Moon screening that selected the final landing zones.
               </Person>
-              <Person name="Kamar Abid" role="Research" href="https://www.linkedin.com/in/kamar-abid-679337374/">
-                Published landing constraints and known analog sites.
+              <Person name="Kamar Abid" role="Research and concept" href="https://www.linkedin.com/in/kamar-abid-679337374/">
+                Helped shape the initial project concept. Researched the published landing constraints, NASA&apos;s Artemis III
+                regions and the known analog sites, and cross-checked the field-test examples against their sources.
               </Person>
             </ul>
           </Section>
