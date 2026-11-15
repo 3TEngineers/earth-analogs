@@ -237,7 +237,7 @@ export function CalculationsPage() {
             values, well-known places, and the raw data computed again from scratch.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <Figure value="158" label="checks passed" />
+            <Figure value="159" label="checks passed" />
             <Figure value="1" label="warning, about map resolution; it does not change a result" />
             <Figure value="0" label="failed, after we fixed the 24 errors the audit and our own review turned up" />
           </div>
@@ -266,8 +266,8 @@ export function CalculationsPage() {
             <li>Water history on Mars, such as old lakes and deltas, is not scored: no global dataset lets us compare it.</li>
             <li>
               The lunar ridges are steeper than almost any cold, dry, bare place on Earth, so Moon matches are weak (totals
-              47–62 against 77–88 for Mars). Two Moon areas were picked for rock and slopes and are nowhere near a pole. The
-              reports say so.
+              47–62 against 77–88 for Mars). Two Moon areas were picked for rock and slopes and are nowhere near a pole; we
+              allow one such place per site. Even 80° N has a far higher summer Sun than the lunar pole. The reports say so.
             </li>
             <li>No place on Earth has lower gravity, a vacuum, Mars&apos; thin CO₂ air or space radiation. Every report lists this.</li>
             <li>Satellite rainfall reads too high in the driest deserts, so we treat anything under 100 mm a year as fully dry.</li>
@@ -489,6 +489,7 @@ export function CalculationsPage() {
             <li>A training area must be at least 90 % land, under 25 % permanent ice and bare all year (vegetation index at most 0.30).</li>
             <li>No place serves two sites of the same world. When two sites want the same place, it goes to the one it fits better.</li>
             <li>A site&apos;s three places are at least 500 km apart.</li>
+            <li>A Moon site takes at most one place outside the polar regions (below 60° latitude), so most of its list has a low Sun.</li>
             <li>A place within 50 km of a published analog site, or in the same named desert within 400 km, is marked as known. At least one of the three must be new.</li>
             <li>A dimension that scores 70 or more becomes a &quot;similar&quot; line and a suggested test; 40 or less becomes a &quot;different&quot; line.</li>
           </ul>

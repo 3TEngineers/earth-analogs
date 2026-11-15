@@ -42,6 +42,11 @@ KNOWN_REGION_KM = 400.0
 MAX_PICK_ICE_PCT = 25.0  # at least three quarters free of permanent snow and ice (MODIS land cover)
 MAX_PICK_NDVI = 0.30  # bare or sparsely vegetated all year: green tundra is no stand-in for the Moon or Mars
 MIN_PICK_LAND_SHARE = 0.90  # inland, measured on the Natural Earth 10 m coastline itself (not its raster)
+# Moon: at most one of a site's three areas may lie outside the polar regions (ours). The low Sun is only a 20 %
+# score, so a place with the right rock and slopes can win without it (the Tibetan Plateau, the Peruvian Andes);
+# one such place shows that trade-off, but most of the list must have a low Sun.
+MOON_POLAR_LAT = 60.0  # where the "Low Sun" score starts to rise above 0
+MOON_MAX_NON_POLAR = 1
 SIMILAR, DIFFERENT = 70, 40
 
 DIMENSIONS = [
@@ -299,7 +304,8 @@ def pick_best_pairs(sites: list[dict], rankings: dict, known: dict, grid, namer:
 
     Within a round the (candidate, place) pair with the highest score is settled first, so a place that two
     candidates want goes to the one it fits better. (The first version let candidates choose in list order,
-    which gave the first one the best places whether or not they fitted it best.)
+    which gave the first one the best places whether or not they fitted it best.) A Moon site takes at most
+    MOON_MAX_NON_POLAR place below MOON_POLAR_LAT.
     """
     entries = {s["id"]: candidate_entries(rankings[s["id"]], known[s["body"]], grid, namer) for s in sites}
     body = {s["id"]: s["body"] for s in sites}
@@ -307,6 +313,9 @@ def pick_best_pairs(sites: list[dict], rankings: dict, known: dict, grid, namer:
 
     def allowed(sid: str, e: dict) -> bool:
         if any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_ANALOG_KM_APART for p in picks[sid]):
+            return False
+        if body[sid] == "moon" and abs(e["lat"]) < MOON_POLAR_LAT and \
+                sum(abs(p["lat"]) < MOON_POLAR_LAT for p in picks[sid]) >= MOON_MAX_NON_POLAR:
             return False
         return not any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_KM_FROM_OTHER_CANDIDATES
                        for other, ps in picks.items() if other != sid and body[other] == body[sid] for p in ps)

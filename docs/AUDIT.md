@@ -16,9 +16,9 @@ pipeline/.venv/Scripts/python pipeline/audit.py   # prints PASS / WARN / FAIL, w
 | After the fixes below (14 Nov) | 98 | 2 | 0 |
 | After error 10 (15 Nov) | 100 | 2 | 0 |
 | After the full audit of the screening (15 Nov, errors 11–15), Mars and Moon sections only | 48 | 1 | 0 |
-| After the Earth audit (15 Nov, errors 16–24), full run | **158** | **1** | **0** |
+| After the Earth audit (15 Nov, errors 16–24), full run | **159** | **1** | **0** |
 
-The last row is the full run on the final data (math 4, inputs 50, outputs 20, Earth terrain and rock 12, Earth climate 23, Mars 37, Moon 12 + the WARN). The remaining WARN is explained under [Remaining limits](#remaining-limits).
+The last row is the full run on the final data (math 4, inputs 50, outputs 21, Earth terrain and rock 12, Earth climate 23, Mars 37, Moon 12 + the WARN). The remaining WARN is explained under [Remaining limits](#remaining-limits).
 
 The Mars section reads the USGS 463 m DEM over the network. On 15 Nov one run out of four stopped there and reported a single FAIL ("section ran"); the three other runs gave 48 / 1 / 0. If that line appears, run the audit again before reading anything into it.
 
@@ -96,7 +96,7 @@ One check was replaced: "albedo has a value" against the coastline is a blunt te
 | **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; the slope where IM-1 tipped over; no empty slope-map pixel is read as 45°; the best-lit pixel is next to Shackleton; every Moon candidate's sunlight and distance to shadow recomputed | Mazarico et al. (2011), NASA/LRO (IM-1), geometry |
 | **Earth terrain and rock** | Bonneville Salt Flats come out flat (0.03°) and at the right height, the Alps steep (20.9°); a box across elevation tiles is read whole; lunar slopes from the elevation grid follow LOLA's slope map; GLiM rock class at Iceland, Deccan Traps (basalt), Grand Erg Oriental (sand), Greenland (ice) | known geology, LOLA slope map |
 | **Earth climate** | GPM rainfall at Manaus, Istanbul, Eskişehir, London, Dalanzadgad, Resolute, In Salah, Atacama; MODIS surface temperature in the Lut Desert and at Dome Fuji (Antarctica); Greenland ice sheet excluded, McMurdo Dry Valleys kept; every raster's registration; albedo at a sand sea, a basalt field and a rainforest | climatology, Dome Fuji station mean −54.4 °C, Natural Earth coastline |
-| **Outputs** | every candidate has exactly 3 training areas; each is inland (≥ 90 % land, Natural Earth), under 25 % permanent ice and bare (NDVI ≤ 0.30); no weighted score is missing and every total is the weighted sum; "plains" only for flat ground; every "similar"/"different" sentence matches its score; country names match the coordinates; 3 areas per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
+| **Outputs** | every candidate has exactly 3 training areas; each is inland (≥ 90 % land, Natural Earth), under 25 % permanent ice and bare (NDVI ≤ 0.30); at least 2 of each Moon site's 3 areas at ≥ 60° latitude; no weighted score is missing and every total is the weighted sum; "plains" only for flat ground; every "similar"/"different" sentence matches its score; country names match the coordinates; 3 areas per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
 
 ## Errors found and fixed
 

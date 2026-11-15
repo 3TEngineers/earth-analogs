@@ -464,6 +464,11 @@ def audit_outputs():
     shown = [t for a in analogs for t in a["similarities"] + a["differences"] + [x["detail"] for x in a["tests"]]]
     broken = [t for t in shown if re.search(r"\b(None|nan|NaN)\b", t)]
     check("outputs", "no missing values (None/NaN) in any text shown on the site", not broken, "; ".join(broken[:3]))
+    # Moon: at least two of a site's three areas lie where the Sun stays low (the Low Sun score is only a weight)
+    few = [f"{sid}: {sum(abs(a['lat']) >= build_analogs.MOON_POLAR_LAT for a in analogs if a['siteId'] == sid)} of 3"
+           for sid in sorted({a["siteId"] for a in analogs if a["siteId"].startswith("moon")})]
+    check("outputs", f"every Moon site has at least 2 areas at ≥ {build_analogs.MOON_POLAR_LAT:.0f}° latitude",
+          all(int(f.split(": ")[1][0]) >= 3 - build_analogs.MOON_MAX_NON_POLAR for f in few), "; ".join(few))
     moon_life = [a["id"] for a in analogs if a["siteId"].startswith("moon") and any("life" in x["title"].lower() for x in a["tests"])]
     check("outputs", "no life-detection tests suggested for Moon analogs", not moon_life, ", ".join(moon_life[:3]))
 
