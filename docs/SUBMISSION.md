@@ -83,7 +83,13 @@ We turned the challenge around: instead of matching Earth to sites others chose,
 
 If there is a free-text field, paste:
 
-> We used Claude (Anthropic), through Claude Code, as an assistant throughout the hackathon: to compare the challenges, check data availability, draft the method and project documents, and write and run code for the data pipeline, the audit and the website, with every result reviewed by the team. The idea, the choice to select our own sites, every rule and design decision, and all reviews are the team's; the "find our own candidate sites first" step came from our mentor. All numbers come from the public datasets listed below, not from the AI. No AI-generated images, video or audio are used. This is also stated on the website's About page and in the repository (docs/PROJECT_HISTORY.md §13).
+> Yes, we used AI in our project, as an assistant. The idea, the choice to select our own sites, every rule and design decision, and all reviews are the team's; the "find our own candidate sites first" step came from our mentor. Where it helped:
+>
+> **Development support:** Claude (Anthropic, through Claude Code) assisted with writing, reviewing and optimising code for the data pipeline, the audit and the website, including the 3D scene and its animations, and with debugging and library suggestions. The team directed the work, and reviewed and tested the results.
+>
+> **Research and documentation:** Claude helped us compare the challenges, find datasets and published mission limits, cross-check our numbers against independent sources, and draft and edit the documentation and site text.
+>
+> **Not AI:** all numbers are computed from the public datasets listed below. No AI-generated images, video or audio are used. This is also stated on the website's About page and in the repository (docs/PROJECT_HISTORY.md §13).
 
 ## NASA Data
 

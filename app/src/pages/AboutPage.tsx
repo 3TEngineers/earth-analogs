@@ -101,17 +101,27 @@ export function AboutPage() {
           </Section>
 
           <Section title="How we used AI">
-            <ul className="grid gap-x-10 gap-y-4 leading-relaxed text-ink/85 md:grid-cols-3">
+            <p className="max-w-3xl leading-relaxed text-ink/85">
+              Yes, we used AI in this project, as an assistant. The idea, the method, every rule and every decision are the
+              team&apos;s, shaped with our mentor; the breakdown below says where the tool helped.
+            </p>
+            <ul className="mt-6 grid gap-x-10 gap-y-5 leading-relaxed text-ink/85 md:grid-cols-3">
               <li>
-                The idea — find new candidate sites first, then their Earth training areas, and show where each analogy breaks —
-                and the choice of challenge are the team&apos;s, shaped with our mentor.
+                <strong className="font-display font-medium text-ink">Development support.</strong> Claude (Anthropic, through
+                Claude Code) assisted with writing, reviewing and optimising code for the data pipeline and this website,
+                including the 3D scene and its animations, and with debugging and library suggestions. The team directed the
+                work, and reviewed and tested the results.
               </li>
               <li>
-                We used Claude (Claude Code) as an assistant: to compare the challenges, check data availability, draft the
-                scoring method and documentation, and write code for the data pipeline and this website. We reviewed and tested
-                what it produced.
+                <strong className="font-display font-medium text-ink">Research and documentation.</strong> Claude helped us
+                compare the challenges, find datasets and published mission limits, cross-check our numbers against
+                independent sources, and draft and edit the documentation and site text.
               </li>
-              <li>Every number on the site comes from the datasets above. No AI-generated images are used.</li>
+              <li>
+                <strong className="font-display font-medium text-ink">What is not AI.</strong> Every number on the site is
+                computed from the NASA, USGS and ESA datasets listed above. No AI-generated images, video or audio are used:
+                the planets and close-ups are real spacecraft imagery.
+              </li>
             </ul>
           </Section>
         </div>
