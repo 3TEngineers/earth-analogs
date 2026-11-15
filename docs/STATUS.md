@@ -66,7 +66,36 @@ Open question to verify before relying on it: the south pole is highland (anorth
 
 ## In progress
 
-- Nothing right now — see Next.
+- **Earth audit (Sadık with Claude, branch `fix/earth-audit`, PR open, NOT finished — stopped on 15 Nov ~15:00 when the session ran out).** Deniz's full audit covered the Mars and Moon screening; this one covers the Earth side (`earth_pool.py`, `earth_ranking.py`, `build_analogs.py`) and re-makes the training areas for all 8 sites (5 Mars + 3 Moon = 24 areas).
+
+  **Found and fixed in the code on this branch (to be written up as errors 16–22 in `docs/AUDIT.md`):**
+  1. **Expected rock at Mars zones a and c was wrong.** The handoff table said basin sediments; the USGS global geologic map (SIM 3292, GIS lookup at the coordinates) draws lava plains: a and b = `AHv`, c = `eHv` (volcanic → basalt), d = `lHt` (transition → sediments), e = `HNhu`, the same polygon Opportunity landed in (→ sandstone). `EXPECTED_ROCK` now carries the unit; `audit.py` repeats the lookup. `build_sites.py` texts for a and c follow the map.
+  2. **Earth slopes were read from one DEM tile only.** A 25 km box crosses a 1° Copernicus tile edge for most cells away from the equator; it was cut at the edge, which squeezed the pixels east–west and made slopes up to ~40 % too steep at high latitudes (Victoria Island: median 1.66° → 1.18°). `earth_window()` now mosaics every tile the box touches.
+  3. **A missing score helped a place.** The total was averaged over whatever scores existed, so a cell with no rock data outranked one with a known mismatch. A training area now needs every score (`complete`).
+  4. **Rain was one year (2023).** Now the NASA IMERG V07 climatology June 2000 – May 2023 (2023 only fills the gap south of 80° S). Closer to station values everywhere tested (Manaus 2490 vs ~2300 mm; Death Valley 100 vs 180 in 2023).
+  5. **Vegetation and temperature used 4 months of 2023.** Now all 12 (`pipeline/fetch_earth.py` downloads every Earth input; it did not exist before, so nobody else could rebuild B3).
+  6. **"New place" was claimed inside published analog regions** (Atacama 139 km from Yungay, Qaidam, Lut). `known` is now true for a spot in the same named region as a listed analog within 400 km; new field `knownName` (`analogs.json` v3), shown in the report.
+  7. **Candidates chose places in list order.** Now the best (site, place) pair is settled first in each round (`pick_best_pairs`).
+  8. **Names said "plains" for mountains.** The landform word now follows the measured slope (plains / hills / mountains).
+  9. **Some Moon areas were green tundra (NDVI 0.4–0.6) or glaciers.** New pick rules: yearly max NDVI ≤ 0.30, permanent ice < 25 % (was 50 %), ≥ 90 % land on the Natural Earth vector coastline itself.
+  10. The Moon "different" sentence quoted the Moon's ~300 K swing as if it held at the pole; it now says "at the equator".
+
+  **New factors (Mars):** `albedo` "Surface brightness" (MGS TES bolometric albedo at the site vs MODIS MCD43C3 snow-free shortwave albedo on Earth) and `altitude` "Thin air" (mean Copernicus elevation of the box). Weights are in `earth_ranking.WEIGHTS` (Mars: terrain 30, rock 20, brightness 10, dryness 20, temperature 10, thin air 10; Moon unchanged). Wider pools: 100 climate cells + 40 per rock class, 200 km apart (was 40 + 15, 300 km).
+
+  **Checked and found correct:** every Earth raster is registered where we think (MODIS land cover, NDVI, LST, albedo, GPM, GLiM cross-correlated with the Natural Earth coastline or with each other: best fit at zero shift, flipped/mirrored/half-turned copies fit far worse — the kind of error that hit the Mars maps is not present). Deniz's `sites.json` and `landings.json` reproduce byte-for-byte on Sadık's machine. Audit before the last two changes: 147 PASS / 1 WARN / 1 FAIL (the FAIL was a coastal Moon area, since excluded by the vector land rule).
+
+  **State of the files:** the code is final for the points above. `app/public/data/analogs.json` in the first commit of this branch is from the run *before* the albedo factor and the NDVI / ice / vector-land rules, so it does not match the code yet; a later commit on the branch replaces it if the last run finished. Check with `git log --oneline -3`.
+
+  **To finish (needs Sadık's machine: `data/raw/earth`, `data/interim`, `data/raw/mars/sim3292/geology`):**
+  ```bash
+  pipeline/.venv/Scripts/python pipeline/earth_pool.py      # ~3 min
+  pipeline/.venv/Scripts/python pipeline/earth_ranking.py   # ~3 min, reads Copernicus DEM over the network
+  pipeline/.venv/Scripts/python pipeline/build_analogs.py
+  pipeline/.venv/Scripts/python pipeline/audit.py           # expect 0 FAIL
+  ```
+  Then: look at the satellite close-up of all 24 areas (land, bare, matches its name); write errors 16–22 and the new totals into `docs/AUDIT.md`; rewrite `docs/ANALOG_RESULTS.md` (method, table of 24, validation ranks); update `app/src/pages/CalculationsPage.tsx` (Mars weights and the two new factors, pool sizes, pick rules, rain climatology, audit totals, known-analog ranks, the limit "rock family is our reading" → mapped unit) and the hard-coded "21" on `LandingPage.tsx` line ~99.
+
+  **Open finding, not fixed:** the Moon terrain comparison is not at the same scale. `ldsm_75s_240m` (LOLA slope map) gives slopes over a **30–120 m baseline** (its label says so), while the Earth side measures over 480 m. The Moon therefore looks rougher than it would at Earth's scale and "terrain" scores for Moon areas are too low. Fix: download `ldem_75s_240m.img/.lbl` (same PDS folder as the slope map, ~62 MB) and compute lunar slopes in `earth_ranking.moon_slopes()` with the same `np.gradient` recipe as Earth. Also worth stating as a limit: MOLA 463 m is interpolated between orbit tracks, so Mars looks smoother than it is at that scale.
 
 ## Next
 

@@ -104,8 +104,9 @@ Criteria used (thresholds are set from published mission constraints during B2):
       "lat": 37.55,
       "lon": 29.68,
       "radiusKm": 10,                    // size of the analog spot
-      "known": true,                     // true = already a known analog
+      "known": true,                     // true = a published analog site, or a spot in the same named region as one
       "knownRef": "https://...",         // source when known, else null
+      "knownName": "Atacama, Yungay area, 139 km away",   // the published analog it is or lies near; null for new places
       "totalScore": 74,                  // 0..100, weighted
       "scores": {
         "terrain": { "score": 62, "confidence": "high", "note": "Copernicus DEM vs HRSC" }
@@ -128,6 +129,6 @@ Criteria used (thresholds are set from published mission constraints during B2):
 - Coordinates are in degrees. Longitude is −180..180, east positive, on all three bodies.
 - Every `candidate` site has exactly 3 analogs, ranks 1–3, from different regions, at least one with `"known": false`. A `past` site may have 0 or 3 analogs — the app hides "Show Earth analogs" when there are none.
 - A `candidate` site passes all its criteria. A `past` site may fail some — that's the point of validation (e.g. a good short-mission site that's too far from the pole for a permanent base).
-- `sites.json` version 2 added `selection`; version 3 added `criterion.why` and `selection.missionRules`. Bump `version` whenever the shape changes.
+- `sites.json` version 2 added `selection`; version 3 added `criterion.why` and `selection.missionRules`. `analogs.json` version 3 added `knownName` and the Mars dimensions `albedo` and `altitude`. Bump `version` whenever the shape changes.
 - `similarities` come from scores ≥ 70, `differences` from scores ≤ 40 — the frontend shows them as given and does not recompute.
 - Text is English and plain (no HTML or Markdown).

@@ -1,8 +1,9 @@
 """B5 + B7 + B8: pick 3 Earth training areas per candidate, write the report text, save analogs.json.
 
-B5  from data/interim/earth_rankings.json (earth_ranking.py): best 3 per candidate, > 500 km apart,
-    at least one new (not a known analog within 50 km, docs/KNOWN_ANALOGS.md §1-2), named with
-    Natural Earth regions and countries, scores as 0-100 with a confidence.
+B5  from data/interim/earth_rankings.json (earth_ranking.py): 3 per candidate, > 500 km apart, only cells
+    with every score, at least one new (not a known analog within 50 km, docs/KNOWN_ANALOGS.md §1-2), named
+    with Natural Earth regions and countries, scores as 0-100 with a confidence. A place two candidates want
+    goes to the one it fits better (pick_best_pairs).
 B7  fixed rules: score >= 70 -> "similar" bullet and a test (docs/KNOWN_ANALOGS.md §3 wording),
     score <= 40 -> "different" bullet.
 B8  validate with pipeline/schema.py and write app/public/data/analogs.json. Past landings get no
@@ -19,7 +20,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
-from shapely.geometry import Point
+from shapely.geometry import Point, box
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -32,36 +33,50 @@ NE = ROOT / "data" / "raw" / "earth" / "naturalearth"
 
 MIN_ANALOG_KM_APART = 500.0  # ours: three clearly different places
 MIN_KM_FROM_OTHER_CANDIDATES = 300.0  # ours: an Earth place serves one candidate per body, so the
-# seven reports don't show the same three places; candidates take turns (round-robin) to stay fair
+# reports don't show the same three places
 KNOWN_MATCH_KM = 50.0  # KNOWN_ANALOGS.md: coordinates are often proxies
-MAX_PICK_ICE_PCT = 50.0  # ours: a training area is mostly bare ground, not an ice cap with a few outcrops.
-# B3 lets cells with >= 10 % barren through so known analogs like the Dry Valleys stay ranked; picks must do better.
+# A place in the same named desert or basin as a published analog is not "new", even 200 km from the spot the
+# paper used: Atacama and Qaidam are whole regions. Same Natural Earth region and within this distance (ours).
+KNOWN_REGION_KM = 400.0
+# What a training area must be, on top of B3's land mask (ours). Known analogs are ranked without these rules.
+MAX_PICK_ICE_PCT = 25.0  # at least three quarters free of permanent snow and ice (MODIS land cover)
+MAX_PICK_NDVI = 0.30  # bare or sparsely vegetated all year: green tundra is no stand-in for the Moon or Mars
+MIN_PICK_LAND_SHARE = 0.90  # inland, measured on the Natural Earth 10 m coastline itself (not its raster)
 SIMILAR, DIFFERENT = 70, 40
 
 DIMENSIONS = [
     {"id": "terrain", "label": "Terrain", "bodies": ["moon", "mars"],
      "description": "Slope distribution over ~25 km at the same pixel size (MOLA 463 m / LOLA 240 m vs Copernicus DEM)"},
     {"id": "mineralogy", "label": "Rock type", "bodies": ["moon", "mars"],
-     "description": "Expected rock family at the site vs the global lithological map GLiM on Earth"},
+     "description": "Rock class of the unit mapped at the site (Mars: USGS geologic map SIM 3292; Moon: highland crust) "
+                    "vs the global lithological map GLiM on Earth"},
     {"id": "water_history", "label": "Water history", "bodies": ["mars"],
      "description": "Lake, delta and river deposits — no global data we could compare, so not scored"},
     {"id": "aridity", "label": "Dryness", "bodies": ["moon", "mars"],
-     "description": "Rainfall (GPM IMERG) and bare ground (MODIS NDVI and land cover)"},
+     "description": "Rainfall (GPM IMERG climatology 2000-2023) and bare ground (MODIS NDVI and land cover)"},
     {"id": "temperature", "label": "Temperature", "bodies": ["moon", "mars"],
      "description": "Day-night surface temperature swing and cold (MODIS land surface temperature)"},
+    {"id": "albedo", "label": "Surface brightness", "bodies": ["mars"],
+     "description": "Broadband albedo of the ground: MGS TES at the site vs MODIS (snow-free) on Earth. Dark rock and "
+                    "gravel match Mars' plains; bright sand and salt do not"},
+    {"id": "altitude", "label": "Thin air", "bodies": ["mars"],
+     "description": "Elevation (Copernicus DEM): higher ground has thinner air and stronger UV. 5,000 m scores 100, "
+                    "and even there the air is about 90 times denser than on Mars"},
     {"id": "sun_angle", "label": "Low Sun", "bodies": ["moon"], "description": "How low the Sun stays (latitude)"},
     {"id": "ice", "label": "Frozen ground", "bodies": ["moon"],
      "description": "Mean surface temperature below freezing (MODIS) as a permafrost proxy"},
 ]
 CONFIDENCE = {"terrain": "high", "mineralogy": "low", "water_history": "low", "aridity": "high",
-              "temperature": "medium", "sun_angle": "high", "ice": "medium"}
+              "temperature": "medium", "albedo": "medium", "altitude": "high", "sun_angle": "high", "ice": "medium"}
 DATA_SOURCES = {
-    "mars": ["https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"],
+    "mars": ["https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+             "https://pubs.usgs.gov/sim/3292/"],
     "moon": ["https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/"],
     "earth": ["https://registry.opendata.aws/copernicus-dem/",
-              "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+              "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
               "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
               "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+              "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
               "https://doi.pangaea.de/10.1594/PANGAEA.788537"],
 }
 ALWAYS_DIFFERENT = {  # NASA NSSDC fact sheets: Mars 6.36 mb surface pressure, 3.71 m/s2; Moon 1.62 m/s2
@@ -120,9 +135,17 @@ def test_mapping() -> dict[str, tuple[str, str]]:
     return out
 
 
-ROCK_LABEL = {"vb": "Basalt plains", "py": "Volcanic ground", "pb": "Gabbro and anorthosite ground",
-              "mt": "Metamorphic ground", "sm": "Sedimentary plains", "su": "Sediment plains",
-              "ss": "Sedimentary plains", "sc": "Carbonate ground", "ev": "Salt flats"}
+ROCK_LABEL = {"vb": "Basalt", "py": "Volcanic", "pb": "Gabbro and anorthosite", "mt": "Metamorphic",
+              "sm": "Sedimentary", "su": "Loose-sediment", "ss": "Sandstone", "sc": "Carbonate", "ev": "Salt",
+              "va": "Volcanic", "vi": "Volcanic", "pa": "Granite", "pi": "Plutonic"}
+
+
+def landform(median_slope: float | None) -> str:
+    """Word for the ground from its median slope at the comparison scale (ours): the name must not say "plains"
+    about mountains, as the first version did."""
+    if median_slope is None:
+        return "ground"
+    return "plains" if median_slope <= 1.5 else "hills" if median_slope <= 6 else "mountains"
 
 
 class Namer:
@@ -136,6 +159,7 @@ class Namer:
         self.regions = gpd.read_file(f"zip://{NE / 'regions.zip'}")
         self.regions = self.regions[~self.regions["FEATURECLA"].isin(["Continent"])]
         self.countries = gpd.read_file(f"zip://{NE / 'countries.zip'}")
+        self.land = self.countries.union_all()
 
     @staticmethod
     def _title(name: str) -> str:
@@ -143,19 +167,24 @@ class Namer:
             return name
         return " ".join(w.capitalize() if w not in ("OF", "AND") else w.lower() for w in name.split())
 
-    def __call__(self, lat: float, lon: float, rock: str | None) -> tuple[str, str]:
+    def region_name(self, lat: float, lon: float) -> str | None:
+        """Most specific Natural Earth region at the point, or the nearest one within ~1.5 degrees."""
+        point = Point(lon, lat)
+        regions = self.regions[self.regions.contains(point)].sort_values("SCALERANK", ascending=False)
+        if regions.empty:
+            distance = self.regions.geometry.distance(point)
+            regions = self.regions[distance <= 1.5].assign(d=distance).sort_values("d")
+        return next((n for n in regions["NAME"] if isinstance(n, str)), None)
+
+    def __call__(self, lat: float, lon: float, rock: str | None, median_slope: float | None = None) -> tuple[str, str]:
         point = Point(lon, lat)
         countries = self.countries[self.countries.contains(point)]
         if countries.empty:  # small islands fall between polygons: nearest country within ~1 degree
             distance = self.countries.geometry.distance(point)
             countries = self.countries[distance <= 1.0].assign(d=distance).sort_values("d")
         country = next(iter(countries["NAME"]), None)
-        regions = self.regions[self.regions.contains(point)].sort_values("SCALERANK", ascending=False)
-        if regions.empty:
-            distance = self.regions.geometry.distance(point)
-            regions = self.regions[distance <= 1.5].assign(d=distance).sort_values("d")
-        region = next(iter(regions["NAME"]), None)
-        label = ROCK_LABEL.get(rock or "", "Barren ground")
+        region = self.region_name(lat, lon)
+        label = f"{ROCK_LABEL.get(rock or '', 'Barren')} {landform(median_slope)}"
         if region and not (country and region.lower() == country.lower()):
             return f"{label} — {self._title(region)}", country or ""
         return label, country or ("Antarctica" if lat < -60 else "")
@@ -180,7 +209,17 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
     if dim == "temperature":
         return (f"Large day-night surface temperature swing ({entry.get('swing_k')} K)" if good else
                 f"Mild day-night swing ({entry.get('swing_k')} K) — far from "
-                + ("the Moon's ~300 K" if body == "moon" else "the up to ~100 K on Mars' surface (Curiosity REMS)"))
+                + ("the airless Moon, whose surface swings by about 300 K at the equator" if body == "moon"
+                   else "the up to ~100 K on Mars' surface (Curiosity REMS)"))
+    if dim == "albedo":
+        here, there = entry.get("albedo"), rank.get("site_albedo")
+        return (f"Ground about as dark as at the site (albedo {here:.2f} here, {there:.2f} there)" if good else
+                f"Ground much {'brighter' if here > there else 'darker'} than at the site (albedo {here:.2f} vs {there:.2f})")
+    if dim == "altitude":
+        elevation = entry.get("elevation_m") or 0
+        pressure = round(100 * float(np.exp(-elevation / 8434.0)))  # scale height of Earth's lower atmosphere
+        return (f"High ground at {elevation:,} m: air pressure about {pressure} % of sea level, and stronger UV" if good else
+                f"Low ground at {elevation:,} m: air about as thick as at sea level")
     if dim == "sun_angle":
         return (f"The Sun stays low all year at {abs(entry['lat']):.0f}° latitude, with long shadows" if good else
                 "The Sun climbs much higher than at the lunar pole")
@@ -204,40 +243,88 @@ def ice_pct(e: dict, grid) -> float:
     return float(grid["snow_ice_pct"][r, c])
 
 
-def candidate_entries(rank: dict, known: list[dict], grid) -> list[dict]:
+def ndvi_max(e: dict, grid) -> float:
+    r, c = int((90 - e["lat"]) / 0.25), int((e["lon"] + 180) / 0.25)
+    return float(np.nan_to_num(grid["ndvi_max"][r, c], nan=0.0))
+
+
+def land_share(e: dict, land) -> float:
+    """Share of the 0.25 deg cell that is land, from the coastline polygons."""
+    cell = box(e["lon"] - 0.125, e["lat"] - 0.125, e["lon"] + 0.125, e["lat"] + 0.125)
+    return cell.intersection(land).area / cell.area
+
+
+def fit_to_train(e: dict, grid, land) -> bool:
+    return (ice_pct(e, grid) < MAX_PICK_ICE_PCT and ndvi_max(e, grid) <= MAX_PICK_NDVI
+            and land_share(e, land) >= MIN_PICK_LAND_SHARE)
+
+
+GENERIC_WORDS = {"desert", "desierto", "basin", "plateau", "mountains", "mts", "range", "area", "near", "lake", "crater",
+                 "island", "islands", "valley", "valleys", "station", "and", "the", "of", "de", "land", "plain", "plains"}
+
+
+def key_words(name: str) -> set[str]:
+    """Proper-name words of a place ("Qaidam Basin, Dalangtan playa" -> {qaidam, dalangtan, playa})."""
+    return {w for w in re.findall(r"[a-zà-ÿ]{3,}", name.lower()) if w not in GENERIC_WORDS}
+
+
+def candidate_entries(rank: dict, known: list[dict], grid, namer: "Namer") -> list[dict]:
     seen, entries = set(), []
     for e in rank["ranked"]:  # dedupe: a cell can be in both the climate and the rock pool
         key = (round(e["lat"], 2), round(e["lon"], 2))
-        if e["total"] is not None and key not in seen and ice_pct(e, grid) < MAX_PICK_ICE_PCT:
+        # "complete": every score exists, so missing data never helps a place (earth_ranking.py)
+        if e.get("complete") and key not in seen and fit_to_train(e, grid, namer.land):
             seen.add(key)
             entries.append(e)
+    for k in known:
+        if "region" not in k:
+            k["region"] = namer.region_name(k["lat"], k["lon"])
     for e in entries:
         near = min(known, key=lambda k: great_circle_km(e["lat"], e["lon"], k["lat"], k["lon"]))
         e["known_match"] = near if great_circle_km(e["lat"], e["lon"], near["lat"], near["lon"]) <= KNOWN_MATCH_KM else None
+        e["known_region"] = None
+        if e["known_match"] is None:
+            region = namer.region_name(e["lat"], e["lon"])
+            same = [(great_circle_km(e["lat"], e["lon"], k["lat"], k["lon"]), k) for k in known
+                    if region and (k["region"] == region or key_words(k["name"]) & key_words(region))]
+            same = [(d, k) for d, k in same if d <= KNOWN_REGION_KM]
+            if same:
+                d, k = min(same, key=lambda item: item[0])
+                e["known_region"] = {**k, "km": round(d)}
     return entries
 
 
-def pick_round_robin(sites: list[dict], rankings: dict, known: dict, grid) -> dict[str, list[dict]]:
-    """Each candidate takes its best remaining place in turn; places are not shared within a body."""
-    entries = {s["id"]: candidate_entries(rankings[s["id"]], known[s["body"]], grid) for s in sites}
+def pick_best_pairs(sites: list[dict], rankings: dict, known: dict, grid, namer: "Namer") -> dict[str, list[dict]]:
+    """Three rounds; in each, every candidate gets one place, and places are not shared within a body.
+
+    Within a round the (candidate, place) pair with the highest score is settled first, so a place that two
+    candidates want goes to the one it fits better. (The first version let candidates choose in list order,
+    which gave the first one the best places whether or not they fitted it best.)
+    """
+    entries = {s["id"]: candidate_entries(rankings[s["id"]], known[s["body"]], grid, namer) for s in sites}
+    body = {s["id"]: s["body"] for s in sites}
     picks: dict[str, list[dict]] = {s["id"]: [] for s in sites}
+
+    def allowed(sid: str, e: dict) -> bool:
+        if any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_ANALOG_KM_APART for p in picks[sid]):
+            return False
+        return not any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_KM_FROM_OTHER_CANDIDATES
+                       for other, ps in picks.items() if other != sid and body[other] == body[sid] for p in ps)
+
     for _ in range(3):
-        for s in sites:
-            taken = [(p, sid) for sid, ps in picks.items() for p in ps
-                     if sid != s["id"] and next(x for x in sites if x["id"] == sid)["body"] == s["body"]]
-            for e in entries[s["id"]]:
-                if any(e is p for p in picks[s["id"]]):
-                    continue
-                if any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_ANALOG_KM_APART for p in picks[s["id"]]):
-                    continue
-                if any(great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) < MIN_KM_FROM_OTHER_CANDIDATES for p, _ in taken):
-                    continue
-                picks[s["id"]].append(e)
+        waiting = [s["id"] for s in sites]
+        while waiting:
+            offers = [(sid, next((e for e in entries[sid] if allowed(sid, e)), None)) for sid in waiting]
+            offers = [(sid, e) for sid, e in offers if e is not None]
+            if not offers:
                 break
+            sid, e = max(offers, key=lambda o: o[1]["total"])
+            picks[sid].append(e)
+            waiting.remove(sid)
     for s in sites:  # contract: at least one new candidate per site
         ps = picks[s["id"]]
-        if ps and all(p["known_match"] for p in ps):
-            new = next((e for e in entries[s["id"]] if not e["known_match"] and all(
+        if ps and all(p["known_match"] or p["known_region"] for p in ps):
+            new = next((e for e in entries[s["id"]] if not e["known_match"] and not e["known_region"] and all(
                 great_circle_km(e["lat"], e["lon"], p["lat"], p["lon"]) >= MIN_ANALOG_KM_APART for p in ps[:2])), None)
             if new:
                 ps[2] = new
@@ -250,7 +337,8 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
     analogs = []
     for rank_no, e in enumerate(picks, start=1):
         k = e["known_match"]
-        region, country = namer(e["lat"], e["lon"], e.get("rock"))
+        in_region = e["known_region"]
+        region, country = namer(e["lat"], e["lon"], e.get("rock"), e.get("earth_slope_median"))
         name = k["name"] if k else region
         scores = {}
         for d in dims:
@@ -258,7 +346,11 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
             scores[d] = {"score": None if raw is None else round(100 * raw), "confidence": CONFIDENCE[d],
                          "note": "No global data we could compare" if raw is None else ""}
         scores["terrain"]["note"] = f"Earth median slope {e.get('earth_slope_median')}°, site {rank['planet_slope_median']}°"
-        scores["mineralogy"]["note"] = f"Earth: {e.get('rock_name')} (GLiM). Site: {rank['expected_rock_note']} (our reading, not a mapped unit)"
+        scores["mineralogy"]["note"] = f"Earth: {e.get('rock_name')} (GLiM, 0.5° map). Site: {rank['expected_rock_note']}"
+        if "albedo" in scores and e.get("albedo") is not None:
+            scores["albedo"]["note"] = f"Earth {e['albedo']:.2f} (MODIS shortwave), site {rank['site_albedo']:.2f} (MGS TES)"
+        if "altitude" in scores and e.get("elevation_m") is not None:
+            scores["altitude"]["note"] = f"Mean elevation {e['elevation_m']:,} m"
         similar = [d for d in dims if scores[d]["score"] is not None and scores[d]["score"] >= SIMILAR]
         different = [d for d in dims if scores[d]["score"] is not None and scores[d]["score"] <= DIFFERENT]
         test_list = []
@@ -274,14 +366,16 @@ def build_for(site: dict, rank: dict, picks: list[dict], tests: dict, namer: Nam
         analogs.append({
             "id": f"{site['id']}-{slug}", "siteId": site["id"], "rank": rank_no, "name": name,
             "country": k["country"] if k else country, "lat": round(e["lat"], 3), "lon": round(e["lon"], 3),
-            "radiusKm": 12.5, "known": bool(k), "knownRef": k["ref"] if k else None,
+            "radiusKm": 12.5, "known": bool(k or in_region), "knownRef": (k or in_region or {}).get("ref"),
+            "knownName": k["name"] if k else f"{in_region['name']}, {in_region['km']} km away" if in_region else None,
             "totalScore": round(100 * e["total"]), "scores": scores,
             "similarities": [sentence_for(d, True, e, rank, body) for d in similar],
             "differences": [sentence_for(d, False, e, rank, body) for d in different] + [ALWAYS_DIFFERENT[body]],
             "tests": test_list,
             "processes": [p for p in [PROCESSES.get(e.get("rock") or "")] if p],
             "image": None,
-            "sources": ([k["ref"]] if k and k["ref"] else []) + DATA_SOURCES[body] + DATA_SOURCES["earth"] + [FACT_SHEETS[body]],
+            "sources": ([(k or in_region)["ref"]] if (k or in_region) and (k or in_region)["ref"] else [])
+                       + DATA_SOURCES[body] + DATA_SOURCES["earth"] + [FACT_SHEETS[body]],
         })
     return analogs
 
@@ -292,7 +386,7 @@ def main() -> None:
     known, tests, namer = known_analogs(), test_mapping(), Namer()
     candidates = [s for s in sites if s["status"] == "candidate"]
     grid = np.load(INTERIM / "earth_grid.npz")
-    picks = pick_round_robin(candidates, rankings, known, grid)
+    picks = pick_best_pairs(candidates, rankings, known, grid, namer)
     for ps in picks.values():
         for e in ps:
             add_climate(e, grid)
@@ -304,9 +398,11 @@ def main() -> None:
             print(f"\n{site['id']} ({site['name']}):")
             for a in built:
                 tag = "known" if a["known"] else "NEW  "
+                if a["knownName"] and a["knownName"] != a["name"]:
+                    tag = "KNOWN REGION"
                 print(f"  {a['rank']}. {tag} {a['totalScore']:3d}  {a['name']}, {a['country']} ({a['lat']}, {a['lon']})"
                       f"  similar {len(a['similarities'])}, different {len(a['differences'])}, tests {len(a['tests'])}")
-    out = {"version": 2, "mock": False, "dimensions": DIMENSIONS, "analogs": analogs}
+    out = {"version": 3, "mock": False, "dimensions": DIMENSIONS, "analogs": analogs}
     AnalogsFile.model_validate(out)
     (DATA / "analogs.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"\nWrote {len(analogs)} analogs to {DATA / 'analogs.json'}")

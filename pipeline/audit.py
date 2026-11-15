@@ -211,14 +211,17 @@ def audit_earth():
     def cell(lat, lon, key):
         return float(g[key][int((90 - lat) / 0.25), int((lon + 180) / 0.25)])
 
-    # long-term mean annual rainfall (mm), approximate climatologies; 2023 is one year, so factor-of-2 tolerance
+    # long-term mean annual rainfall (mm), approximate station climatologies. Our input is the IMERG 2000-2023
+    # climatology (a 25 km cell mean, so not a station value): within a factor of 1.6
     rain = {"Manaus, Brazil": (-3.1, -60.0, 2300), "Istanbul, Türkiye": (41.0, 28.98, 800),
             "Eskişehir, Türkiye": (39.78, 30.52, 380), "London, UK": (51.5, -0.12, 600),
+            "Dalanzadgad, Mongolia (Gobi)": (43.6, 104.4, 130), "Resolute, Canada (Arctic)": (74.7, -94.9, 160),
             "In Salah, Algeria": (27.2, 2.47, 17), "Atacama (Yungay)": (-24.08, -69.99, 2)}
     for name, (lat, lon, ref) in rain.items():
         v = cell(lat, lon, "precip_mm")
         if ref >= 50:
-            check("earth", f"GPM rainfall at {name}", ref / 2 <= v <= ref * 2, f"ours {v:.0f} mm/yr, climatology ≈ {ref} mm")
+            check("earth", f"GPM rainfall at {name}", ref / 1.6 <= v <= ref * 1.6,
+                  f"ours {v:.0f} mm/yr (2023 alone: {cell(lat, lon, 'precip_2023_mm'):.0f}), climatology ≈ {ref} mm")
         else:  # hyperarid: IMERG over-reports here, so the pipeline treats everything <= 100 mm as fully arid
             aridity = cell(lat, lon, "aridity")
             check("earth", f"GPM rainfall at {name} (hyperarid)", v <= 100 and aridity == 1.0,
@@ -232,15 +235,82 @@ def audit_earth():
           not np.isfinite(cell(72.0, -40.0, "mars")), "ice sheet cells carry no score")
     check("earth", "McMurdo Dry Valleys kept", np.isfinite(cell(-77.625, 161.875, "mars")), "ice-free valley cell scored")
 
+    # --- added 15 Nov (Earth audit), after the Mars maps turned out to be shifted: is every Earth raster where we
+    # think it is? Each is compared with an independent map at shifts of up to 3 cells and as a flipped, mirrored
+    # and half-turned copy; the unshifted, untouched one must fit best.
+    import earth_pool
+    import earth_ranking
+    months = {name: len(list((RAW / "earth" / name).glob("*.hdf"))) for name in ("MOD11C3", "MOD13C2")}
+    check("earth", "all 12 months of 2023 are in (surface temperature, vegetation)", set(months.values()) == {12}, str(months))
+    ne = g["ne_land_pct"].astype("float64")
+
+    def fit(reference, layer, mask=None):
+        def corr(x):
+            ok = np.isfinite(reference) & np.isfinite(x) & (True if mask is None else mask)
+            return float(np.corrcoef(reference[ok], x[ok])[0, 1])
+        shifts = {(dy, dx): corr(np.roll(np.roll(layer, dy, axis=0), dx, axis=1)) for dy in range(-3, 4) for dx in range(-3, 4)}
+        wrong = {"flipped north-south": corr(layer[::-1]), "mirrored east-west": corr(layer[:, ::-1]),
+                 "turned 180° in longitude": corr(np.roll(layer, layer.shape[1] // 2, axis=1))}
+        best = max(shifts, key=shifts.get)
+        ok = best == (0, 0) and shifts[(0, 0)] > max(wrong.values()) + 0.2
+        return ok, f"r = {shifts[(0, 0)]:.2f} in place, best shift {best}, best wrong copy {max(wrong.values()):.2f}"
+
+    temperate = np.abs(g["lat"]) < 60  # no sea ice there, so "has a temperature" means land
+    land = (ne > 99) & (np.abs(g["lat"]) < 55)
+    rain_log = np.log1p(g["precip_mm"].astype("float64"))
+    for name, reference, layer, mask in [
+        ("MODIS land cover (water share) vs Natural Earth coastline", ne, 100 - g["water_pct"].astype("float64"), None),
+        ("MODIS vegetation (has a value) vs Natural Earth coastline", ne, np.isfinite(g["ndvi_max"]) * 100.0, None),
+        ("MODIS surface temperature (has a value) vs Natural Earth coastline", ne, np.isfinite(g["mean_lst_k"]) * 100.0, temperate),
+        ("GPM rainfall vs MODIS vegetation on land (rain and green go together)", g["ndvi_max"].astype("float64"), rain_log, land),
+    ]:
+        ok, detail = fit(reference, layer, mask)
+        check("earth", f"registered: {name}", ok, detail)
+    header, glim = earth_ranking.glim_grid()
+    ne_half = earth_pool.block_mean(ne, 2)
+    glim_land = np.isin(glim, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16]) * 100.0
+    ok, detail = fit(ne_half, glim_land)
+    check("earth", "registered: GLiM rock map (has a rock class) vs Natural Earth coastline", ok, detail)
+    ok, detail = fit(ne, np.isfinite(g["albedo"]) * 100.0, temperate)
+    check("earth", "registered: MODIS albedo (has a value) vs Natural Earth coastline", ok, detail)
+    # albedo values at textbook surfaces: a sand sea is bright, a basalt field and a rainforest are dark
+    for name, lat, lon, lo, hi in [("Grand Erg Oriental sand sea", 30.5, 7.5, 0.30, 0.55), ("Al Haruj basalt field, Libya", 27.25, 17.5, 0.05, 0.22),
+                                   ("Amazon rainforest", -3.0, -62.0, 0.08, 0.18)]:
+        v = cell(lat, lon, "albedo")
+        check("earth", f"MODIS albedo at {name}", lo <= v <= hi, f"{v:.2f} (expected {lo}-{hi})")
+    # the rain climatology (2000-2023) and the single year 2023 are separate NASA files: they must agree in pattern
+    both = np.isfinite(g["precip_mm"]) & np.isfinite(g["precip_2023_mm"])
+    r = float(np.corrcoef(rain_log[both], np.log1p(g["precip_2023_mm"].astype("float64"))[both])[0, 1])
+    check("earth", "rain climatology 2000-2023 agrees with the 12 months of 2023", r > 0.95, f"r = {r:.3f} (log rain, all cells)")
+
 
 # ---------------------------------------------------------------- 5. Terrain pipeline on known places
 def audit_terrain():
-    flat = earth_ranking.earth_slopes(40.76, -113.88, 463.0)  # Bonneville Salt Flats, Utah
-    steep = earth_ranking.earth_slopes(46.0, 7.75, 463.0)  # Pennine Alps
-    check("terrain", "Bonneville Salt Flats are flat", flat is not None and np.median(flat) < 1.0,
-          f"median {np.median(flat):.2f}°" if flat is not None else "no data")
-    check("terrain", "Alps are steep", steep is not None and np.median(steep) > 15,
-          f"median {np.median(steep):.1f}°" if steep is not None else "no data")
+    import earth_ranking
+    flat = earth_ranking.earth_terrain(40.76, -113.88, 463.0)  # Bonneville Salt Flats, Utah
+    steep = earth_ranking.earth_terrain(46.0, 7.75, 463.0)  # Pennine Alps
+    check("terrain", "Bonneville Salt Flats are flat", flat is not None and np.median(flat[0]) < 1.0,
+          f"median {np.median(flat[0]):.2f}°" if flat is not None else "no data")
+    check("terrain", "Alps are steep", steep is not None and np.median(steep[0]) > 15,
+          f"median {np.median(steep[0]):.1f}°" if steep is not None else "no data")
+    # --- added 15 Nov (Earth audit) ---
+    # Elevation of the same boxes: the salt flats lie at 1,286 m (the box takes in some higher ground around them)
+    check("terrain", "Bonneville Salt Flats elevation vs 1,286 m", flat is not None and 1270 <= flat[1] <= 1350,
+          f"box mean {flat[1]:.0f} m" if flat is not None else "no data")
+    # A 25 km box crosses the edge of a 1-degree DEM tile for most cells away from the equator. It must be read in
+    # full and stay 25 km wide (the first version cut it at the tile edge). At 72.125° N the box is 0.73° wide.
+    z = earth_ranking.earth_window(72.125, -109.125, 240.0)
+    check("terrain", "a box that crosses DEM tiles is read in full (Victoria Island, 72° N)",
+          z is not None and not np.isnan(z).any(), "no gaps" if z is not None else "no data")
+    # The same ground must give the same slopes whether a tile edge runs through the box or not: read one box in
+    # full, then as two halves, each inside one tile, and compare.
+    whole = earth_ranking.earth_window(41.5, 95.0, 463.0)  # Gobi, centred on a tile corner
+    if whole is not None:
+        n = whole.shape[0]
+        west = earth_ranking.earth_window(41.5, 95.0 - 6.25 / (111.2 * np.cos(np.radians(41.5))), 463.0 * 2)
+        check("terrain", "box across a tile corner has the heights of its parts (Gobi)",
+              west is not None and abs(float(np.nanmean(whole[:, : n // 2])) - float(np.nanmean(west[:, : west.shape[1] // 2 * 2]))) < 60,
+              f"west half mean {np.nanmean(whole[:, : n // 2]):.0f} m" if west is not None else "no data")
     header, glim = earth_ranking.glim_grid()
     for name, lat, lon, want in [("Iceland basalt", 64.85, -16.83, {"vb"}), ("Deccan Traps", 19.0, 75.0, {"vb"}),
                                  ("Grand Erg Oriental sand sea", 30.5, 7.5, {"su", "ss", "sm"}), ("Greenland ice", 72.0, -40.0, {"ig"})]:
@@ -263,6 +333,24 @@ def audit_inputs():
                 or (stated == "Antarctica" and k["lat"] < -60)
             check("inputs", f"{body} known analog '{k['name'][:30]}' lies in {k['country'][:20]}", ok,
                   f"({k['lat']}, {k['lon']}) → {', '.join(near['NAME'])[:40] or 'no country within 50 km'}")
+    # --- added 15 Nov (Earth audit): the rock class we expect at each Mars zone is the unit the USGS global
+    # geologic map (SIM 3292, Tanaka et al. 2014) draws there, looked up again here ---
+    import earth_ranking
+    volcanic = {"AHv", "eHv", "lHv", "Av", "lAv", "Hve", "Ave", "lHvf", "lAvf", "Nve", "eHve"}
+    for s in json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]:
+        if s["body"] != "mars" or s["status"] != "candidate":
+            continue
+        rock, _, unit = earth_ranking.EXPECTED_ROCK[s["id"]]
+        mapped = earth_ranking.mapped_unit(s["lat"], s["lon"])
+        if mapped is None:
+            check("inputs", f"{s['id']} rock class vs USGS geologic map", None, "map files not on this machine (data/raw/mars/sim3292)")
+            continue
+        ok = mapped[0] == unit and ((rock == "vb") == (mapped[0] in volcanic))
+        check("inputs", f"{s['id']} rock class vs USGS geologic map", ok, f"mapped unit {mapped[0]} ({mapped[1]}); we expect {earth_ranking.GLIM_NAMES[rock]}")
+    opportunity = earth_ranking.mapped_unit(-1.9462, -5.5266)
+    if opportunity is not None:
+        check("inputs", "Opportunity landed in the same mapped unit as mars-candidate-e", opportunity[0] == earth_ranking.EXPECTED_ROCK["mars-candidate-e"][2],
+              f"{opportunity[0]} ({opportunity[1]})")
     moon_names = gpd.read_file(f"zip://{RAW / 'names' / 'MOON_nomenclature_center_pts.zip'}")
     import moon_screening as mo
     lookup = {"Peak near Cabeus B": "Cabeus B", "Haworth": "Haworth", "Malapert Massif": "Mons Malapert",
@@ -303,6 +391,30 @@ def audit_outputs():
         check("outputs", f"{sid}: 3 analogs ≥ 500 km apart, ≥ 1 new", len(group) == 3 and apart >= 500 and any(not a["known"] for a in group),
               f"closest pair {apart:.0f} km")
     check("outputs", "every analog points at a real site", all(a["siteId"] in sites for a in analogs), "")
+    # --- added 15 Nov (Earth audit) ---
+    candidates = [s for s in sites.values() if s["status"] == "candidate"]
+    without = [s["id"] for s in candidates if sum(a["siteId"] == s["id"] for a in analogs) != 3]
+    check("outputs", "every candidate has exactly 3 training areas", not without, f"{len(candidates)} candidates, {len(analogs)} areas" + (f"; wrong: {without}" if without else ""))
+    # No score is missing where it counts, and the total is the weighted sum of the scores shown (weights of earth_ranking.py)
+    import earth_ranking
+    weights = earth_ranking.WEIGHTS
+    check("outputs", "dimension weights add up to 100 %", all(abs(sum(w.values()) - 1) < 1e-9 for w in weights.values()),
+          "; ".join(f"{body}: {', '.join(f'{k} {round(100 * v)}' for k, v in w.items())}" for body, w in weights.items()))
+    gaps, off = [], []
+    for a in analogs:
+        w = weights[sites[a["siteId"]]["body"]]
+        if any(a["scores"][k]["score"] is None for k in w):
+            gaps.append(a["name"])
+            continue
+        total = sum(a["scores"][k]["score"] * share for k, share in w.items())
+        if abs(total - a["totalScore"]) > 1.0:  # each shown score is rounded to a whole number
+            off.append(f"{a['name']}: {total:.1f} vs {a['totalScore']}")
+    check("outputs", "no training area has a missing score in a weighted dimension", not gaps, "; ".join(gaps[:4]))
+    check("outputs", "every total is the weighted sum of the scores shown", not off, "; ".join(off[:3]) or f"{len(analogs)} areas")
+    # A name says "plains" only where the ground is flat at the comparison scale
+    hilly = [a["name"] for a in analogs if "plains" in a["name"].split(" — ")[0]
+             and float(re.search(r"Earth median slope ([\d.]+)", a["scores"]["terrain"]["note"]).group(1)) > 1.5]
+    check("outputs", "names say 'plains' only for flat ground (median slope ≤ 1.5°)", not hilly, "; ".join(hilly[:4]))
     # Every training area must be inland: its 0.25° cell at least 90 % inside Natural Earth's 10 m country polygons
     # (vector geometry here, independent of the raster mask the pipeline uses).
     land = countries.union_all()
@@ -315,7 +427,9 @@ def audit_outputs():
     check("outputs", "every training area is inland (≥ 90 % of its cell is land, Natural Earth 10 m)", not wet, "; ".join(wet[:4]))
     grid = np.load(ROOT / "data" / "interim" / "earth_grid.npz")
     icy = [a["name"] for a in analogs if build_analogs.ice_pct(a, grid) >= build_analogs.MAX_PICK_ICE_PCT]
-    check("outputs", "every training area is mostly bare ground (< 50 % permanent snow/ice, MODIS)", not icy, "; ".join(icy[:4]))
+    check("outputs", "every training area is at least three quarters free of permanent snow and ice (MODIS)", not icy, "; ".join(icy[:4]))
+    green = [f"{a['name']} (NDVI {build_analogs.ndvi_max(a, grid):.2f})" for a in analogs if build_analogs.ndvi_max(a, grid) > build_analogs.MAX_PICK_NDVI]
+    check("outputs", "every training area is bare or sparsely vegetated (yearly maximum NDVI ≤ 0.30, MODIS)", not green, "; ".join(green[:4]))
     shown = [t for a in analogs for t in a["similarities"] + a["differences"] + [x["detail"] for x in a["tests"]]]
     broken = [t for t in shown if re.search(r"\b(None|nan|NaN)\b", t)]
     check("outputs", "no missing values (None/NaN) in any text shown on the site", not broken, "; ".join(broken[:3]))
