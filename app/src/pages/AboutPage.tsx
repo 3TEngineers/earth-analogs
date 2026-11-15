@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
@@ -40,16 +40,17 @@ export function AboutPage() {
 
         <div className="stagger" style={step(4)}>
           <Section title="The team">
-            <ul className="grid gap-4 md:grid-cols-3">
-              <Person name="Sadık Bora Erteni" role="Data and analysis">
-                The pipeline: screening Mars and the lunar south pole, the global Earth pass, ranking and the data files the site
-                reads.
+            <ul className="grid gap-4 md:grid-cols-[1fr_1fr_0.72fr]">
+              <Person name="Sadık Bora Erteni" role="Method, data and site" href="https://www.linkedin.com/in/sadik-bora-erteni/">
+                Screening Mars and the lunar south pole, matching every site to Earth and auditing the results; the structure
+                and content of the site&apos;s pages.
               </Person>
-              <Person name="Deniz Aslan" role="3D and interface">
-                The 3D scene with the Moon, Earth and Mars, the flights between them, and the design of the site.
+              <Person name="Deniz Aslan" role="Method, data and site" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
+                The 3D scene with the Moon, Earth and Mars and the design of the site; the full re-check of the Mars and Moon
+                screening that chose the final landing zones.
               </Person>
-              <Person name="Kmar" role="Research and content">
-                Published landing constraints, the Artemis III regions, known analog sites and what can be tested where.
+              <Person name="Kamar Abid" role="Research" href="https://www.linkedin.com/in/kamar-abid-679337374/">
+                Published landing constraints and known analog sites.
               </Person>
             </ul>
           </Section>
@@ -138,10 +139,21 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
-function Person({ name, role, children }: { name: string; role: string; children: ReactNode }) {
+function Person({ name, role, href, children }: { name: string; role: string; href: string; children: ReactNode }) {
   return (
     <li className="rounded-2xl border border-line bg-white/[0.03] p-5">
-      <p className="font-display text-xl font-semibold">{name}</p>
+      <p className="font-display text-xl font-semibold">
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${name} on LinkedIn (opens in a new tab)`}
+          className="group inline-flex items-center gap-1.5 underline decoration-white/25 underline-offset-4 hover:decoration-white"
+        >
+          {name}
+          <ArrowUpRight className="size-4 text-ink-muted transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+        </a>
+      </p>
       <p className="eyebrow mt-1.5 text-ink-muted">{role}</p>
       <p className="mt-3 text-[0.95rem] leading-relaxed text-ink/85">{children}</p>
     </li>
