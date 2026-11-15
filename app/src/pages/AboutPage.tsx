@@ -107,15 +107,9 @@ export function AboutPage() {
             </p>
             <ul className="mt-6 grid gap-x-10 gap-y-5 leading-relaxed text-ink/85 md:grid-cols-3">
               <li>
-                <strong className="font-display font-medium text-ink">Development support.</strong> Claude (Anthropic, through
-                Claude Code) assisted with writing, reviewing and optimising code for the data pipeline and this website,
-                including the 3D scene and its animations, and with debugging and library suggestions. The team directed the
+                <strong className="font-display font-medium text-ink">Development support.</strong> Claude Code assisted with reviewing and optimising code for the data pipeline and this website,
+                including the 3D scene animations, and debugging. The team directed the
                 work, and reviewed and tested the results.
-              </li>
-              <li>
-                <strong className="font-display font-medium text-ink">Research and documentation.</strong> Claude helped us
-                compare the challenges, find datasets and published mission limits, cross-check our numbers against
-                independent sources, and draft and edit the documentation and site text.
               </li>
               <li>
                 <strong className="font-display font-medium text-ink">What is not AI.</strong> Every number on the site is
