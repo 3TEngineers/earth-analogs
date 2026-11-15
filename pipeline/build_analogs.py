@@ -66,7 +66,7 @@ DIMENSIONS = [
                     "gravel match Mars' plains; bright sand and salt do not"},
     {"id": "altitude", "label": "Thin air", "bodies": ["mars"],
      "description": "Elevation (Copernicus DEM): higher ground has thinner air and stronger UV. 5,000 m scores 100, "
-                    "and even there the air is about 90 times denser than on Mars"},
+                    "and even there the air pressure is more than 80 times that on Mars"},
     {"id": "sun_angle", "label": "Low Sun", "bodies": ["moon"], "description": "How low the Sun stays (latitude)"},
     {"id": "ice", "label": "Frozen ground", "bodies": ["moon"],
      "description": "Mean surface temperature below freezing (MODIS) as a permafrost proxy"},
@@ -181,6 +181,29 @@ class Namer:
             regions = self.regions[distance <= 1.5].assign(d=distance).sort_values("d")
         return next((n for n in regions["NAME"] if isinstance(n, str)), None)
 
+    def place(self, lat: float, lon: float) -> str | None:
+        """The region's name if the point is in it or within 25 km of its outline; else "120 km south of X".
+
+        (Until the final review a point up to ~1.5 degrees outside every outline simply took the nearest
+        region's name: a spot in the desert basin 118 km south of the Tian Shan was called "Tian Shan".)
+        """
+        from shapely.ops import nearest_points
+
+        name = self.region_name(lat, lon)
+        if name is None:
+            return None
+        point = Point(lon, lat)
+        outline = self.regions[self.regions["NAME"] == name].geometry.iloc[0]
+        if outline.contains(point):
+            return self._title(name)
+        edge = nearest_points(outline, point)[0]
+        km = great_circle_km(lat, lon, edge.y, edge.x)
+        if km <= 25.0:
+            return self._title(name)
+        bearing = np.degrees(np.arctan2((lon - edge.x) * np.cos(np.radians(lat)), lat - edge.y)) % 360
+        side = ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"][int((bearing + 22.5) // 45) % 8]
+        return f"{round(km, -1):.0f} km {side} of {self._title(name)}"
+
     def __call__(self, lat: float, lon: float, rock: str | None, median_slope: float | None = None) -> tuple[str, str]:
         point = Point(lon, lat)
         countries = self.countries[self.countries.contains(point)]
@@ -191,7 +214,7 @@ class Namer:
         region = self.region_name(lat, lon)
         label = f"{ROCK_LABEL.get(rock or '', 'Barren')} {landform(median_slope)}"
         if region and not (country and region.lower() == country.lower()):
-            return f"{label} — {self._title(region)}", country or ""
+            return f"{label} — {self.place(lat, lon)}", country or ""
         return label, country or ("Antarctica" if lat < -60 else "")
 
 
@@ -202,7 +225,7 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
     pm, em = rank["planet_slope_median"], entry.get("earth_slope_median")
     mean_c = None if entry.get("mean_lst_k") is None else round(entry["mean_lst_k"] - 273.15)
     if dim == "terrain":
-        return (f"Slopes match at the same scale (median {em}° here vs {pm}° at the site)" if good else
+        return (f"Slopes are close at the same scale (median {em}° here vs {pm}° at the site)" if good else
                 f"Terrain is {'much flatter' if em is not None and em < pm else 'rougher'} than at the site "
                 f"(median slope {em}° here vs {pm}°)")
     if dim == "mineralogy":
@@ -224,10 +247,12 @@ def sentence_for(dim: str, good: bool, entry: dict, rank: dict, body: str) -> st
         elevation = entry.get("elevation_m") or 0
         pressure = round(100 * float(np.exp(-elevation / 8434.0)))  # scale height of Earth's lower atmosphere
         return (f"High ground at {elevation:,} m: air pressure about {pressure} % of sea level, and stronger UV" if good else
-                f"Low ground at {elevation:,} m: air about as thick as at sea level")
+                f"Low ground at {elevation:,} m: air pressure about {pressure} % of sea level, against under 1 % on Mars")
     if dim == "sun_angle":
-        return (f"The Sun stays low all year at {abs(entry['lat']):.0f}° latitude, with long shadows" if good else
-                "The Sun climbs much higher than at the lunar pole")
+        # highest Sun of the year: 90 - latitude + Earth's axial tilt (23.44 deg); about 1.5 deg at the lunar pole
+        top = 90.0 - abs(entry["lat"]) + 23.44
+        return (f"The Sun stays low at {abs(entry['lat']):.0f}° latitude (never above about {top:.0f}°), with long shadows" if good else
+                f"The Sun climbs to about {min(top, 90.0):.0f}° here; at the lunar pole it stays within about 1.5° of the horizon")
     if dim == "ice":
         return (f"Ground frozen most of the year (mean surface {mean_c} °C)" if good else
                 f"No lasting frozen ground (mean surface {mean_c} °C)")

@@ -60,7 +60,7 @@
       "bodies": [
         "mars"
       ],
-      "description": "Elevation (Copernicus DEM): higher ground has thinner air and stronger UV. 5,000 m scores 100, and even there the air is about 90 times denser than on Mars"
+      "description": "Elevation (Copernicus DEM): higher ground has thinner air and stronger UV. 5,000 m scores 100, and even there the air pressure is more than 80 times that on Mars"
     },
     {
       "id": "sun_angle",
@@ -127,7 +127,7 @@
       },
       "similarities": [
         "Very dry and bare (181 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 75° latitude, with long shadows",
+        "The Sun stays low at 75° latitude (never above about 38°), with long shadows",
         "Ground frozen most of the year (mean surface -15 °C)"
       ],
       "differences": [
@@ -286,7 +286,7 @@
       ],
       "differences": [
         "Terrain is much flatter than at the site (median slope 3.55° here vs 12.7°)",
-        "The Sun climbs much higher than at the lunar pole",
+        "The Sun climbs to about 78° here; at the lunar pole it stays within about 1.5° of the horizon",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -364,7 +364,7 @@
       ],
       "differences": [
         "Mild day-night swing (5.9 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Sun climbs much higher than at the lunar pole",
+        "The Sun climbs to about 46° here; at the lunar pole it stays within about 1.5° of the horizon",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -432,12 +432,12 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 13.51° here vs 13.06° at the site)",
+        "Slopes are close at the same scale (median 13.51° here vs 13.06° at the site)",
         "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
         "Very dry and bare (113 mm of rain a year, satellite estimate)"
       ],
       "differences": [
-        "The Sun climbs much higher than at the lunar pole",
+        "The Sun climbs to about 90° here; at the lunar pole it stays within about 1.5° of the horizon",
         "No lasting frozen ground (mean surface 25 °C)",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
@@ -513,7 +513,7 @@
       },
       "similarities": [
         "Very dry and bare (86 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 78° latitude, with long shadows",
+        "The Sun stays low at 78° latitude (never above about 35°), with long shadows",
         "Ground frozen most of the year (mean surface -19 °C)"
       ],
       "differences": [
@@ -679,7 +679,7 @@
       "differences": [
         "Wetter or greener than the Moon (734 mm of rain a year)",
         "Mild day-night swing (5.2 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Sun climbs much higher than at the lunar pole",
+        "The Sun climbs to about 50° here; at the lunar pole it stays within about 1.5° of the horizon",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -832,13 +832,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.62° here vs 0.09° at the site)",
+        "Slopes are close at the same scale (median 0.62° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (104 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.23 here, 0.19 there)"
       ],
       "differences": [
-        "Low ground at 1,064 m: air about as thick as at sea level",
+        "Low ground at 1,064 m: air pressure about 88 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -922,12 +922,12 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.17° here vs 0.09° at the site)",
+        "Slopes are close at the same scale (median 0.17° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (64 mm of rain a year, satellite estimate)"
       ],
       "differences": [
-        "Low ground at 1,029 m: air about as thick as at sea level",
+        "Low ground at 1,029 m: air pressure about 89 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1011,12 +1011,12 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.51° here vs 0.09° at the site)",
+        "Slopes are close at the same scale (median 0.51° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (129 mm of rain a year, satellite estimate)"
       ],
       "differences": [
-        "Low ground at 790 m: air about as thick as at sea level",
+        "Low ground at 790 m: air pressure about 91 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1100,14 +1100,14 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.38° here vs 0.2° at the site)",
+        "Slopes are close at the same scale (median 0.38° here vs 0.2° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (20 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.14 here, 0.19 there)"
       ],
       "differences": [
         "Mild day-night swing (22.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 728 m: air about as thick as at sea level",
+        "Low ground at 728 m: air pressure about 92 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1191,14 +1191,14 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.6° here vs 0.2° at the site)",
+        "Slopes are close at the same scale (median 0.6° here vs 0.2° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (95 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.17 here, 0.19 there)"
       ],
       "differences": [
         "Mild day-night swing (18.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 1,082 m: air about as thick as at sea level",
+        "Low ground at 1,082 m: air pressure about 88 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1282,14 +1282,14 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.48° here vs 0.2° at the site)",
+        "Slopes are close at the same scale (median 0.48° here vs 0.2° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (62 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.23 here, 0.19 there)"
       ],
       "differences": [
         "Mild day-night swing (19.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 903 m: air about as thick as at sea level",
+        "Low ground at 903 m: air pressure about 90 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1373,7 +1373,7 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 1.15° here vs 0.7° at the site)",
+        "Slopes are close at the same scale (median 1.15° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
         "Very dry and bare (93 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.23 here, 0.20 there)",
@@ -1463,13 +1463,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.73° here vs 0.7° at the site)",
+        "Slopes are close at the same scale (median 0.73° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
         "Very dry and bare (100 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.21 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 1,109 m: air about as thick as at sea level",
+        "Low ground at 1,109 m: air pressure about 88 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1553,13 +1553,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.79° here vs 0.7° at the site)",
+        "Slopes are close at the same scale (median 0.79° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
         "Very dry and bare (95 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.17 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 740 m: air about as thick as at sea level",
+        "Low ground at 740 m: air pressure about 92 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1643,13 +1643,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.43° here vs 0.19° at the site)",
+        "Slopes are close at the same scale (median 0.43° here vs 0.19° at the site)",
         "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
         "Very dry and bare (61 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.19 here, 0.14 there)"
       ],
       "differences": [
-        "Low ground at 1,904 m: air about as thick as at sea level",
+        "Low ground at 1,904 m: air pressure about 80 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1733,13 +1733,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.27° here vs 0.19° at the site)",
+        "Slopes are close at the same scale (median 0.27° here vs 0.19° at the site)",
         "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
         "Very dry and bare (92 mm of rain a year, satellite estimate)"
       ],
       "differences": [
         "Ground much brighter than at the site (albedo 0.27 vs 0.14)",
-        "Low ground at 923 m: air about as thick as at sea level",
+        "Low ground at 923 m: air pressure about 90 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1823,14 +1823,14 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.14° here vs 0.19° at the site)",
+        "Slopes are close at the same scale (median 0.14° here vs 0.19° at the site)",
         "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
         "Very dry and bare (100 mm of rain a year, satellite estimate)"
       ],
       "differences": [
         "Mild day-night swing (20.5 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
         "Ground much brighter than at the site (albedo 0.27 vs 0.14)",
-        "Low ground at 161 m: air about as thick as at sea level",
+        "Low ground at 161 m: air pressure about 98 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1914,13 +1914,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.41° here vs 0.5° at the site)",
+        "Slopes are close at the same scale (median 0.41° here vs 0.5° at the site)",
         "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
         "Very dry and bare (23 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.21 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 1,511 m: air about as thick as at sea level",
+        "Low ground at 1,511 m: air pressure about 84 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -2005,7 +2005,7 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.19° here vs 0.5° at the site)",
+        "Slopes are close at the same scale (median 0.19° here vs 0.5° at the site)",
         "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
         "Very dry and bare (91 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.24 here, 0.20 there)"
@@ -2045,10 +2045,10 @@
       ]
     },
     {
-      "id": "mars-candidate-e-sandstone-plains-tian-shan",
+      "id": "mars-candidate-e-sandstone-plains-120-km-south-of-tian-sh",
       "siteId": "mars-candidate-e",
       "rank": 3,
-      "name": "Sandstone plains — Tian Shan",
+      "name": "Sandstone plains — 120 km south of Tian Shan",
       "country": "China",
       "lat": 41.625,
       "lon": 90.125,
@@ -2095,13 +2095,13 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.78° here vs 0.5° at the site)",
+        "Slopes are close at the same scale (median 0.78° here vs 0.5° at the site)",
         "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
         "Very dry and bare (48 mm of rain a year, satellite estimate)",
         "Ground about as dark as at the site (albedo 0.20 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 1,250 m: air about as thick as at sea level",
+        "Low ground at 1,250 m: air pressure about 86 % of sea level, against under 1 % on Mars",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [

@@ -41,8 +41,8 @@ MARS_CONTEXT = [
      "landed. The point deepest inside the largest safe area on Mars. The USGS geologic map draws the same "
      "lava-plain unit here as in Elysium Planitia."),
     ("mars-candidate-b", "Northern Elysium Planitia", ["Volcanic plains", "Wind erosion"],
-     "Lava plains in the north of Elysium Planitia, west of the Cerberus Fossae fractures and about 1,500 km "
-     "from InSight's landing site."),
+     "Lava plains at the northern edge of Elysium Planitia, in the region of the western Cerberus Fossae "
+     "fractures and about 1,500 km from InSight's landing site."),
     ("mars-candidate-c", "Western Isidis Planitia", ["Volcanic plains", "Wind erosion"],
      "The flat floor of the Isidis impact basin, in its western part: about 500 km from Jezero crater, where "
      "Perseverance landed, and from the place where Beagle 2 came down in 2003. The USGS geologic map draws "
@@ -143,9 +143,9 @@ def main() -> None:
     sites = []
     for ctx, result in zip(MOON_CONTEXT, moon["candidates"]):
         if result["group"] == "best overall":
-            note = (f"Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's "
-                    f"{result['nearest_artemis']} region ({result['km_to_artemis_feature']} km from its named feature), "
-                    "which cross-checks our method against NASA's own choice.")
+            note = (f"Passes all four criteria; among the best-lit spots at the pole. It lies "
+                    f"{result['km_to_artemis_feature']} km from the named feature of NASA's {result['nearest_artemis']} "
+                    "region, which our screening never used: an independent cross-check of the method.")
         else:
             note = (f"Passes all four criteria, {result['km_to_artemis_feature']:.0f} km from the nearest NASA Artemis "
                     "feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and "

@@ -55,7 +55,8 @@ MAX_SLOPE_DEG = 10.0  # ours. For scale: ISRO built the Chandrayaan-3 lander for
 MAX_PSR_KM = 10.0  # ours: ice within a short traverse
 # ours: only shadowed areas of at least 1 km2 count as a place to look for ice. On the 240 m grid a single
 # shadowed 120 m cell marks its whole pixel, and thousands of such specks would make "distance to shadow"
-# pass almost anywhere near the pole (audit, 15 Nov: 35,996 patches, 3,864 of them >= 1 km2).
+# pass almost anywhere near the pole. Patches are sized on the 120 m map itself (shadow_distance_km):
+# 51,562 patches, 2,306 of them >= 1 km2.
 MIN_PSR_KM2 = 1.0
 # 2 x 2 pixels (~480 m) must pass: room for a landing pad and a base. Well-lit ground is on narrow
 # ridges, so 3 x 3 (~720 m) left almost nothing.
@@ -125,6 +126,26 @@ def read_layer(path: Path, crs, transform: Affine, size: int, resampling: Resamp
             return data.filled(np.nan)
 
 
+def shadow_distance_km(path: Path, crs, transform: Affine, size: int) -> np.ndarray:
+    """Distance (km) from each target pixel to the nearest permanently shadowed area of >= MIN_PSR_KM2.
+
+    Patches are sized and distances measured on the map's own 120 m pixels, then averaged onto the 240 m grid.
+    (Until the final review of 15 Nov the mask was first enlarged to 240 m, keeping a pixel as shadowed if any
+    part of it was. That joined small specks into "areas" of 1 km2 that the 120 m map does not have: 3,864
+    patches instead of 2,306, and distances up to several km too short, e.g. 2.2 km for a site that is 6.0 km away.)
+    """
+    from rasterio.warp import reproject
+
+    with rasterio.open(path) as src:
+        shadowed = (src.read(1).astype("float32") * (src.scales[0] or 1.0) + (src.offsets[0] or 0.0)) > 0.5
+        pixel_m = abs(src.transform.a)
+        native_km = (ndimage.distance_transform_edt(~useful_shadow(shadowed, pixel_m)) * pixel_m / 1000.0).astype("float32")
+        out = np.full((size, size), np.nan, dtype="float32")
+        reproject(native_km, out, src_transform=src.transform, src_crs=src.crs, dst_transform=transform, dst_crs=crs,
+                  resampling=Resampling.average, src_nodata=None, dst_nodata=np.nan)
+    return out
+
+
 def load_layers():
     if not (RAW / "moon" / "ldsm_75s_240m.img").exists():
         local(SOURCES["slope"].replace(".lbl", ".img"))
@@ -135,7 +156,8 @@ def load_layers():
     layers = {
         "sunlit": read_layer(paths["sunlit"], crs, transform, size, Resampling.average),
         "earth": read_layer(paths["earth"], crs, transform, size, Resampling.average),
-        "psr": read_layer(paths["psr"], crs, transform, size, Resampling.max),
+        "psr": read_layer(paths["psr"], crs, transform, size, Resampling.max),  # any shadow: maps and the audit
+        "shadow_km": shadow_distance_km(paths["psr"], crs, transform, size),
         # The slope map stores 0 in the 29 % of its pixels no laser track crossed, and with its scaling 0 reads as
         # exactly 45 deg. Those pixels are left out of the average; a pixel with no measurement at all stays empty
         # and cannot pass. (Until the 15 Nov Earth audit they counted as 45 deg slopes: no unsafe ground passed,
@@ -225,8 +247,7 @@ def main() -> None:
     crs, transform, size, layers = load_layers()
     values, counts = np.unique(np.round(layers["psr"][np.isfinite(layers["psr"])], 3), return_counts=True)
     print("PSR layer values (top 5):", sorted(zip(counts, values), reverse=True)[:5])
-    psr = useful_shadow(np.nan_to_num(layers["psr"]) > 0.5, PIXEL_M)
-    psr_km = ndimage.distance_transform_edt(~psr) * PIXEL_M / 1000.0
+    psr_km = layers["shadow_km"]
 
     sunlit, earth, slope = layers["sunlit"], layers["earth"], layers["slope"]
     finite = np.isfinite(sunlit) & np.isfinite(earth) & np.isfinite(slope)
@@ -241,7 +262,7 @@ def main() -> None:
     def values_at(row: int, col: int) -> dict:
         window = np.s_[row - 1 : row + 2, col - 1 : col + 2]
         return {"sunlit": float(np.nanmedian(sunlit[window])), "earth": float(np.nanmedian(earth[window])),
-                "slope": float(np.nanmedian(slope[window])), "psr_km": float(np.nanmin(psr_km[window]))}
+                "slope": float(np.nanmedian(slope[window])), "psr_km": float(psr_km[row, col])}
 
     # Two groups of candidates:
     #   best overall  — best-lit passing spots (these land next to NASA's regions: a cross-check)
@@ -264,7 +285,7 @@ def main() -> None:
                 continue
             crit = criteria(values_at(row, col))
             if not all(c["pass"] for c in crit):
-                continue  # quality gate: the ~720 m neighbourhood must pass too, not just one pixel
+                continue  # quality gate: the median over the ~720 m neighbourhood must pass too, not just one pixel
             if group == "away from NASA":
                 # quality gate: at least as well lit as our weakest best-overall candidate
                 weakest = min(c["criteria"][0]["value"] for c in candidates if c["group"] == "best overall")

@@ -6,7 +6,7 @@
       "purpose": "The Soviet Mars 3 lander reached the surface in 1971. We found no source for why this site was chosen.",
       "sources": ["https://nssdc.gsfc.nasa.gov/planetary/chronology_mars.html"],
       "why": {
-        "winter_sun": "It came down at 45° S. Our band of ±30° is for a solar-powered mission that must work through winter.",
+        "winter_sun": "It came down at 45° S. The ±30° band keeps a lander warm through winter and, if it is solar powered, supplied with power.",
         "pressure": "Its site is higher than the −1 km limit, which was written for a one-tonne rover on a parachute.",
         "relief": "Rough highland ground. Nothing in our sources says the site was screened for hazards."
       }
@@ -22,7 +22,7 @@
       "purpose": "The second Viking lander had the same goals as the first. Its site in Utopia Planitia, at 48° N, was chosen from orbiter pictures of the candidate sites.",
       "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-083C", "https://science.nasa.gov/mission/viking/"],
       "why": {
-        "winter_sun": "Viking landers ran on nuclear generators, not solar panels, so a low winter Sun at 48° N did not matter."
+        "winter_sun": "Viking landers ran on nuclear generators, which gave them power and heat without the Sun, so a low winter Sun at 48° N did not matter."
       }
     },
     "Mars Pathfinder": {
@@ -48,7 +48,7 @@
       "purpose": "Phoenix studied the history of water and whether the ground could support life at a high northern site. It landed farther north than any mission before it, because water ice is found in the polar ground.",
       "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-034A", "https://science.nasa.gov/mission/phoenix/"],
       "why": {
-        "winter_sun": "It went to 68° N on purpose, to reach ice. Our ±30° band is for a mission that needs sunlight all year."
+        "winter_sun": "It went to 68° N on purpose, to reach ice, and was built to work through one polar summer. The ±30° band is for a mission that must last through winter."
       }
     },
     "Curiosity": {

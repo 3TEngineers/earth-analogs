@@ -25,7 +25,7 @@ How we found three Earth training areas for each of our 8 candidate sites (5 Mar
 
      For the Moon it is the anorthositic highland crust of the south pole (GLiM's "basic plutonic" class). Because B3's pools are climate-only and hold almost no basalt or anorthosite-family rock, B4 adds, per expected rock class, the **40 best-climate Earth cells of that class**, ≥ 200 km apart.
    - **Surface brightness (Mars):** MGS TES bolometric albedo at the zone against MODIS albedo on Earth; a difference of 0.20 scores 0. Dark rock and gravel match Mars' plains; bright sand and salt do not.
-   - **Thin air (Mars):** mean elevation of the box; 5,000 m scores 100. Even there the air is about 90 times denser than on Mars.
+   - **Thin air (Mars):** mean elevation of the box; 5,000 m scores 100. Even there the air pressure is more than 80 times that on Mars.
    - Dryness and temperature (and for the Moon low Sun and frozen ground) from B3.
    - **Weighted total.** Mars: terrain 30 %, rock 20 %, dryness 20 %, brightness 10 %, temperature 10 %, thin air 10 %. Moon: terrain 25 %, rock 25 %, low Sun 20 %, frozen ground 15 %, dryness 10 %, temperature 5 %. **A cell with any score missing gets no total** and cannot be picked, so missing data never helps a place.
 3. **B5 — pick 3.** A training area must be at least three quarters free of permanent snow and ice, bare or sparsely vegetated all year (yearly maximum NDVI ≤ 0.30) and ≥ 90 % land on the Natural Earth vector coastline. Three rounds; in each round every candidate gets one place, and **the best (candidate, place) pair is settled first**, so a place two candidates want goes to the one it fits better. A candidate's three places are ≥ 500 km apart, and a place given to one candidate is closed (300 km) to the others on the same body. **A Moon site takes at most one place below 60° latitude**: the low Sun is only a 20 % weight, so a place with the right rock and slopes can win without it — one such place shows that trade-off, the other two must be polar. A place counts as **known** if a published analog lies within 50 km, or within 400 km in the same named region (the Atacama, Qaidam and Lut are whole regions); at least one of the three must be new. Names: rock label + landform word from the measured slope (plains ≤ 1.5°, hills ≤ 6°, mountains above) + the most specific Natural Earth region, plus the country — descriptive on purpose; we don't invent exact place names we can't check.
@@ -42,7 +42,7 @@ Weighted total, 0–100, in brackets.
 | Mars B — Northern Elysium Planitia | Basalt plains — Al Harüj al Aswad, Libya (81) | Basalt plains — Arabian Peninsula, Saudi Arabia (80) | Basalt plains — Syrian Desert, Saudi Arabia (80) |
 | Mars C — Western Isidis Planitia | Basalt plains — Plateau of Tibet, China (88) | Basalt plains — Mongolian Plateau, Mongolia (84) | Basalt plains — Groot Karasberge, Namibia (82) |
 | Mars D — Chryse–Acidalia plains | Sedimentary plains — Gobi Desert, China (84) | Sedimentary plains — Rigestan, Afghanistan (78) | Sedimentary plains — Garagum Desert, Turkmenistan (77) |
-| Mars E — Eastern Meridiani Planum | Sandstone plains — Desierto de Atacama, Chile (88) † | Sandstone plains — Qaidam Basin, China (86) † | Sandstone plains — Tian Shan, China (84) |
+| Mars E — Eastern Meridiani Planum | Sandstone plains — Desierto de Atacama, Chile (88) † | Sandstone plains — Qaidam Basin, China (86) † | Sandstone plains — 120 km south of Tian Shan, China (84) |
 | Moon A — de Gerlache rim ridge | Sandstone mountains — Taymyr Peninsula, Russia (57) | Metamorphic hills — Baffin Island, Canada (50) | Gabbro and anorthosite hills — Plateau of Tibet, China (49) |
 | Moon B — Shackleton–de Gerlache ridge | Volcanic mountains — Chukchi Range, Russia (62) | Gabbro and anorthosite mountains — Cordillera Occidental, Peru (54) | Sedimentary hills — Queen Elizabeth Islands, Canada (47) |
 | Moon C — Cabeus–Malapert ridge | Gabbro and anorthosite plains — Victoria Island, Canada (61) | Gabbro and anorthosite mountains, Greenland (57) | Basalt hills — Central Siberian Plateau, Russia (51) |
@@ -82,7 +82,7 @@ Every one of the 24 was checked on its Sentinel-2 close-up (25 km) and a 200 km 
 - **"Low Sun" is latitude, not sunlight.** Even at 80° N the summer Sun climbs to about 33°; at the lunar south pole it stays within a degree or two of the horizon. A polar place on Earth is the closest there is, not a match.
 - **Thin air is a ranking aid, not a likeness.** The highest area (5,094 m, Plateau of Tibet) has about 55 % of sea-level pressure; Mars has under 1 %.
 - **Earth can't reproduce** reduced gravity, the lunar vacuum, the thin Martian atmosphere, the Moon's surface temperature swing (about 300 K at the equator) or space radiation — every report has a line saying so.
-- Names are descriptive (rock label + landform + region); Kmar can replace them with sourced place names. "Tian Shan" for Mars E3 is the Natural Earth region; the box lies in the desert basin south of the range.
+- Names are descriptive (rock label + landform + region); Kmar can replace them with sourced place names. A point more than 25 km outside every Natural Earth outline is named by distance and direction (Mars E3: "120 km south of Tian Shan").
 
 ## Re-running
 

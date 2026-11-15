@@ -21,7 +21,7 @@ Maps (also for the slides):
 | Criterion | Rule | Basis |
 |---|---|---|
 | Air to slow down | Elevation ≤ −1 km, shown as estimated surface pressure ≥ 668 Pa (`610 Pa × exp(−h / 11.1 km)`) | MSL |
-| Winter sun | \|latitude\| ≤ 30°, shown as winter noon Sun elevation ≥ 34.8° (`90° − |lat| − 25.19°`) | MSL, Mars 2020 |
+| Winter sun | \|latitude\| ≤ 30°, shown as winter noon Sun elevation ≥ 34.8° (`90° − |lat| − 25.19°`) | MSL, Mars 2020 (set for the rover's thermal design; a solar-powered lander needs the same band for power) |
 | Not dust-covered | TES thermal inertia ≥ 100 J m⁻² K⁻¹ s⁻½ | MSL engineering guide, Mars 2020 |
 | Not dust-covered, second check | TES albedo ≤ 0.25 where thermal inertia is below 150 | MSL guide: thermal inertia < 100 with albedo > 0.25 is "not suitable for landing spacecraft or driving rovers"; Mars 2020: below ~150 with high albedo "may also be dusty" |
 | Slope | ≤ 3° between MOLA pixels 3.7 km apart | MSL engineering guide: "three degrees or less over a 2 to 5 km length scale". Its finer limits (5° over 200–500 m, 15° over 20–40 m and 5 m) need images a global map does not have |
@@ -61,7 +61,7 @@ Same 463 m check at past landings: InSight 0.53° / 90 m, Viking 1 0.94° / 72 m
 
 **What happened to the 14 Nov candidates.** With the maps aligned: *Southern Elysium Planitia* has thermal inertia 104 and albedo 0.28 — bright and low-inertia, so it fails the second dust check. *Western Amazonis Planitia* has thermal inertia 49 and albedo 0.27: dust by any rule (the misaligned map had shown 122). *Margaritifer Terra lowland* still passes at its own point, but its safe area is 15 000 km² and it sits 36 km inside it, so it fails both quality gates.
 
-Names: the USGS Gazetteer feature each point lies in (Utopia Planitia, Elysium Planitia, Isidis Planitia, Acidalia/Chryse Planitia, Meridiani Planum).
+Names: the USGS Gazetteer feature each point lies in (Utopia Planitia, Isidis Planitia, Acidalia Planitia next to Chryse, Meridiani Planum). Zone B is the exception: it lies 2.7° north of the Gazetteer's outline of Elysium Planitia, inside the outline of the Cerberus Fossae, on the same mapped lava unit; "northern edge" is the honest wording.
 
 ### Validation — the 11 past landings
 
@@ -99,10 +99,10 @@ Extra check: **Oxia Planum**, ESA's selected landing site for the Rosalind Frank
 | Sunlit time | ≥ 50 % at the surface | **Ours.** Published best spots are lit 85–95 % of the time 2–10 m above ground on a 20 m terrain model; PGDA is at the surface (its own 120 m maximum is 90 %) and we average to 240 m, so the peak on our grid is ~72 % |
 | Earth in view | ≥ 50 % of the time | **Ours** (no published threshold) |
 | Slope | ≤ 10° | **Ours.** For scale: ISRO built the Chandrayaan-3 lander for slopes up to 12° |
-| Distance to permanent shadow | ≤ 10 km to a shadowed area of **at least 1 km²** | **Ours.** Until 15 Nov any shadowed pixel counted; the grid holds 35 996 shadow patches and only 3 864 are ≥ 1 km² |
+| Distance to permanent shadow | ≤ 10 km to a shadowed area of **at least 1 km²** | **Ours.** Until 15 Nov any shadowed pixel counted; the 120 m map holds 51 562 shadow patches and only 2 306 are ≥ 1 km². Patches are sized and distances measured on the 120 m map itself (`AUDIT.md`, error 25) |
 | Area | All of the above over 2 × 2 pixels (~480 m) | **Ours** — 720 m left almost nothing, because well-lit ground is narrow ridges |
 
-Data: NASA PGDA LOLA average illumination, Earth visibility and permanently shadowed regions (75° S, 120 m), LOLA slope map (75° S, 240 m), resampled to 240 m over the whole 75° S product. Passing area: 62.9 km². (It read 19.4 km² until the 15 Nov Earth audit: 29 % of the slope map's pixels hold no measurement and were being read as 45° slopes, which failed the measured ground next to them. The candidates, their values and the validation below did not change — `AUDIT.md`, error 23.)
+Data: NASA PGDA LOLA average illumination, Earth visibility and permanently shadowed regions (75° S, 120 m), LOLA slope map (75° S, 240 m), resampled to 240 m over the whole 75° S product. Passing area: 44.3 km². (Two corrections on 15 Nov changed it, neither changed the candidates: 29 % of the slope map's pixels hold no measurement and were being read as 45° slopes — `AUDIT.md`, error 23 — and distance to shadow is now measured on the 120 m map, error 25.)
 
 ### Why 50 % sunlight only means something near the pole
 
@@ -122,16 +122,16 @@ So candidates are only taken **south of 84° S** (the polar lighting zone, dashe
 
 1. **Best overall:** the best-lit passing spots (score = sunlit + 0.25 × Earth in view), at least 30 km apart.
 2. **Outside NASA's regions:** passing spots south of 84° S and more than 40 km from every Artemis III named feature, ranked on the 3 × 3 mean of sunlit time so a single lucky pixel can't win, at least 30 km apart.
-3. Every candidate's ~720 m neighbourhood (the values shown in the app) must pass all criteria, not just one pixel.
+3. The values shown in the app are **medians over the candidate's ~720 m neighbourhood** (distance to shadow: at the site itself), and those must pass all criteria, not just one pixel. On these narrow ridges single 120 m pixels inside the window vary widely.
 4. An outside-NASA candidate must be at least as well lit as our weakest best-overall candidate. **Only one site met this.**
 
 ### Candidates
 
 | Id | Name | Group | Lat, lon | Sunlit | Earth in view | Slope | To a shadow ≥ 1 km² | Nearest Artemis feature |
 |---|---|---|---|---|---|---|---|---|
-| `moon-candidate-a` | de Gerlache rim ridge | best overall | −88.670°, −68.294° | 53.6 % | 57.8 % | 5.7° | 5.5 km | de Gerlache Rim 2, 16 km |
-| `moon-candidate-b` | Shackleton–de Gerlache connecting ridge | best overall | −89.474°, −137.234° | 52.6 % | 55.9 % | 5.6° | 2.2 km | de Gerlache Rim 2, 38 km |
-| `moon-candidate-c` | Cabeus–Malapert ridge | outside NASA's regions | −85.488°, −19.049° | **54.2 %** | **92.4 %** | 4.3° | 2.6 km | Malapert Massif, 42 km |
+| `moon-candidate-a` | de Gerlache rim ridge | best overall | −88.670°, −68.294° | 53.6 % | 57.8 % | 5.7° | 7.0 km | de Gerlache Rim 2, 16 km |
+| `moon-candidate-b` | Shackleton–de Gerlache connecting ridge | best overall | −89.474°, −137.234° | 52.6 % | 55.9 % | 5.6° | 6.0 km | de Gerlache Rim 2, 38 km |
+| `moon-candidate-c` | Cabeus–Malapert ridge | outside NASA's regions | −85.488°, −19.049° | **54.2 %** | **92.4 %** | 4.3° | 2.9 km | Malapert Massif, 42 km |
 
 - A and B sit next to NASA's own regions: our method lands where NASA did, which supports it. In the raw 120 m product the brightest places are the Shackleton rim, the connecting ridge (B), Mons Malapert and Mons Mouton — the places the literature names.
 - C is our proposal outside NASA's regions: the best lit of the three, with Earth in view 92 % of the time, on the ridge between Cabeus crater (where NASA's LCROSS impact found water ice in 2009) and Mons Malapert.
@@ -145,8 +145,8 @@ Passing ground within 25 km of each region's named feature (NASA gives no region
 |---|---|---|
 | Peak near Cabeus B | **no** | 41.4 % |
 | Haworth | **no** | 34.0 % |
-| Malapert Massif | yes (0.40 km²) | 65.9 % |
-| Mons Mouton (and Plateau) | yes (3.17 km²) | 64.8 % |
+| Malapert Massif | yes (0.06 km²) | 65.9 % |
+| Mons Mouton (and Plateau) | yes (3.74 km²) | 64.8 % |
 | Nobile Rim 1 and 2 | **no** | 41.5 % |
 | de Gerlache Rim 2 | yes (0.17 km²) | 68.9 % |
 | Slater Plain | yes (0.06 km²) | 68.2 % |
@@ -158,8 +158,8 @@ Passing ground within 25 km of each region's named feature (NASA gives no region
 | Landing | Sunlit | Earth in view | Slope | To a shadow ≥ 1 km² | Why it went there |
 |---|---|---|---|---|---|
 | Chandrayaan-3 (2023), −69.373°, 32.319° | 48.3 % ✗ | 100 % | 0.8° | none within 30 km ✗ | To show a soft landing and a rover drive, for one lunar day; site chosen for slope, boulders, light for power and contact with Earth |
-| IM-1 Odysseus (2024), −80.13°, 1.44° | 39.1 % ✗ | 100 % | 11.0° ✗ | 8.1 km | NASA wanted to learn about terrain and communications near the pole; Malapert A is "relatively flat and safe" |
-| IM-2 Athena (2025), −84.791°, 29.196° | 46.5 % ✗ | 92.3 % | 2.7° | 6.6 km | To drill for water ice on Mons Mouton (NASA's PRIME-1) |
+| IM-1 Odysseus (2024), −80.13°, 1.44° | 39.1 % ✗ | 100 % | 11.0° ✗ | 9.2 km | NASA wanted to learn about terrain and communications near the pole; Malapert A is "relatively flat and safe" |
+| IM-2 Athena (2025), −84.791°, 29.196° | 46.5 % ✗ | 92.3 % | 2.7° | 9.8 km | To drill for water ice on Mons Mouton (NASA's PRIME-1) |
 
 All three were built to work for about one lunar day: they needed two weeks of daylight, not light all year. That is the difference between a landing site and a base site. NASA's orbiter found IM-1 resting on a **12° slope**; our map reads **11.0°** at the same spot — an independent check of the slope layer.
 

@@ -60,7 +60,7 @@
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
-            "value": 5.5,
+            "value": 7.0,
             "unit": "km",
             "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
@@ -68,7 +68,7 @@
             "why": null
           }
         ],
-        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (16.1 km from its named feature), which cross-checks our method against NASA's own choice.",
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It lies 16.1 km from the named feature of NASA's de Gerlache Rim 2 region, which our screening never used: an independent cross-check of the method.",
         "missionRules": []
       },
       "purpose": null
@@ -131,7 +131,7 @@
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
-            "value": 2.2,
+            "value": 6.0,
             "unit": "km",
             "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
@@ -139,7 +139,7 @@
             "why": null
           }
         ],
-        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (37.6 km from its named feature), which cross-checks our method against NASA's own choice.",
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It lies 37.6 km from the named feature of NASA's de Gerlache Rim 2 region, which our screening never used: an independent cross-check of the method.",
         "missionRules": []
       },
       "purpose": null
@@ -202,7 +202,7 @@
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
-            "value": 2.6,
+            "value": 2.9,
             "unit": "km",
             "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
@@ -393,7 +393,7 @@
       "status": "candidate",
       "lat": 14.094,
       "lon": 159.094,
-      "summary": "Lava plains in the north of Elysium Planitia, west of the Cerberus Fossae fractures and about 1,500 km from InSight's landing site.",
+      "summary": "Lava plains at the northern edge of Elysium Planitia, in the region of the western Cerberus Fossae fractures and about 1,500 km from InSight's landing site.",
       "processes": [
         "Volcanic plains",
         "Wind erosion"

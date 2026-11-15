@@ -82,7 +82,8 @@ export function CalculationsPage() {
               Parachutes need air, and low ground has more of it above.
             </RuleCard>
             <RuleCard title="Winter sunlight" limit="Latitude within ±30°" basis="Curiosity, Perseverance">
-              Near the equator the Sun stays high all year, for power and warmth.
+              Near the equator the Sun stays high all year. Curiosity&apos;s team set this band to keep the rover warm; a
+              solar-powered lander needs it for power too.
             </RuleCard>
             <RuleCard title="Firm ground" limit="Thermal inertia ≥ 100, and not bright where it is below 150" basis="Curiosity, Perseverance">
               Deep dust is too soft to drive on. Ground that holds heat is firmer; bright ground that does not is dust.
@@ -237,9 +238,9 @@ export function CalculationsPage() {
             values, well-known places, and the raw data computed again from scratch.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <Figure value="159" label="checks passed" />
-            <Figure value="1" label="warning, about map resolution; it does not change a result" />
-            <Figure value="0" label="failed, after we fixed the 24 errors the audit and our own review turned up" />
+            <Figure value="167" label="checks passed" />
+            <Figure value="27" label="errors found in our own work along the way, each one fixed and written up" />
+            <Figure value="0" label="checks failing or in doubt on the final data" />
           </div>
           <ul className="mt-6 grid gap-x-8 gap-y-2 text-[0.95rem] leading-relaxed text-ink/85 sm:grid-cols-2">
             <Tick>Elevation under 7 Mars landers: within 56 m of the published values</Tick>
@@ -360,10 +361,10 @@ export function CalculationsPage() {
           <ul className="list-disc space-y-1.5 pl-5">
             <li>Best overall: the best-lit passing spots (sunlit time + ¼ of Earth-in-view time), at least 30 km apart.</li>
             <li>Outside NASA&apos;s regions: more than 40 km from every Artemis III named feature, and at least as well lit as our weakest other site. Only one spot met this.</li>
-            <li>The surroundings of each site (about 720 m) must pass every rule, not just one map cell.</li>
+            <li>The values shown for a site are medians over its surroundings (about 720 m), and those must pass every rule, not just one map cell.</li>
             <li>
-              Only shadowed areas of at least 1 km² count as a place to look for ice. The map holds about 36,000 patches of
-              permanent shadow; fewer than 4,000 are that large.
+              Only shadowed areas of at least 1 km² count as a place to look for ice. The 120 m map holds about 52,000
+              patches of permanent shadow; about 2,300 are that large. Distances are measured on that map.
             </li>
           </ul>
         </Detail>
@@ -434,8 +435,8 @@ export function CalculationsPage() {
             head={['Landing', 'Sunlit', 'Earth in view', 'Slope', 'To shadow', 'Why it went there']}
             rows={[
               ['Chandrayaan-3 (2023), 69° S', '48.3 % ✗', '100 %', '0.8°', 'none in 30 km ✗', 'To show a soft landing and a rover drive, for one lunar day'],
-              ['IM-1 Odysseus (2024), 80° S', '39.1 % ✗', '100 %', '11.0° ✗', '8.1 km', 'To learn about terrain and radio links near the pole before crews go'],
-              ['IM-2 Athena (2025), 85° S', '46.5 % ✗', '92.3 %', '2.7°', '6.6 km', 'To drill for water ice on Mons Mouton'],
+              ['IM-1 Odysseus (2024), 80° S', '39.1 % ✗', '100 %', '11.0° ✗', '9.2 km', 'To learn about terrain and radio links near the pole before crews go'],
+              ['IM-2 Athena (2025), 85° S', '46.5 % ✗', '92.3 %', '2.7°', '9.8 km', 'To drill for water ice on Mons Mouton'],
             ]}
           />
           <p>
@@ -466,7 +467,7 @@ export function CalculationsPage() {
             <li>Rock type: the rock class at the site against the GLiM global lithological map (Hartmann and Moosdorf, 2012).</li>
             <li>Because the climate pass found almost no basalt or anorthosite, the 40 best-climate cells of each expected rock class are added.</li>
             <li>Surface brightness (Mars): albedo from the TES instrument at the site against MODIS albedo on Earth, without snow. A difference of 0.20 scores 0.</li>
-            <li>Thin air (Mars): mean elevation of the window. 5,000 m scores 100; the air there is still about 90 times denser than on Mars.</li>
+            <li>Thin air (Mars): mean elevation of the window. 5,000 m scores 100; the air pressure there is still more than 80 times that on Mars.</li>
             <li>A place with any score missing gets no total, so a gap in the data never helps it.</li>
           </ul>
         </Detail>
@@ -581,11 +582,28 @@ export function CalculationsPage() {
             </li>
           </ul>
         </Detail>
-        <Detail title="The one warning">
-          <p>
-            On the Moon, our 240 m grid slightly enlarges shadowed areas, which can shorten a distance to shadow by at
-            most 0.24 km.
-          </p>
+        <Detail title="Found in the final review">
+          <p>Before submitting we went through every number and sentence once more, and recomputed our sites by routes the pipeline does not use.</p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              Distance to permanent shadow on the Moon was measured on a coarsened map that joined small specks of shadow
+              into areas of 1 km². Measured on the 120 m map itself, the three ridges are 7.0, 6.0 and 2.9 km from such an
+              area (they read 5.5, 2.2 and 2.6 km). All three still pass, and the same three ridges come out.
+            </li>
+            <li>
+              One training area was named after a mountain range 118 km away. Names now say so: &quot;120 km south of Tian
+              Shan&quot;.
+            </li>
+            <li>
+              &quot;Thin air&quot; compared air density where it meant pressure: at 5,000 m the pressure is more than 80
+              times that on Mars. The ±30° latitude band was set by Curiosity&apos;s team for warmth, not for solar power; the
+              text now says so.
+            </li>
+            <li>
+              Confirmed again: all five Mars zones on a second elevation map (heights within 20 m, no ground above −1 km in
+              the landing square), and the Moon maps are not mirrored east to west.
+            </li>
+          </ul>
         </Detail>
       </Drawer>
     </main>

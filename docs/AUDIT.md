@@ -16,9 +16,10 @@ pipeline/.venv/Scripts/python pipeline/audit.py   # prints PASS / WARN / FAIL, w
 | After the fixes below (14 Nov) | 98 | 2 | 0 |
 | After error 10 (15 Nov) | 100 | 2 | 0 |
 | After the full audit of the screening (15 Nov, errors 11–15), Mars and Moon sections only | 48 | 1 | 0 |
-| After the Earth audit (15 Nov, errors 16–24), full run | **159** | **1** | **0** |
+| After the Earth audit (15 Nov, errors 16–24), full run | 159 | 1 | 0 |
+| After the final review (15 Nov, errors 25–27), full run | **167** | **0** | **0** |
 
-The last row is the full run on the final data (math 4, inputs 50, outputs 21, Earth terrain and rock 12, Earth climate 23, Mars 37, Moon 12 + the WARN). The remaining WARN is explained under [Remaining limits](#remaining-limits).
+The last row is the full run on the final data (math 4, inputs 50, outputs 21, Earth terrain and rock 12, Earth climate 23, Mars 42, Moon 15). The one WARN of the earlier runs is gone: it described the coarsened shadow map that error 25 removed.
 
 The Mars section reads the USGS 463 m DEM over the network. On 15 Nov one run out of four stopped there and reported a single FAIL ("section ran"); the three other runs gave 48 / 1 / 0. If that line appears, run the audit again before reading anything into it.
 
@@ -39,7 +40,7 @@ Changes that are improvements rather than errors:
 - **Slope rule is now a published one.** The MSL engineering guide gives "three degrees or less over a 2 to 5 km length scale". We had "≤ 2° at ~4 km, ours", measured with a 7.4 km baseline. It is now ≤ 3° between pixels 3.7 km apart.
 - **Second dust check from TES albedo** (MSL guide; Mars 2020). It is what rejects the old Elysium candidate.
 - **Beagle 2 and Schiaparelli count as past landing sites** for the "new place" rule.
-- **Moon: distance to shadow only counts shadowed areas ≥ 1 km².** Any shadowed 240 m pixel used to count. The three candidates stayed; their distances are now 5.5, 2.2 and 2.6 km.
+- **Moon: distance to shadow only counts shadowed areas ≥ 1 km².** Any shadowed 240 m pixel used to count. The three candidates stayed; their distances were then 5.5, 2.2 and 2.6 km (corrected to 7.0, 6.0 and 2.9 km by error 25).
 - **Every past landing has a sourced "why the mission went there"**, and each Mars landing is checked against its own mission's elevation and latitude limits with our data (all seven pass).
 - **Three real south-polar landings** (Chandrayaan-3, IM-1, IM-2) are run through the base-site rules.
 
@@ -86,14 +87,37 @@ What the new checks confirmed:
 
 One check was replaced: "albedo has a value" against the coastline is a blunt test (albedo also has values over shallow water, 6 % of sea pixels) and its best fit wandered by one cell; albedo against vegetation on land is sharp and sits at zero shift.
 
+## The final review of 15 Nov
+
+Before submitting, Sadık asked for one more pass "with the eyes of a NASA engineer": every site recomputed by a route the pipeline does not use, and every sentence on the site read against its source. The method held; three errors were found, one of them in numbers shown on the site.
+
+| # | Error | Effect | Fix |
+|---|---|---|---|
+| 25 | **Distance to permanent shadow was measured on a coarsened map.** The 120 m shadow map was first enlarged to our 240 m grid, keeping a pixel as shadowed if any part of it was. That joined small specks into "areas" of 1 km² the 120 m map does not have (3,864 such patches instead of 2,306), and the distance was taken from the nearest edge of the site's 720 m window, not from the site. Found by recomputing the three distances at 120 m with a k-d tree. The old audit note that this could shorten a distance "by at most 0.24 km" was wrong | Distances on the site were too short: **5.5 → 7.0 km, 2.2 → 6.0 km, 2.6 → 2.9 km**. All three ridges still pass (≤ 10 km) and the same three come out. Passing area 62.9 → 44.3 km²; IM-1 8.1 → 9.2 km, IM-2 6.6 → 9.8 km; still 4 of 7 Artemis features with passing ground (Malapert Massif 0.46 → 0.06 km², Mons Mouton 3.92 → 3.74 km²) | Patches are sized and distances measured on the 120 m map, then averaged onto the grid; the value shown is at the site itself. The audit recomputes each distance by the independent route |
+| 26 | **A training area was named after a region 118 km away.** A point outside every Natural Earth outline took the nearest region's name within ~1.5° | Mars E3, in the desert basin south of the Tian Shan, was called "Tian Shan" | A point more than 25 km outside the nearest outline is named by distance and direction: "120 km south of Tian Shan" |
+| 27 | **Sentences that said more than the data, or something slightly wrong.** (a) "Thin air" said the air at 5,000 m is "about 90 times denser than on Mars": that is the pressure ratio (about 85); in density it is nearer 40. (b) A training area at 1,500 m was described as having air "about as thick as at sea level" (it is 83 %). (c) The ±30° latitude rule was explained as "for power", and attributed to Curiosity, which is nuclear powered: its team set the band for the rover's thermal design. (d) The landing page said the rules were "taken from real missions" for the Moon too (the four base rules are ours), that three landings "aimed for high latitudes on purpose" (we have no source for Mars 3) and that "every landing passes its own mission's limits" (we found limits for 7 of 11). (e) "Slopes match" was used for medians of 0.62° and 0.09°. (f) Zone B was "west of the Cerberus Fossae"; it lies inside the Gazetteer's outline of the fossae, near their western end. (g) "The surroundings of each site must pass every rule": it is the median over the surroundings | Wording only; no number changed | Each sentence corrected; the Sun sentences now give the highest Sun of the year at that latitude |
+
+What the review confirmed, by routes independent of the pipeline (now part of `audit.py`):
+
+- **Mars zones on a second elevation product.** On the USGS 463 m DEM the 26 km square around each zone has a median height within 20 m of the screening grid's and no ground above −1 km (highest points: −4,162, −1,997, −3,828, −3,790 and −1,261 m). Slopes at the 3.7 km scale recomputed from it stay below 1.4° everywhere in the square; relief over 18 km is 26–116 m.
+- **Distances and "new place" claims** recomputed by hand: every zone is more than 500 km from every landing and touchdown site (closest: zone C, 501 km from Beagle 2 and 522 km from Jezero; zone E, 524 km from Opportunity) and the zones are at least 1,954 km apart.
+- **The Moon maps are not mirrored east to west.** Near the pole most checks cannot tell. Two can: the LCROSS impact site in Cabeus (84.675° S, 48.725° W) is permanently shadowed on our map and its mirror point is lit ground; Mons Mouton (84.6° S, 31° E) stands 5 km high and its mirror point does not.
+- **Moon site values against the 120 m data directly**, with the polar stereographic projection written out by hand: sunlit time, Earth visibility and slope under each site's window agree with the values shown. All three sites pass the slope rule whether slope is taken from LOLA's slope map (medians 6.4°, 6.9°, 3.6°) or from the elevation grid at 240 m or 480 m baselines (2.6–5.4°).
+- **Mapped rock unit over the whole 25 km box** of each Mars zone, not just its centre: one unit each (`AHv`, `AHv`, `eHv`, `lHt`, `HNhu`).
+- **Names** against the Gazetteer's outlines: zones A, C, D and E lie inside Utopia, Isidis, Acidalia and Meridiani; zone B lies 2.7° north of the Gazetteer's outline of Elysium Planitia, inside that of the Cerberus Fossae — its summary now says "northern edge".
+- **The close-ups show the right ground.** The live orbital images for two Moon sites, zone D and Curiosity were compared with shaded relief made from the elevation data for the same box: the craters, the rim and Mount Sharp are where they should be.
+- Landing coordinates, years, mission limits and physical constants (gravity, pressure, axial tilt, scale height) were re-read against their sources; none changed.
+
+What a reader should know about the Moon values: a site's sunlit time, Earth visibility and slope are **medians over about 720 m**. The ridges are narrow, so single 120 m pixels inside that window range widely (sunlit 26–85 %, Earth in view 0–58 % at site B); the far side of a crest can lose sight of Earth within a few hundred metres.
+
 ## What is checked
 
 | Section | Checks | Reference |
 |---|---|---|
 | **Math** | slope of a synthetic 10° plane; identical slope distributions score 1; equator winter noon Sun = 90° − 25.19°; pressure formula gives 610 Pa at the MOLA datum | geometry, Mars axial tilt, mean surface pressure |
 | **Inputs** | all 37 known-analog coordinates (`KNOWN_ANALOGS.md`) fall in the country the doc names; all 7 Artemis III feature coordinates match the USGS Gazetteer; the rock class of every Mars zone against the USGS geologic map | Natural Earth countries, USGS Gazetteer of Planetary Nomenclature, USGS SIM 3292 |
-| **Mars data** | MOLA elevation under 7 landers vs published values, on the 463 m DEM and on our 16 px/deg screening grid; the grid's registration against the 463 m DEM around Gale; thermal inertia and albedo in four textbook regions; each landing against its own mission's limits; candidates unchanged when the map is cut elsewhere; no candidate in the dust mode; every Mars candidate's criteria recomputed from the raw grids | published landing-site elevations, USGS 463 m DEM, Mellon et al. (2000), Christensen et al. (2001), mission site-selection papers |
-| **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; the slope where IM-1 tipped over; no empty slope-map pixel is read as 45°; the best-lit pixel is next to Shackleton; every Moon candidate's sunlight and distance to shadow recomputed | Mazarico et al. (2011), NASA/LRO (IM-1), geometry |
+| **Mars data** | MOLA elevation under 7 landers vs published values, on the 463 m DEM and on our 16 px/deg screening grid; the grid's registration against the 463 m DEM around Gale; thermal inertia and albedo in four textbook regions; each landing against its own mission's limits; candidates unchanged when the map is cut elsewhere; no candidate in the dust mode; every candidate's landing square on the 463 m DEM; every Mars candidate's criteria recomputed from the raw grids | published landing-site elevations, USGS 463 m DEM, Mellon et al. (2000), Christensen et al. (2001), mission site-selection papers |
+| **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; the slope where IM-1 tipped over; no empty slope-map pixel is read as 45°; east and west not swapped (LCROSS site, Mons Mouton); the best-lit pixel is next to Shackleton; every Moon candidate's sunlight recomputed, and its distance to shadow by an independent route at 120 m | Mazarico et al. (2011), NASA/LRO (IM-1), geometry |
 | **Earth terrain and rock** | Bonneville Salt Flats come out flat (0.03°) and at the right height, the Alps steep (20.9°); a box across elevation tiles is read whole; lunar slopes from the elevation grid follow LOLA's slope map; GLiM rock class at Iceland, Deccan Traps (basalt), Grand Erg Oriental (sand), Greenland (ice) | known geology, LOLA slope map |
 | **Earth climate** | GPM rainfall at Manaus, Istanbul, Eskişehir, London, Dalanzadgad, Resolute, In Salah, Atacama; MODIS surface temperature in the Lut Desert and at Dome Fuji (Antarctica); Greenland ice sheet excluded, McMurdo Dry Valleys kept; every raster's registration; albedo at a sand sea, a basalt field and a rainforest | climatology, Dome Fuji station mean −54.4 °C, Natural Earth coastline |
 | **Outputs** | every candidate has exactly 3 training areas; each is inland (≥ 90 % land, Natural Earth), under 25 % permanent ice and bare (NDVI ≤ 0.30); at least 2 of each Moon site's 3 areas at ≥ 60° latitude; no weighted score is missing and every total is the weighted sum; "plains" only for flat ground; every "similar"/"different" sentence matches its score; country names match the coordinates; 3 areas per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
@@ -125,7 +149,8 @@ The Navarro-González et al. (2003, *Science* 302:1018) page could not be fetche
 ## Remaining limits
 
 - ~~WARN — Curiosity on the 16 px/deg grid~~ — gone: it was the one-pixel shift of error 12.
-- **WARN — shadow area on our 240 m grid:** keeping a cell as "shadowed" if any of its 120 m sub-cells is shadowed inflates the area (39,149 km² over the whole 75° S map), but it is only used for "distance to shadow", which it can shorten by at most 0.24 km.
+- ~~WARN — shadow area on our 240 m grid~~ — gone: distances are now measured on the 120 m map (error 25). The coarsened layer is only drawn on the maps in `docs/images/`.
+- **Moon site values are medians over ~720 m** on ridges where single pixels vary widely; see the final review.
 - **Permanently shadowed area +22 %** vs Mazarico et al. (2011): we use the newer 120 m product (2016); their maps were 240 m.
 - **Satellite rainfall is a 25 km average**, not a station value: the 2000–2023 climatology is still ~1.5× high at Eskişehir (561 mm vs ~380 mm) and reads 36 mm in the Atacama where gauges record ~2 mm. Rain at or below 100 mm a year counts as fully dry for that reason.
 - **Vegetation, surface temperature and albedo are from one year (2023).**
