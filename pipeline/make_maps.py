@@ -42,21 +42,27 @@ def mars_map() -> Path:
     for name, lat, lon, _ in mars.LANDINGS:
         ax.plot(lon, lat, marker="^", ms=8, color=LANDING, mec="black", mew=0.8)
         ax.annotate(name, (lon, lat), xytext=(5, -11), textcoords="offset points", color="white", fontsize=8)
-    ax.plot(-24.666, 18.275, marker="D", ms=7, color="#7FDBFF", mec="black")
-    ax.annotate("Oxia Planum (ESA, future)", (-24.666, 18.275), xytext=(6, -12), textcoords="offset points",
-                color="#7FDBFF", fontsize=8)
-    for s in SITES:
-        if s["body"] == "mars" and s["status"] == "candidate":
-            ax.plot(s["lon"], s["lat"], marker="*", ms=22, color=CANDIDATE, mec="black", mew=1)
-            ax.annotate(f"{label_of(s['id'])}  {s['name']}", (s["lon"], s["lat"]), xytext=(10, 6),
-                        textcoords="offset points", color=CANDIDATE, fontsize=11, weight="bold")
+    for name, lat, lon in mars.OTHER_TOUCHDOWNS:  # reached the surface, no working mission
+        ax.plot(lon, lat, marker="x", ms=7, color=LANDING, mew=1.5)
+        ax.annotate(name, (lon, lat), xytext=(5, 5), textcoords="offset points", color="white", fontsize=7)
+    for name, lat, lon, _ in mars.OTHER_SITES:  # chosen by an agency, not flown yet
+        ax.plot(lon, lat, marker="D", ms=7, color="#7FDBFF", mec="black")
+        ax.annotate(f"{name} (ESA, future)", (lon, lat), xytext=(6, -12), textcoords="offset points",
+                    color="#7FDBFF", fontsize=8)
+    candidates = [s for s in SITES if s["body"] == "mars" and s["status"] == "candidate"]
+    for s in candidates:
+        ax.plot(s["lon"], s["lat"], marker="*", ms=22, color=CANDIDATE, mec="black", mew=1)
+        ax.annotate(f"{label_of(s['id'])}  {s['name']}", (s["lon"], s["lat"]), xytext=(10, 6),
+                    textcoords="offset points", color=CANDIDATE, fontsize=11, weight="bold")
     ax.axhline(30, color="white", lw=0.6, ls="--", alpha=0.6)
     ax.axhline(-30, color="white", lw=0.6, ls="--", alpha=0.6)
     ax.set_xlabel("Longitude (deg E)")
     ax.set_ylabel("Latitude (deg)")
-    ax.set_title("Mars — safe landing zones (green), our 4 candidates (stars), past landings (triangles)\n"
-                 "Elevation <= -1 km, |lat| <= 30 deg, thermal inertia >= 100, slope <= 2 deg, relief <= 500 m "
-                 "over a 25 km area. Data: MOLA, MGS TES.", fontsize=11)
+    ax.set_title(f"Mars — safe landing zones (green), our {len(candidates)} candidates (stars), past landings "
+                 "(triangles), failed landers (x)\n"
+                 f"Elevation <= {mars.MAX_ELEVATION_M / 1000:g} km, |lat| <= {mars.MAX_ABS_LAT_DEG:g} deg, thermal inertia "
+                 f">= {mars.MIN_THERMAL_INERTIA:g} and not bright dust, slope <= {mars.MAX_SLOPE_DEG:g} deg, relief <= "
+                 f"{mars.MAX_RELIEF_M:g} m over a {mars.ELLIPSE_KM:g} km area. Data: MOLA, MGS TES.", fontsize=11)
     out = IMAGES / "mars_screening.png"
     fig.tight_layout()
     fig.savefig(out)
@@ -67,10 +73,8 @@ def mars_map() -> Path:
 def moon_map() -> Path:
     crs, transform, size, layers = moon.load_layers()
     psr = np.nan_to_num(layers["psr"]) > 0.5
-    psr_km = ndimage.distance_transform_edt(~psr) * moon.PIXEL_M / 1000.0
-    ok = (np.isfinite(layers["sunlit"]) & (layers["sunlit"] >= moon.MIN_SUNLIT) & (layers["earth"] >= moon.MIN_EARTH)
-          & (layers["slope"] <= moon.MAX_SLOPE_DEG) & (psr_km <= moon.MAX_PSR_KM))
-    safe = ndimage.binary_erosion(ok, structure=np.ones((moon.PAD_PX, moon.PAD_PX), bool))
+    # the passing ground exactly as moon_screening.py found it (shadow only counts from 1 km2 up)
+    safe = np.load(ROOT / "data" / "interim" / "moon_safe.npz")["safe"]
     half_km = moon.HALF_EXTENT_M / 1000
     extent = (-half_km, half_km, -half_km, half_km)
     to_xy = Transformer.from_crs(CRS.from_wkt(crs.to_wkt()).geodetic_crs, CRS.from_wkt(crs.to_wkt()), always_xy=True)
@@ -96,6 +100,10 @@ def moon_map() -> Path:
         x, y = xy(lat, lon)
         ax.plot(x, y, marker="s", ms=9, mfc="none", mec="#7FDBFF", mew=1.5)
         ax.annotate(name, (x, y), xytext=(7, -12), textcoords="offset points", color="#7FDBFF", fontsize=8)
+    for name, lat, lon in moon.POLAR_LANDINGS:  # real landings inside the map
+        x, y = xy(lat, lon)
+        ax.plot(x, y, marker="^", ms=8, color=LANDING, mec="black", mew=0.8)
+        ax.annotate(name, (x, y), xytext=(6, 5), textcoords="offset points", color="white", fontsize=8)
     for s in SITES:
         if s["body"] == "moon" and s["status"] == "candidate":
             x, y = xy(s["lat"], s["lon"])
@@ -105,8 +113,9 @@ def moon_map() -> Path:
     ax.set_xlabel("km from the south pole")
     ax.set_ylabel("km from the south pole")
     ax.set_title("Moon south pole — sunlit time (colour), permanent shadow (blue), passing spots (green rings),\n"
-                 "NASA Artemis III features (squares) and our candidates (stars). Outside the dashed circle 50 % sunlight\n"
-                 "is an ordinary day/night cycle, so candidates are only taken inside it. Data: LOLA via NASA PGDA.",
+                 "NASA Artemis III features (squares), real landings (triangles) and our candidates (stars).\n"
+                 "Outside the dashed circle 50 % sunlight is an ordinary day/night cycle, so candidates are only taken\n"
+                 "inside it. Data: LOLA via NASA PGDA.",
                  fontsize=10)
     fig.colorbar(im, ax=ax, fraction=0.04, pad=0.02, label="Sunlit time (%)")
     out = IMAGES / "moon_screening.png"
