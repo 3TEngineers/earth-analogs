@@ -53,6 +53,8 @@ export function SiteDetail({ site }: { site: Site }) {
           >
             Fly to its {analogs.length} training areas on Earth <ArrowRight className="size-4" aria-hidden="true" />
           </button>
+        ) : candidate ? (
+          <p className="text-center text-sm text-ink-muted">Earth training areas for this site have not been computed yet.</p>
         ) : undefined
       }
     >
