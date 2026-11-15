@@ -35,6 +35,9 @@ EARTH_RADIUS_KM = 6371.0
 CELL_DEG = 0.25
 POOL_SIZE = 40  # cells per body
 POOL_MIN_KM_APART = 300.0  # ours: pool entries come from different regions
+# A training area must be inland, not a coastal strip. Two independent sources must agree (ours):
+MAX_WATER_PCT = 10.0  # MODIS land cover, IGBP water class (sea ice included)
+MIN_LAND_PCT = 90.0  # Natural Earth 10 m country polygons
 
 
 def block_mean(a: np.ndarray, k: int) -> np.ndarray:
@@ -43,6 +46,18 @@ def block_mean(a: np.ndarray, k: int) -> np.ndarray:
     a = a[: h - h % k, : w - w % k].reshape(h // k, k, w // k, k)
     with np.errstate(invalid="ignore"):
         return np.nanmean(a, axis=(1, 3))
+
+
+def natural_earth_land_pct(k: int) -> np.ndarray:
+    """Share of each 0.25 deg cell inside Natural Earth's 10 m country polygons, in %, rasterised at 0.05 deg."""
+    import geopandas as gpd
+    from rasterio.features import rasterize
+    from rasterio.transform import from_origin
+
+    countries = gpd.read_file(f"zip://{RAW / 'naturalearth' / 'countries.zip'}")
+    fine = rasterize(((g, 1) for g in countries.geometry), out_shape=(3600, 7200),
+                     transform=from_origin(-180, 90, 0.05, 0.05), fill=0, dtype="uint8")
+    return block_mean(fine.astype("float64"), k) * 100
 
 
 def read_modis(path: Path, sds_name: str, scale: float, fill) -> np.ndarray:
@@ -76,12 +91,15 @@ def load_features() -> dict[str, np.ndarray]:
 
     cover = SD(str(next((RAW / "MCD12C1").glob("*.hdf"))), SDC.READ)
     percent = cover.select("Land_Cover_Type_1_Percent")
+    water = block_mean(percent[:, :, 0].astype("float64"), k)  # IGBP class 0: water (sea ice included)
     snow_ice = block_mean(percent[:, :, 15].astype("float64"), k)  # IGBP class 15: permanent snow and ice
     barren = block_mean(percent[:, :, 16].astype("float64"), k)  # IGBP class 16: barren
     cover.end()
 
     with np.errstate(invalid="ignore", all="ignore"):
         features = {
+            "water_pct": water,
+            "ne_land_pct": natural_earth_land_pct(k),
             "snow_ice_pct": snow_ice,
             "barren_pct": barren,
             "precip_mm": precip,
@@ -102,7 +120,10 @@ def clip01(a):
 
 def scores(f: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     """0-1 score per dimension (ours), and a pool score per body."""
-    land = np.isfinite(f["mean_lst_k"]) & np.isfinite(f["precip_mm"])
+    # MODIS LST also reports sea ice and GPM covers the oceans, so both being present doesn't make a cell land:
+    # frozen Arctic sea looked like bare, dry, cold ground until the 15 Nov fix. Land = inland on both maps.
+    land = (np.isfinite(f["mean_lst_k"]) & np.isfinite(f["precip_mm"])
+            & (f["water_pct"] < MAX_WATER_PCT) & (f["ne_land_pct"] >= MIN_LAND_PCT))
     # Exposed ground: >= 10 % barren, or < 50 % snow/ice where vegetation data exists. Ice shelves and the
     # polar plateau have empty land-cover and no NDVI, so the second test alone would let them in.
     exposed = (f["barren_pct"] >= 10) | ((f["snow_ice_pct"] < 50) & np.isfinite(f["ndvi_max"]))

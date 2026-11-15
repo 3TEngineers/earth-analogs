@@ -209,7 +209,7 @@ export function CalculationsPage() {
           </dl>
           <Figure
             className="mt-6"
-            value="Top 1.5 %"
+            value="Top 1.7 %"
             label="of Earth's land on climate alone: that is where our method puts five published Mars analog sites (Qaidam, Atacama, McMurdo Dry Valleys, Lut, Namib). It was never told they exist."
           />
         </Section>
@@ -221,9 +221,9 @@ export function CalculationsPage() {
             values, well-known places, and the raw data computed again from scratch.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <Figure value="98" label="checks passed" />
+            <Figure value="100" label="checks passed" />
             <Figure value="2" label="warnings, both about map resolution and neither changes a result" />
-            <Figure value="0" label="failed, after we fixed the 9 errors the audit turned up" />
+            <Figure value="0" label="failed, after we fixed the 10 errors the audit and our own review turned up" />
           </div>
           <ul className="mt-6 grid gap-x-8 gap-y-2 text-[0.95rem] leading-relaxed text-ink/85 sm:grid-cols-2">
             <Tick>Elevation under 7 Mars landers: within 56 m of the published values</Tick>
@@ -356,7 +356,7 @@ export function CalculationsPage() {
         <Detail title="First pass: climate, everywhere">
           <p>
             All land on a 0.25° grid, from 2023 satellite data: rainfall (GPM IMERG), vegetation and land cover (MODIS), and
-            surface temperature by day and night (MODIS). Ice sheets are left out; ice-free ground such as the Antarctic Dry
+            surface temperature by day and night (MODIS). Water is left out (a cell must be at least 90 % land on two independent maps), and so are ice sheets; ice-free ground such as the Antarctic Dry
             Valleys stays in. The 40 best cells per world, at least 300 km apart, go on to the next pass together with every
             published analog site.
           </p>
@@ -384,11 +384,11 @@ export function CalculationsPage() {
             head={['Published analog site', 'Rank on climate']}
             rows={[
               ['Qaidam Basin, China', 'top 0.1 %'],
-              ['Atacama, Chile', 'top 0.2 %'],
-              ['McMurdo Dry Valleys, Antarctica', 'top 0.9 %'],
-              ['Lut Desert, Iran', 'top 1.0 %'],
-              ['Namib Desert, Namibia', 'top 1.5 %'],
-              ['Haughton crater, Canada (for the Moon)', 'top 0.5 %'],
+              ['Atacama, Chile', 'top 0.3 %'],
+              ['McMurdo Dry Valleys, Antarctica', 'top 1.0 %'],
+              ['Lut Desert, Iran', 'top 1.2 %'],
+              ['Namib Desert, Namibia', 'top 1.7 %'],
+              ['Haughton crater, Canada (for the Moon)', 'top 0.3 %'],
             ]}
           />
           <p>It does not find Lake Salda as a match for Jezero crater: that likeness is in carbonate minerals and a lake delta, and no global dataset we have covers those.</p>
@@ -415,6 +415,7 @@ export function CalculationsPage() {
             <li>Satellite rainfall reads too high in the driest deserts (Atacama: 59 mm against about 2 mm measured). Rain under 100 mm a year now counts as fully dry.</li>
             <li>Some report sentences showed missing values, and Moon reports suggested a life-detection test. Both fixed.</li>
             <li>Four of the 16 examples of past field tests did not match their sources. They were corrected or removed.</li>
+            <li>Six training areas were on frozen Arctic sea, and five Moon areas on ice caps. Land now has to be at least 90 % land on two maps, and a training area mostly bare ground; all nine Moon areas changed.</li>
           </ul>
         </Detail>
         <Detail title="The two warnings">

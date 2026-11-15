@@ -65,168 +65,9 @@
   ],
   "analogs": [
     {
-      "id": "moon-candidate-a-gabbro-and-anorthosite-ground-ellesmere-",
-      "siteId": "moon-candidate-a",
-      "rank": 1,
-      "name": "Gabbro and anorthosite ground — Ellesmere Island",
-      "country": "Canada",
-      "lat": 82.375,
-      "lon": -84.875,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 71,
-      "scores": {
-        "terrain": {
-          "score": 4,
-          "confidence": "high",
-          "note": "Earth median slope 1.5°, site 12.99°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
-        },
-        "aridity": {
-          "score": 97,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 3,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "Very dry and bare (117 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 82° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -21 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 1.5° here vs 12.99°)",
-        "Mild day-night swing (1.2 K) — far from the Moon's ~300 K",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [
-        "Mafic plutonic crust"
-      ],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-a-barren-ground-knud-rasmussen-land",
-      "siteId": "moon-candidate-a",
-      "rank": 2,
-      "name": "Barren ground — Knud Rasmussen Land",
-      "country": "Greenland",
-      "lat": 82.875,
-      "lon": -47.875,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 62,
-      "scores": {
-        "terrain": {
-          "score": 6,
-          "confidence": "high",
-          "note": "Earth median slope 0.0°, site 12.99°"
-        },
-        "mineralogy": {
-          "score": null,
-          "confidence": "low",
-          "note": "Earth: no data (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
-        },
-        "aridity": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 6,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Very dry and bare (96 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 83° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -17 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 0.0° here vs 12.99°)",
-        "Mild day-night swing (2.0 K) — far from the Moon's ~300 K",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
       "id": "moon-candidate-a-gabbro-and-anorthosite-ground-victoria-i",
       "siteId": "moon-candidate-a",
-      "rank": 3,
+      "rank": 1,
       "name": "Gabbro and anorthosite ground — Victoria Island",
       "country": "Canada",
       "lat": 72.125,
@@ -301,35 +142,35 @@
       ]
     },
     {
-      "id": "moon-candidate-b-gabbro-and-anorthosite-ground-franz-jose",
-      "siteId": "moon-candidate-b",
-      "rank": 1,
-      "name": "Gabbro and anorthosite ground — Franz Josef Land",
-      "country": "Russia",
-      "lat": 81.625,
-      "lon": 58.375,
+      "id": "moon-candidate-a-sedimentary-plains",
+      "siteId": "moon-candidate-a",
+      "rank": 2,
+      "name": "Sedimentary plains",
+      "country": "Greenland",
+      "lat": 80.625,
+      "lon": -26.375,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 66,
+      "totalScore": 52,
       "scores": {
         "terrain": {
-          "score": 1,
+          "score": 13,
           "confidence": "high",
-          "note": "Earth median slope 0.0°, site 13.49°"
+          "note": "Earth median slope 5.07°, site 12.99°"
         },
         "mineralogy": {
-          "score": 100,
+          "score": 15,
           "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+          "note": "Earth: siliciclastic sedimentary (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
         },
         "aridity": {
-          "score": 56,
+          "score": 100,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 3,
+          "score": 4,
           "confidence": "medium",
           "note": ""
         },
@@ -345,23 +186,97 @@
         }
       },
       "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "The Sun stays low all year at 82° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -14 °C)"
+        "Very dry and bare (8 mm of rain a year, satellite estimate)",
+        "The Sun stays low all year at 81° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -16 °C)"
       ],
       "differences": [
-        "Terrain is much flatter than at the site (median slope 0.0° here vs 13.49°)",
-        "Mild day-night swing (1.0 K) — far from the Moon's ~300 K",
+        "Terrain is much flatter than at the site (median slope 5.07° here vs 12.99°)",
+        "Different rock type: siliciclastic sedimentary, not the anorthositic highland crust",
+        "Mild day-night swing (1.5 K) — far from the Moon's ~300 K",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-a-gabbro-and-anorthosite-ground-plateau-of",
+      "siteId": "moon-candidate-a",
+      "rank": 3,
+      "name": "Gabbro and anorthosite ground — Plateau of Tibet",
+      "country": "China",
+      "lat": 35.125,
+      "lon": 88.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 49,
+      "scores": {
+        "terrain": {
+          "score": 6,
+          "confidence": "high",
+          "note": "Earth median slope 3.55°, site 12.99°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 69,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 54,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 0,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 85,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Ground frozen most of the year (mean surface -6 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 3.55° here vs 12.99°)",
+        "The Sun climbs much higher than at the lunar pole",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
         {
           "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
           "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
         },
         {
           "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
@@ -385,7 +300,7 @@
     {
       "id": "moon-candidate-b-gabbro-and-anorthosite-ground-qeqertarsu",
       "siteId": "moon-candidate-b",
-      "rank": 2,
+      "rank": 1,
       "name": "Gabbro and anorthosite ground — Qeqertarsuaq",
       "country": "Greenland",
       "lat": 70.125,
@@ -460,22 +375,174 @@
       ]
     },
     {
-      "id": "moon-candidate-b-metamorphic-ground-queen-maude-mountains",
+      "id": "moon-candidate-b-metamorphic-ground-baffin-island",
       "siteId": "moon-candidate-b",
-      "rank": 3,
-      "name": "Metamorphic ground — Queen Maude Mountains",
-      "country": "Antarctica",
-      "lat": -86.375,
-      "lon": -159.625,
+      "rank": 2,
+      "name": "Metamorphic ground — Baffin Island",
+      "country": "Canada",
+      "lat": 70.875,
+      "lon": -75.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 60,
+      "totalScore": 48,
       "scores": {
         "terrain": {
-          "score": 10,
+          "score": 2,
           "confidence": "high",
-          "note": "Earth median slope 18.28°, site 13.49°"
+          "note": "Earth median slope 2.15°, site 13.49°"
+        },
+        "mineralogy": {
+          "score": 50,
+          "confidence": "low",
+          "note": "Earth: metamorphic (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 92,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 10,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 54,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (141 mm of rain a year, satellite estimate)",
+        "Ground frozen most of the year (mean surface -19 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 2.15° here vs 13.49°)",
+        "Mild day-night swing (3.5 K) — far from the Moon's ~300 K",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Metamorphosed crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-b-sedimentary-plains-parry-islands",
+      "siteId": "moon-candidate-b",
+      "rank": 3,
+      "name": "Sedimentary plains — Parry Islands",
+      "country": "Canada",
+      "lat": 77.625,
+      "lon": -111.375,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 47,
+      "scores": {
+        "terrain": {
+          "score": 1,
+          "confidence": "high",
+          "note": "Earth median slope 0.77°, site 13.49°"
+        },
+        "mineralogy": {
+          "score": 15,
+          "confidence": "low",
+          "note": "Earth: mixed sedimentary (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 6,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 88,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (73 mm of rain a year, satellite estimate)",
+        "The Sun stays low all year at 78° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -17 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 0.77° here vs 13.49°)",
+        "Different rock type: mixed sedimentary, not the anorthositic highland crust",
+        "Mild day-night swing (2.0 K) — far from the Moon's ~300 K",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mixed sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-c-metamorphic-ground-knud-rasmussen-land",
+      "siteId": "moon-candidate-c",
+      "rank": 1,
+      "name": "Metamorphic ground — Knud Rasmussen Land",
+      "country": "Greenland",
+      "lat": 78.625,
+      "lon": -67.125,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "totalScore": 57,
+      "scores": {
+        "terrain": {
+          "score": 2,
+          "confidence": "high",
+          "note": "Earth median slope 1.47°, site 11.2°"
         },
         "mineralogy": {
           "score": 50,
@@ -488,12 +555,12 @@
           "note": ""
         },
         "temperature": {
-          "score": 2,
+          "score": 4,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 100,
+          "score": 93,
           "confidence": "high",
           "note": ""
         },
@@ -504,13 +571,13 @@
         }
       },
       "similarities": [
-        "Very dry and bare (0 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 86° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -41 °C)"
+        "Very dry and bare (99 mm of rain a year, satellite estimate)",
+        "The Sun stays low all year at 79° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -19 °C)"
       ],
       "differences": [
-        "Terrain is rougher than at the site (median slope 18.28° here vs 13.49°)",
-        "Mild day-night swing (0.8 K) — far from the Moon's ~300 K",
+        "Terrain is much flatter than at the site (median slope 1.47° here vs 11.2°)",
+        "Mild day-night swing (1.4 K) — far from the Moon's ~300 K",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -538,40 +605,40 @@
       ]
     },
     {
-      "id": "moon-candidate-c-gabbro-and-anorthosite-ground-severnaya-",
+      "id": "moon-candidate-c-sedimentary-plains-taymyr-peninsula",
       "siteId": "moon-candidate-c",
-      "rank": 1,
-      "name": "Gabbro and anorthosite ground — Severnaya Zemlya",
+      "rank": 2,
+      "name": "Sedimentary plains — Taymyr Peninsula",
       "country": "Russia",
-      "lat": 78.375,
-      "lon": 106.125,
+      "lat": 75.875,
+      "lon": 107.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 66,
+      "totalScore": 51,
       "scores": {
         "terrain": {
-          "score": 1,
+          "score": 45,
           "confidence": "high",
-          "note": "Earth median slope 0.0°, site 11.2°"
+          "note": "Earth median slope 9.99°, site 11.2°"
         },
         "mineralogy": {
-          "score": 100,
+          "score": 15,
           "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+          "note": "Earth: mixed sedimentary (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
         },
         "aridity": {
-          "score": 71,
+          "score": 49,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 3,
+          "score": 8,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 92,
+          "score": 79,
           "confidence": "high",
           "note": ""
         },
@@ -582,21 +649,15 @@
         }
       },
       "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "Very dry and bare (246 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 78° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -18 °C)"
+        "The Sun stays low all year at 76° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -16 °C)"
       ],
       "differences": [
-        "Terrain is much flatter than at the site (median slope 0.0° here vs 11.2°)",
-        "Mild day-night swing (1.2 K) — far from the Moon's ~300 K",
+        "Different rock type: mixed sedimentary, not the anorthositic highland crust",
+        "Mild day-night swing (2.8 K) — far from the Moon's ~300 K",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
         {
           "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
           "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
@@ -607,7 +668,7 @@
         }
       ],
       "processes": [
-        "Mafic plutonic crust"
+        "Mixed sedimentary layers"
       ],
       "image": null,
       "sources": [
@@ -621,116 +682,40 @@
       ]
     },
     {
-      "id": "moon-candidate-c-barren-ground-peary-land",
-      "siteId": "moon-candidate-c",
-      "rank": 2,
-      "name": "Barren ground — Peary Land",
-      "country": "Greenland",
-      "lat": 83.375,
-      "lon": -25.125,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "totalScore": 60,
-      "scores": {
-        "terrain": {
-          "score": 1,
-          "confidence": "high",
-          "note": "Earth median slope 0.0°, site 11.2°"
-        },
-        "mineralogy": {
-          "score": null,
-          "confidence": "low",
-          "note": "Earth: no data (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
-        },
-        "aridity": {
-          "score": 98,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 4,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Very dry and bare (112 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 83° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -18 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 0.0° here vs 11.2°)",
-        "Mild day-night swing (1.5 K) — far from the Moon's ~300 K",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://www.earthdata.nasa.gov/data/catalog/ges-disc-gpm-3imergm-07",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-c-barren-ground-queen-elizabeth-islands",
+      "id": "moon-candidate-c-metamorphic-ground-boothia-peninsula",
       "siteId": "moon-candidate-c",
       "rank": 3,
-      "name": "Barren ground — Queen Elizabeth Islands",
+      "name": "Metamorphic ground — Boothia Peninsula",
       "country": "Canada",
-      "lat": 78.125,
-      "lon": -103.875,
+      "lat": 70.625,
+      "lon": -93.375,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 58,
+      "totalScore": 46,
       "scores": {
         "terrain": {
-          "score": 1,
+          "score": 3,
           "confidence": "high",
-          "note": "Earth median slope 0.0°, site 11.2°"
+          "note": "Earth median slope 2.6°, site 11.2°"
         },
         "mineralogy": {
-          "score": null,
+          "score": 50,
           "confidence": "low",
-          "note": "Earth: no data (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
+          "note": "Earth: metamorphic (GLiM). Site: anorthositic highland crust (our reading, not a mapped unit)"
         },
         "aridity": {
-          "score": 97,
+          "score": 70,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 13,
+          "score": 10,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 91,
+          "score": 53,
           "confidence": "high",
           "note": ""
         },
@@ -741,26 +726,23 @@
         }
       },
       "similarities": [
-        "Very dry and bare (119 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 78° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -19 °C)"
+        "Very dry and bare (132 mm of rain a year, satellite estimate)",
+        "Ground frozen most of the year (mean surface -14 °C)"
       ],
       "differences": [
-        "Terrain is much flatter than at the site (median slope 0.0° here vs 11.2°)",
-        "Mild day-night swing (4.4 K) — far from the Moon's ~300 K",
+        "Terrain is much flatter than at the site (median slope 2.6° here vs 11.2°)",
+        "Mild day-night swing (3.7 K) — far from the Moon's ~300 K",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
         {
           "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
           "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
         }
       ],
-      "processes": [],
+      "processes": [
+        "Metamorphosed crust"
+      ],
       "image": null,
       "sources": [
         "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
@@ -1599,27 +1581,27 @@
       ]
     },
     {
-      "id": "mars-candidate-d-barren-ground-queen-elizabeth-islands",
+      "id": "mars-candidate-d-basalt-plains-namib-desert",
       "siteId": "mars-candidate-d",
       "rank": 3,
-      "name": "Barren ground — Queen Elizabeth Islands",
-      "country": "Canada",
-      "lat": 77.125,
-      "lon": -78.625,
+      "name": "Basalt plains — Namib Desert",
+      "country": "Namibia",
+      "lat": -21.375,
+      "lon": 14.375,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
-      "totalScore": 80,
+      "totalScore": 76,
       "scores": {
         "terrain": {
-          "score": 89,
+          "score": 61,
           "confidence": "high",
-          "note": "Earth median slope 0.0°, site 0.23°"
+          "note": "Earth median slope 1.04°, site 0.23°"
         },
         "mineralogy": {
-          "score": null,
+          "score": 100,
           "confidence": "low",
-          "note": "Earth: no data (GLiM). Site: lava plains of Amazonis Planitia under a dust and sediment cover (our reading, not a mapped unit)"
+          "note": "Earth: basic volcanic (basalt) (GLiM). Site: lava plains of Amazonis Planitia under a dust and sediment cover (our reading, not a mapped unit)"
         },
         "water_history": {
           "score": null,
@@ -1627,7 +1609,7 @@
           "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 100,
+          "score": 99,
           "confidence": "high",
           "note": ""
         },
@@ -1638,23 +1620,25 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.0° here vs 0.23° at the site)",
-        "Very dry and bare (101 mm of rain a year, satellite estimate)"
+        "Same rock family: basic volcanic (basalt), like the lava plains of Amazonis Planitia under a dust and sediment cover",
+        "Very dry and bare (74 mm of rain a year, satellite estimate)"
       ],
       "differences": [
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
         {
-          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
-          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
         },
         {
           "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
           "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
         }
       ],
-      "processes": [],
+      "processes": [
+        "Basaltic lava flows"
+      ],
       "image": null,
       "sources": [
         "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
