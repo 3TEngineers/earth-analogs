@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
@@ -41,15 +41,18 @@ export function AboutPage() {
         <div className="stagger" style={step(4)}>
           <Section title="The team">
             <ul className="grid gap-4 md:grid-cols-3">
-              <Person name="Sadık Bora Erteni" role="Data and analysis">
-                The pipeline: screening Mars and the lunar south pole, the global Earth pass, ranking and the data files the site
-                reads.
+              <Person name="Sadık Bora Erteni" role="Data analysis and 3D visualisation" href="https://www.linkedin.com/in/sadik-bora-erteni/">
+                Built the analysis pipeline with Deniz: the screening of Mars and the lunar south pole, the global Earth
+                matching and the scoring model. Led the data-accuracy audits and worked on the 3D globes, the pages and their
+                content.
               </Person>
-              <Person name="Deniz Aslan" role="3D and interface">
-                The 3D scene with the Moon, Earth and Mars, the flights between them, and the design of the site.
+              <Person name="Deniz Aslan" role="3D visualisation and data analysis" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
+                Built the interactive 3D experience of the Moon, Earth and Mars with Sadık, and the interface around it. Led the
+                full re-validation of the Mars and Moon screening and worked on the data that selected the final landing zones.
               </Person>
-              <Person name="Kmar" role="Research and content">
-                Published landing constraints, the Artemis III regions, known analog sites and what can be tested where.
+              <Person name="Kamar Abid" role="Research and concept" href="https://www.linkedin.com/in/kamar-abid-679337374/">
+                Helped shape the initial project concept. Researched the published landing constraints, NASA&apos;s Artemis III
+                regions and the known analog sites, and cross-checked the field-test examples against their sources.
               </Person>
             </ul>
           </Section>
@@ -98,17 +101,21 @@ export function AboutPage() {
           </Section>
 
           <Section title="How we used AI">
-            <ul className="grid gap-x-10 gap-y-4 leading-relaxed text-ink/85 md:grid-cols-3">
+            <p className="max-w-3xl leading-relaxed text-ink/85">
+              Yes, we used AI in this project, as an assistant. The idea, the method, every rule and every decision are the
+              team&apos;s, shaped with our mentor; the breakdown below says where the tool helped.
+            </p>
+            <ul className="mt-6 grid gap-x-10 gap-y-5 leading-relaxed text-ink/85 md:grid-cols-3">
               <li>
-                The idea — find new candidate sites first, then their Earth training areas, and show where each analogy breaks —
-                and the choice of challenge are the team&apos;s, shaped with our mentor.
+                <strong className="font-display font-medium text-ink">Development support.</strong> Claude Code assisted with reviewing and optimising code for the data pipeline and this website,
+                including the 3D scene animations, and debugging. The team directed the
+                work, and reviewed and tested the results.
               </li>
               <li>
-                We used Claude (Claude Code) as an assistant: to compare the challenges, check data availability, draft the
-                scoring method and documentation, and write code for the data pipeline and this website. We reviewed and tested
-                what it produced.
+                <strong className="font-display font-medium text-ink">What is not AI.</strong> Every number on the site is
+                computed from the NASA, USGS and ESA datasets listed above. No AI-generated images, video or audio are used:
+                the planets and close-ups are real spacecraft imagery.
               </li>
-              <li>Every number on the site comes from the datasets above. No AI-generated images are used.</li>
             </ul>
           </Section>
         </div>
@@ -138,10 +145,21 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
-function Person({ name, role, children }: { name: string; role: string; children: ReactNode }) {
+function Person({ name, role, href, children }: { name: string; role: string; href: string; children: ReactNode }) {
   return (
     <li className="rounded-2xl border border-line bg-white/[0.03] p-5">
-      <p className="font-display text-xl font-semibold">{name}</p>
+      <p className="font-display text-xl font-semibold">
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${name} on LinkedIn (opens in a new tab)`}
+          className="group inline-flex items-center gap-1.5 underline decoration-white/25 underline-offset-4 hover:decoration-white"
+        >
+          {name}
+          <ArrowUpRight className="size-4 text-ink-muted transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+        </a>
+      </p>
       <p className="eyebrow mt-1.5 text-ink-muted">{role}</p>
       <p className="mt-3 text-[0.95rem] leading-relaxed text-ink/85">{children}</p>
     </li>
