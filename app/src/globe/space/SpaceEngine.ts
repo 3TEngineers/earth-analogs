@@ -169,6 +169,7 @@ export class SpaceEngine {
   private pointerDown: { x: number; y: number } | null = null
   private frame = 0
   private lastTime = performance.now()
+  private disposed = false
   private reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   private container: HTMLElement
   private events: EngineEvents
@@ -233,6 +234,7 @@ export class SpaceEngine {
   }
 
   dispose() {
+    this.disposed = true
     cancelAnimationFrame(this.frame)
     window.removeEventListener('resize', this.resize)
     window.removeEventListener('pointermove', this.trackMouse)
@@ -591,6 +593,34 @@ export class SpaceEngine {
     // Intro: a slow push-in from deep space to wherever the page wants us.
     this.applyLayout(this.pendingLayout ?? { kind: 'story' }, INTRO_MS, easeOut, 0)
     this.pendingLayout = null
+    this.loadSharpTextures()
+  }
+
+  /**
+   * After the intro has started, swap each planet's surface for its 8192 × 4096 version, one planet at a time so
+   * the downloads don't compete with the first frames. Skipped on small screens, on data-saver connections and on
+   * GPUs that can't hold an 8K texture; those keep the 2K/4K images.
+   */
+  private async loadSharpTextures() {
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    const small = Math.min(window.screen.width, window.screen.height) < 700
+    if (small || connection?.saveData || this.renderer.capabilities.maxTextureSize < 8192) return
+    const loader = new THREE.TextureLoader()
+    for (const id of PLANET_IDS) {
+      try {
+        const texture = await loader.loadAsync(PLANETS[id].sharpTexture)
+        if (this.disposed) return texture.dispose()
+        texture.colorSpace = THREE.SRGBColorSpace
+        texture.anisotropy = this.renderer.capabilities.getMaxAnisotropy()
+        const material = this.planets[id].globe.globeMaterial() as THREE.MeshPhongMaterial
+        const old = material.map
+        material.map = texture
+        material.needsUpdate = true
+        old?.dispose()
+      } catch {
+        // Keep the smaller texture if the large one can't be loaded.
+      }
+    }
   }
 
   /** Three shells of stars at different depths, so they parallax against each other. */
