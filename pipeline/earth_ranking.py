@@ -51,10 +51,12 @@ FAMILY = {"vb": "mafic", "pb": "mafic", "py": "volcanic", "vi": "volcanic", "va"
 
 # Expected rock class at each candidate (ours, from general geology — not a mapped unit).
 EXPECTED_ROCK = {
-    "mars-candidate-a": ("vb", "young lava plains of Elysium Planitia"),
-    "mars-candidate-b": ("sm", "outflow-channel sediments over lowland plains"),
-    "mars-candidate-c": ("sm", "ancient cratered terrain cut by channels"),
-    "mars-candidate-d": ("vb", "lava plains of Amazonis Planitia under a dust and sediment cover"),
+    # Mars candidates as of the 15 Nov audit (the screening was re-run with corrected data)
+    "mars-candidate-a": ("sm", "sediments that fill the Utopia basin"),
+    "mars-candidate-b": ("vb", "young lava plains of Elysium Planitia"),
+    "mars-candidate-c": ("sm", "sediments and lava that fill the Isidis impact basin"),
+    "mars-candidate-d": ("sm", "outflow-channel sediments over lowland plains"),
+    "mars-candidate-e": ("ss", "layered sandstone, as Opportunity found on the same plain"),
     "moon-candidate-a": ("pb", "anorthositic highland crust"),
     "moon-candidate-b": ("pb", "anorthositic highland crust"),
     "moon-candidate-c": ("pb", "anorthositic highland crust"),

@@ -6,11 +6,22 @@ The backend (`pipeline/`) writes these files; the frontend (`app/`) only reads t
 |---|---|---|
 | `app/public/data/sites.json` | pipeline | app |
 | `app/public/data/analogs.json` | pipeline | app |
-| `app/public/data/landings.json` | pipeline (from sourced lists in `docs/`) | app |
+| `app/public/data/landings.json` | pipeline (`build_sites.py`, from the lists the screening itself uses) | app |
 | `app/public/images/sites/<siteId>.png` | pipeline | app |
 | `app/public/images/analogs/<analogId>.png` | pipeline | app |
 
 `sites.json` and `analogs.json` carry `"mock": true` until the real pipeline output replaces them (`sites.json` is real since B2; analogs are mock until B8).
+
+## Additions on 2026-11-15 (full audit) — `sites.json` version 3
+
+All three are optional for the app (older files still load).
+
+- **`criterion.why`** — string or `null`. Only on a **failed** criterion of a **past landing**: why that rule did not matter for that mission ("Viking landers ran on nuclear generators, so a low winter Sun did not matter"). The card shows it under the failed row. Text and sources: `pipeline/content/past_landings.json`.
+- **`selection.missionRules`** — a list of criteria in the same shape as `selection.criteria`: the limits the **mission's own team** published (ids `own_elevation`, `own_latitude`), checked with our data. `[]` for candidates and for missions with no published limits. A past landing can fail our rules and pass its own: that is the point.
+- **`site.purpose` is now filled for past landings too** — why the mission went there, with sources (from `pipeline/content/past_landings.json`). For candidates it still comes from `pipeline/content/purposes.json` (Kmar) and is `null` until written.
+- **`landings.json` is generated** by `build_sites.py` from `mars_screening.LANDINGS` and the Moon lists, so the markers, the validation and the docs use the same coordinates. Moon: Chandrayaan-3, IM-1 Odysseus, IM-2 Athena. The older lunar landings (Luna, Surveyor, Apollo, Chang'e, …) are still to be collected.
+- **Mars criteria changed** (ids below): `albedo` is new, and `slope` is now the published MSL rule.
+- **Mars candidates changed:** `mars-candidate-a` … `-e` are five new places (see `SCREENING_RESULTS.md`). Only `mars-candidate-d` (Chryse–Acidalia) is the old candidate B. **Until the Earth matching is re-run, candidates a, b, c and e have no analogs** — the "exactly 3 analogs" rule below is knowingly broken for them, and the app hides the training-area button.
 
 ## Additions on 2026-11-14 (team decision)
 
@@ -55,9 +66,11 @@ The backend (`pipeline/`) writes these files; the frontend (`app/`) only reads t
             "unit": "km",
             "rule": "<= -1 km",          // human-readable threshold
             "pass": true,                // or null when there is no data
-            "source": "MOLA DEM"
+            "source": "MOLA DEM",
+            "why": null                  // v3, optional: on a past landing's failed rule, why it did not matter
           }
         ],
+        "missionRules": [],              // v3, optional: the mission's own published limits, same shape as criteria
         "note": "Why this site is on the list, in one or two sentences."
       }
     }
@@ -69,7 +82,7 @@ Criteria used (thresholds are set from published mission constraints during B2):
 
 | Body | Goal | Criteria ids |
 |---|---|---|
-| Mars | Safe landing zone | `elevation`, `latitude`, `slope`, `thermal_inertia` |
+| Mars | Safe landing zone | `pressure`, `winter_sun`, `thermal_inertia`, `albedo`, `slope`, `relief` (+ `own_elevation`, `own_latitude` in `missionRules`) |
 | Moon | Permanent base site | `illumination`, `earth_visibility`, `slope`, `ice_distance` |
 
 ## `analogs.json`
@@ -115,6 +128,6 @@ Criteria used (thresholds are set from published mission constraints during B2):
 - Coordinates are in degrees. Longitude is −180..180, east positive, on all three bodies.
 - Every `candidate` site has exactly 3 analogs, ranks 1–3, from different regions, at least one with `"known": false`. A `past` site may have 0 or 3 analogs — the app hides "Show Earth analogs" when there are none.
 - A `candidate` site passes all its criteria. A `past` site may fail some — that's the point of validation (e.g. a good short-mission site that's too far from the pole for a permanent base).
-- `sites.json` version 2 added `selection`. Bump `version` whenever the shape changes.
+- `sites.json` version 2 added `selection`; version 3 added `criterion.why` and `selection.missionRules`. Bump `version` whenever the shape changes.
 - `similarities` come from scores ≥ 70, `differences` from scores ≤ 40 — the frontend shows them as given and does not recompute.
 - Text is English and plain (no HTML or Markdown).

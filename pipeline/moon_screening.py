@@ -50,8 +50,12 @@ HALF_EXTENT_M = 250_000.0 + 854 * 240.0
 # 50 % already means the top ~1 % of the south-pole grid.
 MIN_SUNLIT = 0.50
 MIN_EARTH = 0.50  # ours: Earth in view at least half the time
-MAX_SLOPE_DEG = 10.0  # ours: no published lunar lander limit found
+MAX_SLOPE_DEG = 10.0  # ours. For scale: ISRO built the Chandrayaan-3 lander for slopes up to 12 deg
 MAX_PSR_KM = 10.0  # ours: ice within a short traverse
+# ours: only shadowed areas of at least 1 km2 count as a place to look for ice. On the 240 m grid a single
+# shadowed 120 m cell marks its whole pixel, and thousands of such specks would make "distance to shadow"
+# pass almost anywhere near the pole (audit, 15 Nov: 35,996 patches, 3,864 of them >= 1 km2).
+MIN_PSR_KM2 = 1.0
 # 2 x 2 pixels (~480 m) must pass: room for a landing pad and a base. Well-lit ground is on narrow
 # ridges, so 3 x 3 (~720 m) left almost nothing.
 PAD_PX = 2
@@ -72,6 +76,22 @@ ARTEMIS = [  # docs/LANDING_CONSTRAINTS.md §3 — feature centres, not exact re
     ("Slater Plain", -88.08, 111.29),
 ]
 ARTEMIS_RADIUS_KM = 25.0  # regions sit near, not on, the named feature
+
+# Robotic landers that reached the south polar region, as a check on real landing sites. They were built
+# for about one lunar day, so they needed a safe spot in daylight, not year-round light or ice.
+POLAR_LANDINGS = [
+    ("IM-1 Odysseus", -80.13, 1.44),  # NASA/LRO: 80.13 S, 1.44 E, on a 12 deg slope; tipped over (2024)
+    ("IM-2 Athena", -84.7906, 29.1957),  # LROC: Mons Mouton; ended on its side in a small crater (2025)
+]
+
+
+def useful_shadow(psr: np.ndarray, pixel_m: float) -> np.ndarray:
+    """Permanently shadowed pixels that belong to a patch of at least MIN_PSR_KM2."""
+    labels, n = ndimage.label(psr)
+    if n == 0:
+        return psr
+    sizes = ndimage.sum(psr, labels, index=np.arange(1, n + 1)) * (pixel_m / 1000.0) ** 2
+    return np.isin(labels, np.flatnonzero(sizes >= MIN_PSR_KM2) + 1)
 
 
 def local(url: str) -> Path:
@@ -146,11 +166,11 @@ def criteria(values: dict) -> list[dict]:
          "rule": f">= {100 * MIN_EARTH:.0f} % (ours)", "pass": values["earth"] >= MIN_EARTH,
          "source": "LOLA Earth visibility (NASA PGDA)"},
         {"id": "slope", "label": "Slope", "value": round(values["slope"], 1), "unit": "deg",
-         "rule": f"<= {MAX_SLOPE_DEG:.0f} deg (ours)", "pass": values["slope"] <= MAX_SLOPE_DEG,
-         "source": "LOLA slope map, 240 m"},
+         "rule": f"<= {MAX_SLOPE_DEG:.0f} deg (ours; Chandrayaan-3's lander was built for <= 12 deg)",
+         "pass": values["slope"] <= MAX_SLOPE_DEG, "source": "LOLA slope map, 240 m"},
         {"id": "ice_distance", "label": "Distance to permanent shadow", "value": round(values["psr_km"], 1),
-         "unit": "km", "rule": f"<= {MAX_PSR_KM:.0f} km (ours)", "pass": values["psr_km"] <= MAX_PSR_KM,
-         "source": "LOLA permanently shadowed regions (NASA PGDA)"},
+         "unit": "km", "rule": f"<= {MAX_PSR_KM:.0f} km to a shadowed area of >= {MIN_PSR_KM2:.0f} km2 (ours)",
+         "pass": values["psr_km"] <= MAX_PSR_KM, "source": "LOLA permanently shadowed regions (NASA PGDA)"},
     ]
 
 
@@ -167,12 +187,12 @@ def check_point_65s(lat: float, lon: float) -> dict:
         with rasterio.open(path) as src:
             row, col = to_pixel(src.crs, src.transform, lat, lon)
             scale, offset = src.scales[0] or 1.0, src.offsets[0] or 0.0
-            half = 60 if name == "psr" else 1  # psr: ~29 km window to find the nearest shadow
+            half = 125 if name == "psr" else 1  # psr: 60 km window to find the nearest useful shadow
             from rasterio.windows import Window
             data = src.read(1, window=Window(col - half, row - half, 2 * half + 1, 2 * half + 1), masked=True)
             data = data.astype("float32") * scale + offset
             if name == "psr":
-                shadow = np.argwhere(data.filled(0) > 0.5)
+                shadow = np.argwhere(useful_shadow(data.filled(0) > 0.5, abs(src.transform.a)))
                 values["psr_km"] = (float(np.min(np.hypot(*(shadow - half).T)) * abs(src.transform.a) / 1000)
                                     if len(shadow) else float("inf"))
             else:
@@ -195,7 +215,7 @@ def main() -> None:
     crs, transform, size, layers = load_layers()
     values, counts = np.unique(np.round(layers["psr"][np.isfinite(layers["psr"])], 3), return_counts=True)
     print("PSR layer values (top 5):", sorted(zip(counts, values), reverse=True)[:5])
-    psr = np.nan_to_num(layers["psr"]) > 0.5
+    psr = useful_shadow(np.nan_to_num(layers["psr"]) > 0.5, PIXEL_M)
     psr_km = ndimage.distance_transform_edt(~psr) * PIXEL_M / 1000.0
 
     sunlit, earth, slope = layers["sunlit"], layers["earth"], layers["slope"]
@@ -268,12 +288,20 @@ def main() -> None:
     print("\nChandrayaan-3 (past landing, 69 S):",
           ", ".join(f"{c['id']}={c['value']}{'' if c['pass'] else ' FAIL'}" for c in ch3_criteria))
 
+    polar_landings = []
+    for name, la, lo in POLAR_LANDINGS:
+        row, col = to_pixel(crs, transform, la, lo)
+        crit = criteria(values_at(row, col))
+        polar_landings.append({"name": name, "lat": la, "lon": lo, "criteria": crit})
+        print(f"{name} (past landing):", ", ".join(f"{c['id']}={c['value']}{'' if c['pass'] else ' FAIL'}" for c in crit))
+
     np.savez_compressed(OUT / "moon_safe.npz", safe=safe, lat=lat.astype("float32"), lon=lon.astype("float32"))
     (OUT / "moon_screening.json").write_text(json.dumps(
         {"thresholds": {"min_sunlit": MIN_SUNLIT, "min_earth": MIN_EARTH, "max_slope_deg": MAX_SLOPE_DEG,
-                        "max_psr_km": MAX_PSR_KM, "pixel_m": PIXEL_M, "pad_px": PAD_PX},
+                        "max_psr_km": MAX_PSR_KM, "min_psr_km2": MIN_PSR_KM2, "pixel_m": PIXEL_M, "pad_px": PAD_PX},
          "candidates": candidates, "validation": validation,
-         "chandrayaan3": {"lat": -69.373, "lon": 32.319, "criteria": ch3_criteria}}, indent=2, default=bool))
+         "chandrayaan3": {"lat": -69.373, "lon": 32.319, "criteria": ch3_criteria},
+         "polar_landings": polar_landings}, indent=2, default=bool))
     print(f"\nWrote {OUT / 'moon_screening.json'}")
 
 

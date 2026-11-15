@@ -1,6 +1,6 @@
 # Landing and base-site constraints (K3b)
 
-Published constraints that past missions used to choose where to land, collected for **B2 (screening)**. Every number has a source. Where a number came from an abstract or a secondary page rather than the full paper, the **Confidence** column says so. Researched 2026-11-14 by Kmar with Claude (web search); full papers behind paywalls were not read.
+Published constraints that past missions used to choose where to land, collected for **B2 (screening)**. Every number has a source. Where a number came from an abstract or a secondary page rather than the full paper, the **Confidence** column says so. Researched 2026-11-14 by Kmar with Claude (web search); full papers behind paywalls were not read. **Re-checked 2026-11-15 in the full audit** (`AUDIT.md`): the MSL Engineering User's Guide [MSL2] and LPSC abstract 2163 [M20-1] were read in full and the MSL and Mars 2020 rows corrected from them; landing coordinates were checked again; §2b, §3b and §6 are new.
 
 - Coordinates: degrees, latitude north positive, longitude **east positive, −180..180** (as in `DATA_CONTRACT.md`).
 - "MOLA elevation" means height relative to the MOLA areoid.
@@ -14,17 +14,18 @@ Published constraints that past missions used to choose where to land, collected
 | **Mars Pathfinder** (1997) | Below 0 km | 10°N–20°N | Smooth, flat area ~70 × 200 km | "Moderate"; < 1 % of surface covered by rocks > 0.5 m high (same rule as MER) | Little dust | Average radar reflectivity; ellipse 300 × 100 km | Medium (abstract + MER memo) | [P1], [M1] |
 | **MER Spirit / Opportunity** (2004) | Below **−1.3 km** MOLA (enough air for the parachute) | 15°S–5°N (MER-A), 5°S–15°N (MER-B); final papers say 10°N–15°S overall | Slopes "generally less than 15°"; no scarps, large hills or fresh craters > 5 km | < 1 % covered by rocks > 0.5 m; total rock cover **< 20 %** from thermal infrared | Avoid fine-component thermal inertia below **125–165 J m⁻² s⁻½ K⁻¹** (dust, not load-bearing); avoid very high albedo | Radar reflectivity > 0.05; winds < ~20 m/s; ellipse 30 km wide, 80–360 km long | High (original memo) | [M1], [M2] |
 | **Phoenix** (2008) | Below **−3.5 km** | **65°N–72°N** (polar ice was the goal) | Slopes and rocks no worse than at the Viking Lander 2 site | Same as above (no worse than Viking 2) | — | Low winds; a few cm of soil over ice | Medium (abstract) | [PH1] |
-| **MSL Curiosity** (2012) | Below **−1 km** | **±30°** (rover thermal management) | Relief < 100–130 m at 1–1000 m baselines; slopes **< 30° at 2–5 m** | "Moderate" (to protect the belly pan) | Radar-reflective, load-bearing, trafficable, not dominated by fine dust | Initial sites 25 × 20 km | High for the six criteria (quoted abstract); thresholds for rocks and thermal inertia not verified | [MSL1] |
+| **MSL Curiosity** (2012) | Below **−1 km** in the final selection [MSL1]; the entry system was designed for up to +2 km, with a −2 km fallback [MSL2] | **±30°** (rover thermal management) [MSL1]; the entry system allowed 60°S–60°N [MSL2] | Slopes **≤ 3° over 2–5 km**, ≤ 5° over 200–500 m, ≤ 15° over 20–40 m and over 5 m [MSL2]. Final paper: relief < 100–130 m at 1–1000 m baselines, slopes < 30° at 2–5 m [MSL1] | Around **10 %** of the area covered by rocks (so that a rock taller than 0.6 m under the belly pan is unlikely) [MSL2] | Thermal inertia **< 100 J m⁻² s⁻½ K⁻¹ with albedo > 0.25** is very dusty ground, "not suitable for landing spacecraft or driving rovers" [MSL2] | Steady winds < 30 m/s horizontal and < 10 m/s vertical at 0–5 km above ground; lands within a 10 km radius; initial sites 25 × 20 km | High: [MSL2] read in full on 15 Nov; [MSL1] quoted abstract | [MSL1], [MSL2] |
 | **InSight** (2018) | Below about **−2.5 km** | 15°S–5°N at first, narrowed to **3°N–5°N** (solar power, thermal) | Slopes **< 15°** at 84 m and 2 m scales | **< 10 %** | Load-bearing, confirmed with thermal inertia and radar; one source gives ~100–140 J m⁻² s⁻½ K⁻¹ | Ellipse ~130 × 27 km; 3–5 m of fine regolith for the heat probe | Medium (abstract + secondary pages) | [I1] |
-| **Mars 2020 Perseverance** (2021) | Below **+0.5 km** MOLA (corrected 14 Nov audit; was "−0.5") | ±30° | Relief < ~100 m at 1–1000 m; slopes **< 25°–30° at 2–5 m** | ~7–12 %, locally up to 20 % (Terrain Relative Navigation avoids hazards) | Thermal inertia **> 100–150 J m⁻² s⁻½ K⁻¹**; < ~150 with high albedo = possibly dusty, check further | Ellipse 25 × 20 km, later 13 × 7 km with range trigger; final 7.7 × 6.6 km | High for elevation, relief, slope, TI (abstract read in full); rock abundance Medium (secondary page) | [M20-1], [M20-2] |
+| **Mars 2020 Perseverance** (2021) | Below **−0.5 km** MOLA ("MOLA elevation below −0.5 km for sufficient atmosphere"; the 14 Nov audit changed this to +0.5 km by mistake, see `AUDIT.md` error 14) | ±30° | Relief < ~100 m at 1–1000 m; slopes **< 25°–30° at 2–5 m** | ~7–12 %, locally up to 20 % (Terrain Relative Navigation avoids hazards) | Thermal inertia **> 100 J m⁻² s⁻½ K⁻¹**; **< ~150 with high albedo** "may also be dusty" and is noted for further investigation | Ellipse 25 × 20 km, later 13 × 7 km with range trigger; final 7.7 × 6.6 km | High for elevation, relief, slope, TI (abstract read in full); rock abundance Medium (secondary page) | [M20-1], [M20-2] |
 
 ### What the constraints mean (plain English, for the Method page)
 
-- **Elevation** — lower ground has more atmosphere above it, so the parachute has more time to slow the spacecraft. Every mission set a "must be below" height. Better entry systems allowed higher sites over time (Phoenix −3.5 km → MER −1.3 km → MSL −1 km → Mars 2020 +0.5 km).
+- **Elevation** — lower ground has more atmosphere above it, so the parachute has more time to slow the spacecraft. Every mission set a "must be below" height. Better entry systems allowed higher sites over time (Phoenix −3.5 km → InSight −2.5 km → MER −1.3 km → MSL −1 km → Mars 2020 −0.5 km).
 - **Latitude** — near the equator there is more sunlight for solar power and milder temperatures. Phoenix is the exception: it went north on purpose to dig into ice.
 - **Slope and relief** — steep ground can fool the landing radar, tip the lander or waste fuel during powered descent.
 - **Rocks** — big rocks can puncture airbags or hit the bottom of the lander.
 - **Thermal inertia** — low values mean fine dust: too soft to drive on, and it coats solar panels.
+- **Albedo** (how bright the ground is) — dust is bright. Low thermal inertia together with high albedo is the published signature of a thick dust cover; either one alone can have another cause.
 
 ---
 
@@ -39,12 +40,24 @@ Published constraints that past missions used to choose where to land, collected
 | Spirit (MER-A) | 2004 | Gusev crater | −14.5719 | 175.4785 | [ODE] (Doppler solution) |
 | Opportunity (MER-B) | 2004 | Meridiani Planum | −1.9483 | −5.5258 | [ODE] (Doppler solution) |
 | Phoenix | 2008 | Vastitas Borealis | 68.22 | −125.75 | [ODE] |
-| Curiosity (MSL) | 2012 | Gale crater | −4.59 | 137.44 | [ODE] |
+| Curiosity (MSL) | 2012 | Gale crater | −4.5895 | 137.4417 | [ODE] |
 | InSight | 2018 | Elysium Planitia | 4.5024 | 135.6234 | [W-IN] (Wikipedia) |
-| Perseverance | 2021 | Jezero crater (Octavia E. Butler Landing) | 18.44 | 77.45 | [W-PE] (Wikipedia, citing NASA GISS Mars24) |
-| Zhurong (Tianwen-1) | 2021 | Utopia Planitia | 25.102 | 109.914 | [W-ZH] (Wikipedia) |
+| Perseverance | 2021 | Jezero crater (Octavia E. Butler Landing) | 18.4447 | 77.4508 | [W-PE] (Wikipedia, citing NASA GISS Mars24) |
+| Zhurong (Tianwen-1) | 2021 | Utopia Planitia | 25.066 | 109.925 | [ZH] (corrected 15 Nov; the earlier 25.102, 109.914 was about 2 km off) |
 
 ODE values come from the PDS Geosciences Node; their own citations are Folkner et al. 1997 (Viking, Pathfinder), Smith et al. 2009 (Phoenix) and Seelos et al. 2014 (Curiosity). Wikipedia values should be cross-checked before the final JSON.
+
+**Checked 15 Nov:** our 16 px/deg MOLA grid gives the published elevation under the 7 landers that have one within 60 m, once the grid is placed by its label (`AUDIT.md` error 12). That also confirms the coordinates are on the right ground. `landings.json` is now written by `build_sites.py` from the list in `mars_screening.py`, so this table, the screening and the site cannot drift apart.
+
+### 2b. Other places on Mars that are "taken"
+
+| Site | Latitude | Longitude (E, −180..180) | What it is | Used for | Source |
+|---|---|---|---|---|---|
+| Beagle 2 | 11.52 | 90.44 | ESA/UK lander, 2003. Reached the surface of Isidis Planitia but never called home; found intact in orbiter images in 2015 | A candidate within 500 km would not be a new place | [B2] |
+| Schiaparelli | −2.07 | −6.21 | ESA test lander, 2016. Crashed in Meridiani Planum | Same | [SCH] |
+| Oxia Planum | 18.275 | −24.632 | ESA's chosen site for the Rosalind Franklin (ExoMars) rover, not flown yet | An extra test of our rules: it passes all of them | [OX] |
+
+Positions of the two failed landers are good to a few km, which is enough for a 500 km rule.
 
 ---
 
@@ -68,6 +81,18 @@ NASA gives **no coordinates** for the regions, only names and an image. The tabl
 
 > **Check before we write about Artemis III:** Wikipedia's Artemis III page says (Feb 2026) that Artemis III was redesignated as a low-Earth-orbit test and that Artemis IV is now expected to be the first crewed landing. We did not confirm this on a NASA page. Safer wording for the site: "NASA's 2024 south-pole candidate regions for the first Artemis crewed landing". [W-A3]
 
+### 3b. Moon — three real landings near the south pole
+
+Added 15 Nov. These are run through our base-site rules as a second validation (results in `SCREENING_RESULTS.md`). None of them was a base: each was a short mission in daylight, which is exactly why they fail the "light all year" rule.
+
+| Mission | Year | Site | Latitude | Longitude | Why it went there | Source |
+|---|---|---|---|---|---|---|
+| Chandrayaan-3 (ISRO) | 2023 | Statio Shiv Shakti | −69.373 | 32.319 | Show a safe soft landing and a rover drive for one lunar day. Site chosen for gentle slopes, few boulders and craters, enough light and a clear line to Earth | [CH3], [CH3b] |
+| IM-1 Odysseus (Intuitive Machines / NASA) | 2024 | Malapert A | −80.13 | 1.44 | Six NASA instruments; NASA moved the site to the south-pole region to learn about terrain and radio links before astronauts go. Came to rest tilted on a **12° slope** | [IM1], [IM1b] |
+| IM-2 Athena (Intuitive Machines / NASA) | 2025 | Mons Mouton | −84.7906 | 29.1957 | NASA's PRIME-1 drill and mass spectrometer, to test the ground for water ice. Came to rest on its side about 250 m from its target | [IM2] |
+
+One published engineering number came out of this: ISRO built the Chandrayaan-3 lander for slopes **up to 12°** [CH3b]. Our own limit for a base is 10°.
+
 ---
 
 ## 4. Moon — what makes a good permanent base site
@@ -88,9 +113,31 @@ NASA gives **no coordinates** for the regions, only names and an image. The tabl
 These are **suggestions**, not decisions. Sadık sets the thresholds in B2.
 
 1. **Validation will not pass all 11 Mars landings with one set of rules.** `STATUS.md` says all 11 should pass, but with a ±30° latitude rule, Phoenix (68°N), Viking 2 (47.7°N) and Mars 3 (45°S) fail. Each mission had its own latitude band for its own purpose (e.g. Phoenix wanted ice). Options: (a) validate rovers against rover-style rules and explain the polar landers separately, or (b) widen latitude and lose meaning. Option (a) is more honest and matches the "a ✗ is fine for validation" rule in `panels/README.md`.
-2. **Slope scale.** `PROJECT_PLAN.md` says "MSL < 3° over 2–5 km". The MSL abstract says **< 30° at 2–5 m** (metres, not km) plus **relief < 100–130 m at 1–1000 m**. MOLA can't see metre-scale slopes, so a km-scale slope or relief rule from MOLA is our own simplification — worth stating on the Limitations page.
+2. **Slope scale.** `PROJECT_PLAN.md` says "MSL < 3° over 2–5 km". **Both are right (resolved 15 Nov):** the MSL engineering guide [MSL2] gives ≤ 3° over 2–5 km, the scale MOLA can measure, and the final paper [MSL1] adds < 30° at 2–5 m and relief < 100–130 m at 1–1000 m, which MOLA cannot see. The screening now uses the published 3° rule at 3.7 km; the metre-scale rules stay on the Limitations page as things we cannot check.
 3. **Possible Mars starting thresholds:** elevation ≤ −1 km (MSL; covers MER, InSight, Phoenix), latitude within ±30° (MSL and Mars 2020), thermal inertia ≥ 100 J m⁻² s⁻½ K⁻¹ (Mars 2020), rock abundance ≤ 10–20 % if a map is found.
-4. **Moon:** only illumination has published numbers (~85–95 % for the best spots). Earth visibility, slope and distance to shadow need thresholds we choose ourselves; label them as our choice.
+4. **Dust needs two maps (added 15 Nov).** Both MSL and Mars 2020 pair thermal inertia with albedo. The screening now uses TES albedo as well: below 100 always fails; between 100 and 150 fails if the ground is also brighter than 0.25.
+5. **Moon:** only illumination has published numbers (~85–95 % for the best spots). Earth visibility, slope and distance to shadow need thresholds we choose ourselves; label them as our choice.
+
+---
+
+## 6. Why each mission went where it did
+
+Added 15 Nov, after our mentor's advice to ask what each landing was *for*, not only what the ground is like. The full text with a source for every statement is in `pipeline/content/past_landings.json`; the site shows it on each past landing ("Why the mission went there").
+
+| Mission | Goal, and why this site | When it fails one of our rules, why that did not matter |
+|---|---|---|
+| Mars 3 (1971) | First lander to reach the surface. No source found for why this site | Fails elevation, latitude and relief. Nothing in our sources says the site was screened for hazards |
+| Viking 1 and 2 (1976) | Image the surface, measure atmosphere and soil, search for life. Sites chosen from the Viking orbiters' own pictures | Viking 2 is at 48°N: nuclear-powered, so a low winter Sun did not matter |
+| Mars Pathfinder (1997) | Show a low-cost landing. Ares Vallis looked safe, and an ancient flood left a variety of rocks | Passes |
+| Spirit (2004) | Find rocks that record water. Gusev looks like the bed of a crater lake | Passes |
+| Opportunity (2004) | Same goal. Meridiani has hematite, a mineral that usually forms in water, and is one of the smoothest places on Mars | Passes |
+| Phoenix (2008) | Dig into ground ice at a high northern site | 68°N on purpose: the ice was the goal |
+| Curiosity (2012) | Could Mars have supported life? Gale's layered central mountain | Relief: the mountain it came for is inside our 18 km window. Guided entry put it within 10 km of target, on the flat floor |
+| InSight (2018) | Study the interior. Chosen only for safety: flat, low, near the equator | Passes |
+| Perseverance (2021) | Signs of ancient life, samples for return. Jezero held a lake with a river delta | Relief 517 m against our 500 m: the delta cliffs and rim. Terrain Relative Navigation steered away from hazards |
+| Zhurong (2021) | China's first rover, southern Utopia Planitia | Passes |
+
+**Each mission passes its own limits.** Seven missions have a published elevation limit and latitude band (§1). With our MOLA elevation, all seven landings are inside both. So a ✗ against our rules never means "this was a bad site": it means the mission was built for something other than a solar-powered, parachute-landed base that must run all year.
 
 ---
 
@@ -101,11 +148,22 @@ These are **suggestions**, not decisions. Sadık sets the thresholds in B2.
 - **[M2]** Golombek et al. (2003), *Selection of the Mars Exploration Rover landing sites*, JGR 108(E12), 8072, doi:10.1029/2003JE002074 — https://www.usgs.gov/publications/selection-mars-exploration-rover-landing-sites
 - **[PH1]** Arvidson et al. (2008), *Mars Exploration Program 2007 Phoenix landing site selection and characteristics*, JGR, doi:10.1029/2007JE003021 — https://pubs.usgs.gov/publication/70034555
 - **[MSL1]** Golombek et al. (2012), *Selection of the Mars Science Laboratory Landing Site*, Space Sci. Rev. 170, 641–737, doi:10.1007/s11214-012-9916-y — https://authors.library.caltech.edu/35374
+- **[MSL2]** *MSL Landing Site Selection: User's Guide to Engineering Constraints*, version 2 (JPL) — https://marsoweb.nas.nasa.gov/landingsites/msl/memoranda/MSL_Eng_User_Guide_v2.pdf (read in full, 15 Nov)
 - **[I1]** Golombek et al. (2017), *Selection of the InSight Landing Site*, Space Sci. Rev. 211, doi:10.1007/s11214-016-0321-9 — https://www.usgs.gov/publications/selection-insight-landing-site
 - **[M20-1]** Fergason et al. (2017), *Mars 2020 landing site evaluation: slope and physical property assessment*, LPSC XLVIII, 2163 — https://www.hou.usra.edu/meetings/lpsc2017/pdf/2163.pdf
 - **[M20-2]** Grant et al. (2018), *The science process for selecting the landing site for the 2020 Mars rover*, Planet. Space Sci. — https://www.sciencedirect.com/science/article/abs/pii/S0032063318301077 ; rock-abundance figures via LPSC 2015 abstract 1653 — https://www.hou.usra.edu/meetings/lpsc2015/pdf/1653.pdf
 - **[ODE]** PDS Geosciences Node, Orbital Data Explorer, *Landing Sites* — https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm
 - **[W-M3]** https://en.wikipedia.org/wiki/Mars_3 · **[W-IN]** https://en.wikipedia.org/wiki/InSight · **[W-PE]** https://en.wikipedia.org/wiki/Octavia_E._Butler_Landing · **[W-ZH]** https://en.wikipedia.org/wiki/Zhurong_(rover)
+- **[ZH]** Liu et al. (2022), *Geomorphic contexts and science focus of the Zhurong landing site on Mars*, Nature Astronomy 6, 65–71 — https://www.nature.com/articles/s41550-021-01519-5
+- **[B2]** NASA/JPL HiRISE image ESP_039308_1915 (Beagle 2 on the surface of Isidis Planitia)
+- **[SCH]** ESA, Schiaparelli landing investigation (impact at 2.07°S, 353.79°E)
+- **[OX]** ESA, Oxia Planum, the landing site chosen for the Rosalind Franklin rover (18.275°N, 335.368°E)
+- **[CH3]** ISRO, *Chandrayaan-3 details* — https://www.isro.gov.in/Chandrayaan3_Details.html
+- **[CH3b]** ISRO presentation to UN COPUOS (2024) — https://www.unoosa.org/documents/pdf/copuos/stsc/2024/ListTechnicalPresentations/2024_STSC_technical_presentations_slides/9_26_--_4_INDIA_Chandrayaan3.pdf
+- **[IM1]** NASA (2023), *Intuitive Machines' lunar landing site moves to south pole* — https://www.nasa.gov/blogs/missions/2023/05/25/intuitive-machines-lunar-landing-site-moves-to-south-pole
+- **[IM1b]** NASA (2024), *NASA's LRO images Intuitive Machines' Odysseus lander* — https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/
+- **[IM2]** NASA, *Polar Resources Ice Mining Experiment-1 (PRIME-1)* — https://www.nasa.gov/mission/polar-resources-ice-mining-experiment-1-prime-1/
+- **NSSDCA** mission pages (goals of each Mars mission), listed per mission in `pipeline/content/past_landings.json`
 - **[A1]** NASA (28 Oct 2024), *NASA Provides Update on Artemis III Moon Landing Regions* — https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
 - **[A2]** Astronomy.com, *Here are the nine sites where Artemis 3 might land on the Moon* — https://www.astronomy.com/space-exploration/here-are-the-nine-sites-where-artemis-3-might-land-on-the-moon/
 - **[W-A3]** https://en.wikipedia.org/wiki/Artemis_III

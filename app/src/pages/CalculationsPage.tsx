@@ -21,6 +21,8 @@ export function CalculationsPage() {
   const data = useData()
   const sites = data.status === 'ready' ? data.sites.sites : []
   const candidates = (body: 'mars' | 'moon') => sites.filter((s) => s.body === body && s.selection.role === 'candidate')
+  const nMars = candidates('mars').length || 5
+  const nMoon = candidates('moon').length || 3
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
   return (
@@ -64,7 +66,7 @@ export function CalculationsPage() {
             <h2 className="mt-3 font-display text-2xl leading-tight font-semibold">Start from the maps and choose the sites ourselves</h2>
             <p className="mt-3 leading-relaxed text-ink/90">
               We applied published mission limits to the whole of Mars and to the Moon&apos;s south pole, and kept what passed:
-              4 landing zones and 3 base sites that are ours. Known sites became the test of our rules, not the starting point.
+              {nMars} landing zones and {nMoon} base sites that are ours. Known sites became the test of our rules, not the starting point.
             </p>
           </div>
         </section>
@@ -82,29 +84,29 @@ export function CalculationsPage() {
             <RuleCard title="Winter sunlight" limit="Latitude within ±30°" basis="Curiosity, Perseverance">
               Near the equator the Sun stays high all year, for power and warmth.
             </RuleCard>
-            <RuleCard title="Firm ground" limit="Thermal inertia ≥ 100" basis="Perseverance">
-              Deep dust is too soft to drive on. Ground that holds heat is firmer.
+            <RuleCard title="Firm ground" limit="Thermal inertia ≥ 100, and not bright where it is below 150" basis="Curiosity, Perseverance">
+              Deep dust is too soft to drive on. Ground that holds heat is firmer; bright ground that does not is dust.
             </RuleCard>
-            <RuleCard title="Gentle slopes" limit="≤ 2° at 4 km scale" basis="Ours" ours>
-              A lander must come down level.
+            <RuleCard title="Gentle slopes" limit="≤ 3° over 2–5 km" basis="Curiosity">
+              A tilted plain misleads the landing radar as powered descent begins.
             </RuleCard>
             <RuleCard title="Low relief" limit="≤ 500 m over 18 km" basis="Ours" ours>
               No crater walls or mountains inside the landing area.
             </RuleCard>
           </div>
           <div className="mt-6 grid gap-5 md:grid-cols-[1fr_1.2fr]">
-            <Figure value="4.3 %" label="of Mars passes all five rules: 6.2 million km² in 1,003 separate patches">
+            <Figure value="4.5 %" label="of Mars passes all five rules: 6.45 million km² in 895 separate patches">
               <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-[4.3%] rounded-full bg-accent" />
+                <div className="h-full w-[4.5%] rounded-full bg-accent" />
               </div>
             </Figure>
             <div className="rounded-2xl border border-line p-5">
-              <p className="eyebrow text-ink-muted">From patches to 4 zones</p>
+              <p className="eyebrow text-ink-muted">From safe ground to {nMars} zones</p>
               <ul className="mt-3 space-y-2 text-[0.95rem] leading-relaxed text-ink/85">
-                <Tick>Largest safe patches first, each at least 40,000 km²</Tick>
-                <Tick>The point deepest inside the patch, 40 km or more from its edge</Tick>
-                <Tick>More than 500 km from every past landing, so the place is new</Tick>
-                <Tick>More than 1,500 km between our own zones, so they are four regions</Tick>
+                <Tick>Take the point deepest inside safe ground, in a safe area of at least 40,000 km²</Tick>
+                <Tick>It must be more than 500 km from every place a lander has come down, so it is new</Tick>
+                <Tick>Take the next deepest point that is also 1,500 km from the zones already chosen</Tick>
+                <Tick>Stop when the best point left is less than 40 km inside its area. That happened after five.</Tick>
               </ul>
             </div>
           </div>
@@ -126,8 +128,8 @@ export function CalculationsPage() {
             <RuleCard title="Level ground" limit="Slope ≤ 10°" basis="Ours" ours>
               Room to land, build and drive.
             </RuleCard>
-            <RuleCard title="Ice within reach" limit="≤ 10 km to permanent shadow" basis="Ours" ours>
-              Crater floors that never see the Sun can keep water ice.
+            <RuleCard title="Ice within reach" limit="≤ 10 km to a shadowed area of ≥ 1 km²" basis="Ours" ours>
+              Crater floors that never see the Sun can keep water ice. Specks of shadow do not count.
             </RuleCard>
           </div>
           <div className="mt-6 grid gap-5 md:grid-cols-3">
@@ -141,18 +143,26 @@ export function CalculationsPage() {
         <Section id="check" n="Step 2 · Check" accent="var(--color-ink)" title="The same rules on real missions" onDetails={() => setDetail('check')}>
           <p className="max-w-3xl leading-relaxed text-ink/90">
             If the rules are sound, they should accept the places where landings worked, and each rejection should have a
-            reason. We ran them on all 11 past Mars landings and on the 7 named features of NASA&apos;s Artemis III regions.
+            reason. We ran them on all 11 past Mars landings, on the 7 named features of NASA&apos;s Artemis III regions and
+            on the 3 robotic landers that have reached the Moon&apos;s south polar region. We also asked why each mission went
+            where it did: a site that fails our rules was usually chosen for a different job.
           </p>
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-line p-5">
               <p className="eyebrow text-mars">Mars · 11 past landings</p>
               <ul className="mt-4 space-y-4">
-                <Outcome pass names="Viking 1, Spirit, InSight, Perseverance">
+                <Outcome pass names="Viking 1, Pathfinder, Spirit, Opportunity, InSight, Zhurong">
                   Pass all five rules.
                 </Outcome>
-                <Outcome names="Pathfinder, Opportunity, Zhurong">Fail only the firm-ground rule: earlier missions accepted dustier ground.</Outcome>
-                <Outcome names="Curiosity">Fails slope and relief: it landed beside Mount Sharp on purpose, with guided entry.</Outcome>
-                <Outcome names="Viking 2, Phoenix, Mars 3">Fail winter sunlight: high-latitude targets by design.</Outcome>
+                <Outcome names="Curiosity, Perseverance">
+                  Fail only low relief. Both landed beside the mountain or delta they came to study, using guided landing systems built for that.
+                </Outcome>
+                <Outcome names="Viking 2, Phoenix, Mars 3">
+                  Fail winter sunlight: high-latitude sites. Viking ran on nuclear power, and Phoenix went north to reach ice.
+                </Outcome>
+                <Outcome pass names="Their own missions' limits">
+                  All 7 landings whose own published elevation and latitude limits we found pass them on our map.
+                </Outcome>
               </ul>
             </div>
             <div className="rounded-2xl border border-line p-5">
@@ -164,7 +174,9 @@ export function CalculationsPage() {
                 <Outcome names="Peak near Cabeus B, Haworth, Nobile Rim">
                   No passing ground within 25 km. NASA also weighs science goals and launch windows, which we do not model.
                 </Outcome>
-                <Outcome names="Chandrayaan-3 landing site">A good landing site, but not a base site: a normal day and night, and no permanent shadow within reach.</Outcome>
+                <Outcome names="Chandrayaan-3, IM-1 Odysseus, IM-2 Athena">
+                  Real landings, built for about one lunar day. None is lit half the year, so none passes as a base site. Our map gives 11° where IM-1 tipped over on a 12° slope.
+                </Outcome>
               </ul>
             </div>
           </div>
@@ -221,14 +233,16 @@ export function CalculationsPage() {
             values, well-known places, and the raw data computed again from scratch.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <Figure value="100" label="checks passed" />
-            <Figure value="2" label="warnings, both about map resolution and neither changes a result" />
-            <Figure value="0" label="failed, after we fixed the 10 errors the audit and our own review turned up" />
+            <Figure value="100+" label="checks passed" />
+            <Figure value="1" label="warning, about map resolution; it does not change a result" />
+            <Figure value="0" label="failed, after we fixed the 15 errors the audit and our own review turned up" />
           </div>
           <ul className="mt-6 grid gap-x-8 gap-y-2 text-[0.95rem] leading-relaxed text-ink/85 sm:grid-cols-2">
             <Tick>Elevation under 7 Mars landers: within 56 m of the published values</Tick>
+            <Tick>Dust maps tested on regions every textbook calls dusty or dark</Tick>
             <Tick>All 37 known analog sites fall in the country their source names</Tick>
-            <Tick>Every rule value of all 7 sites recomputes exactly from the raw data</Tick>
+            <Tick>Every rule value of all {nMars + nMoon} sites recomputes exactly from the raw data</Tick>
+            <Tick>The Mars zones come out the same wherever the map is cut</Tick>
             <Tick>Rainfall, temperature, slopes and rock type tested at known places</Tick>
           </ul>
         </Section>
@@ -256,21 +270,28 @@ export function CalculationsPage() {
         </section>
       </article>
 
-      <Drawer open={detail === 'mars'} onClose={() => setDetail(null)} eyebrow="Step 1 · Mars" title="Thresholds, formulas and the four zones">
+      <Drawer open={detail === 'mars'} onClose={() => setDetail(null)} eyebrow="Step 1 · Mars" title="Thresholds, formulas and the zones">
         <Detail title="Where each limit comes from">
           <Table
             head={['Rule', 'Limit', 'Basis']}
             rows={[
               ['Air to brake in', 'Elevation ≤ −1 km, shown as surface pressure ≥ 668 Pa', 'Curiosity (MSL)'],
               ['Winter sunlight', '|latitude| ≤ 30°, shown as winter noon Sun ≥ 34.8°', 'MSL, Mars 2020'],
-              ['Firm ground', 'Thermal inertia ≥ 100 J m⁻² K⁻¹ s⁻½', 'Mars 2020'],
-              ['Slope', '≤ 2° at ~4 km scale', 'Ours'],
+              ['Firm ground', 'Thermal inertia ≥ 100 J m⁻² K⁻¹ s⁻½', 'MSL, Mars 2020'],
+              ['Firm ground, second check', 'Albedo ≤ 0.25 where thermal inertia is below 150', 'MSL, Mars 2020'],
+              ['Slope', '≤ 3° between map cells 3.7 km apart', 'MSL: 3° over 2–5 km'],
               ['Relief', '≤ 500 m over ~18 km', 'Ours'],
             ]}
           />
           <p>
-            Missions set their slope limits at 2–5 m scale, which a global elevation map cannot see. Ours are set at the scale
-            the map does see, at two to three times what the smooth past landing sites show.
+            Curiosity&apos;s engineers set slope limits at four scales: 3° over 2–5 km, 5° over 200–500 m, and 15° over 20–40 m and
+            over 5 m. A global elevation map can only see the first, so that is the one we apply. The others need images
+            that exist for a few places only.
+          </p>
+          <p>
+            Dust has two signatures. It holds little heat (low thermal inertia) and it is bright (high albedo). Curiosity&apos;s
+            guide rules out ground with thermal inertia below 100 and albedo above 0.25; Perseverance&apos;s team flags
+            anything below about 150 that is also bright. We use both.
           </p>
         </Detail>
         <Detail title="Formulas">
@@ -278,17 +299,31 @@ export function CalculationsPage() {
           <Formula>winter noon Sun = 90° − |latitude| − 25.19°</Formula>
           <p>610 Pa is the mean surface pressure at the zero level of the elevation map, 11.1 km the scale height of Mars&apos; atmosphere, 25.19° its axial tilt.</p>
         </Detail>
-        <Detail title="The four zones, measured">
+        <Detail title="The zones, measured">
           <SiteTable sites={candidates('mars')} />
           <p>
-            Second look on a finer map (463 m): 95 % of slopes stay below 1.05° (A), 0.40° (B), 3.82° (C) and 1.07° (D). The
-            same measure gives 0.53° at InSight, 0.94° at Viking 1, 1.49° at Spirit and 10.48° at Perseverance. Zone C is
-            rougher than the others, close to Spirit&apos;s site; we kept it as the only large safe area in the southern
-            hemisphere.
+            Second look on a finer map (463 m): 95 % of slopes stay below 0.31° (A), 0.81° (B), 2.31° (C), 0.50° (D) and
+            1.36° (E). The same measure gives 0.53° at InSight, 0.94° at Viking 1, 1.49° at Spirit and 10.48° at
+            Perseverance. Zone C, on the floor of the Isidis basin, is the roughest of the five; it is still far smoother
+            than Jezero crater, where Perseverance landed.
+          </p>
+          <p>
+            All five lie in the northern lowlands or on Meridiani Planum. South of the equator most ground is too high
+            for the air-to-brake rule, and the patches that do pass are too small to hold a zone 40 km from their edge.
+          </p>
+        </Detail>
+        <Detail title="A place counts as new">
+          <p>
+            A zone must be more than 500 km from the 11 successful landings and from two landers that reached the ground
+            without a working mission: Beagle 2 (Isidis Planitia, 2003) and Schiaparelli (Meridiani Planum, 2016).
           </p>
         </Detail>
         <Detail title="Data">
-          <p>MOLA topography at 16 pixels per degree (about 3.7 km) and at 463 m; thermal inertia from the TES instrument on Mars Global Surveyor at 8 pixels per degree.</p>
+          <p>
+            MOLA topography at 16 pixels per degree (about 3.7 km) and at 463 m; thermal inertia and albedo from the TES
+            instrument on Mars Global Surveyor at 8 pixels per degree; names from the USGS Gazetteer of Planetary
+            Nomenclature.
+          </p>
         </Detail>
       </Drawer>
 
@@ -312,6 +347,10 @@ export function CalculationsPage() {
             <li>Best overall: the best-lit passing spots (sunlit time + ¼ of Earth-in-view time), at least 30 km apart.</li>
             <li>Outside NASA&apos;s regions: more than 40 km from every Artemis III named feature, and at least as well lit as our weakest other site. Only one spot met this.</li>
             <li>The surroundings of each site (about 720 m) must pass every rule, not just one map cell.</li>
+            <li>
+              Only shadowed areas of at least 1 km² count as a place to look for ice. The map holds about 36,000 patches of
+              permanent shadow; fewer than 4,000 are that large.
+            </li>
           </ul>
         </Detail>
         <Detail title="The three ridges, measured">
@@ -323,17 +362,43 @@ export function CalculationsPage() {
       </Drawer>
 
       <Drawer open={detail === 'check'} onClose={() => setDetail(null)} eyebrow="Step 2 · Check" title="Every past landing, rule by rule">
-        <Detail title="Mars">
+        <Detail title="Mars: our rules, and why each mission went there">
           <Table
-            head={['Landing', 'Result', 'Why']}
+            head={['Landing', 'Our rules', 'Why the mission went there']}
             rows={[
-              ['Viking 1, Spirit, InSight, Perseverance', 'Pass', 'All five rules hold'],
-              ['Mars Pathfinder, Opportunity, Zhurong', 'Fail firm ground', 'Thermal inertia 80, 99 and 54; the limit of 100 is from Mars 2020'],
-              ['Curiosity', 'Fails slope and relief', 'At 4 km scale its ellipse includes Mount Sharp and the crater wall'],
-              ['Viking 2, Phoenix, Mars 3', 'Fail winter sunlight', 'High-latitude targets; Phoenix went north for ice'],
+              ['Viking 1 (1976)', 'Passes', 'Images, atmosphere, soil and a search for life; site picked from orbiter pictures'],
+              ['Mars Pathfinder (1997)', 'Passes', 'To prove a low-cost landing; a flood plain that looked safe and held many kinds of rock'],
+              ['Spirit (2004)', 'Passes', 'Signs of past water; Gusev crater looks like a lake bed'],
+              ['Opportunity (2004)', 'Passes', 'Signs of past water; hematite, a mineral that forms in water, on a very smooth plain'],
+              ['InSight (2018)', 'Passes', 'The interior of Mars; site chosen for safety, not for its surface'],
+              ['Zhurong (2021)', 'Passes', "China's first rover, on the plains of southern Utopia Planitia"],
+              ['Curiosity (2012)', 'Fails relief: 1,406 m', 'Past habitability; it climbs the layered mountain inside Gale crater, which is in our 18 km window'],
+              ['Perseverance (2021)', 'Fails relief: 517 m', 'Signs of ancient life; the river delta and rim of Jezero crater are in our window'],
+              ['Viking 2 (1976)', 'Fails winter sunlight', 'Same goals as Viking 1, at 48° N; nuclear powered, so the low Sun did not matter'],
+              ['Phoenix (2008)', 'Fails winter sunlight', 'Went to 68° N on purpose, to reach water ice in the ground'],
+              ['Mars 3 (1971)', 'Fails air, sunlight, relief', 'Landed at 45° S on high, rough ground; we found no source for why'],
             ]}
           />
-          <p>One more test: Oxia Planum, the site ESA chose for the Rosalind Franklin rover, passes every rule.</p>
+          <p>
+            Curiosity and Perseverance are the two landings that fail a terrain rule, and they are the two that carried
+            guided landing systems so that they could land next to steep ground.
+          </p>
+        </Detail>
+        <Detail title="Each landing against its own mission's limits">
+          <p>Every mission wrote limits for its own spacecraft. Checked with our elevation map, all seven we could find pass.</p>
+          <Table
+            head={['Landing', 'Elevation limit', 'Our map', 'Latitude band', 'Landed at']}
+            rows={[
+              ['Mars Pathfinder', 'below 0 km', '−3.68 km', '10° N to 20° N', '19.1° N'],
+              ['Spirit', 'below −1.3 km', '−1.93 km', '15° S to 5° N', '14.6° S'],
+              ['Opportunity', 'below −1.3 km', '−1.38 km', '5° S to 15° N', '1.9° S'],
+              ['Phoenix', 'below −3.5 km', '−4.13 km', '65° N to 72° N', '68.2° N'],
+              ['Curiosity', 'below −1 km', '−4.49 km', '30° S to 30° N', '4.6° S'],
+              ['InSight', 'below −2.5 km', '−2.60 km', '3° N to 5° N', '4.5° N'],
+              ['Perseverance', 'below −0.5 km', '−2.56 km', '30° S to 30° N', '18.4° N'],
+            ]}
+          />
+          <p>One more test: Oxia Planum, the site ESA chose for the Rosalind Franklin rover, passes every one of our rules.</p>
         </Detail>
         <Detail title="Moon">
           <Table
@@ -349,6 +414,21 @@ export function CalculationsPage() {
             ]}
           />
           <p>NASA gives no coordinates for the regions, so we measure around the named feature, taken from the USGS Gazetteer of Planetary Nomenclature.</p>
+        </Detail>
+        <Detail title="Moon: three real landings">
+          <Table
+            head={['Landing', 'Sunlit', 'Earth in view', 'Slope', 'To shadow', 'Why it went there']}
+            rows={[
+              ['Chandrayaan-3 (2023), 69° S', '48.3 % ✗', '100 %', '0.8°', 'none in 30 km ✗', 'To show a soft landing and a rover drive, for one lunar day'],
+              ['IM-1 Odysseus (2024), 80° S', '39.1 % ✗', '100 %', '11.0° ✗', '8.1 km', 'To learn about terrain and radio links near the pole before crews go'],
+              ['IM-2 Athena (2025), 85° S', '46.5 % ✗', '92.3 %', '2.7°', '6.6 km', 'To drill for water ice on Mons Mouton'],
+            ]}
+          />
+          <p>
+            All three were built to work for about one lunar day, so they needed two weeks of daylight, not light all
+            year. That is the difference between a landing site and a base site, and it is what our sunlight rule
+            measures. IM-1 came to rest on a 12° slope and tipped over; our map reads 11° at that spot.
+          </p>
         </Detail>
       </Drawer>
 
@@ -402,8 +482,8 @@ export function CalculationsPage() {
             rows={[
               ['Math', 'A synthetic 10° slope, identical distributions, the pressure formula at zero elevation'],
               ['Inputs', '37 analog coordinates against country borders; 7 Artemis features against the USGS Gazetteer'],
-              ['Mars data', 'Published elevations of 7 landing sites'],
-              ['Moon data', 'Shackleton crater floor in shadow; total shadowed area against Mazarico et al. (2011)'],
+              ['Mars data', 'Published elevations of 7 landing sites; a second elevation map around Gale crater; dust in Tharsis, Arabia and Amazonis, none on Syrtis Major; each mission against its own limits'],
+              ['Moon data', 'Shackleton crater floor in shadow; total shadowed area against Mazarico et al. (2011); the 12° slope where IM-1 tipped over'],
               ['Earth data', 'Rainfall at six known places, temperature at Dome Fuji, salt flats flat, Alps steep, basalt in Iceland'],
               ['Outputs', 'Every sentence in a report agrees with its score; no missing values'],
             ]}
@@ -418,11 +498,32 @@ export function CalculationsPage() {
             <li>Six training areas were on frozen Arctic sea, and five Moon areas on ice caps. Land now has to be at least 90 % land on two maps, and a training area mostly bare ground; all nine Moon areas changed.</li>
           </ul>
         </Detail>
-        <Detail title="The two warnings">
+        <Detail title="Errors found on the last day, in the screening itself">
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              On Mars the dust map was read half a planet away from the elevation map. Pathfinder, Opportunity and Zhurong
+              looked dusty when they are not, and two of our four zones stood on dust. With the maps aligned, 6 of 11
+              landings pass every rule (it was 4) and the zones were chosen again.
+            </li>
+            <li>
+              The software that reads the Mars maps placed them one cell (3.7 km) off. Positions now come from the data
+              labels and are tested against a second, finer map. This is why Curiosity used to read 400 m too high.
+            </li>
+            <li>
+              Choosing zones stopped at the edge of the map at 180° and tried only one point per safe area, which dropped
+              the second and third largest safe areas on Mars. Both fixed; the result no longer depends on where the map is cut.
+            </li>
+            <li>A correction made the day before was itself wrong: Perseverance&apos;s elevation limit is below −0.5 km, as first written.</li>
+            <li>
+              On the Moon any speck of permanent shadow counted as ice within reach. Now only shadowed areas of 1 km² or
+              more count. The three ridges stayed the same.
+            </li>
+          </ul>
+        </Detail>
+        <Detail title="The one warning">
           <p>
-            On the coarse Mars grid the cell under Curiosity sits on the foot of Mount Sharp, 400 m too high; the finer map is
-            right, and no result depends on it. On the Moon, our 240 m grid slightly enlarges shadowed areas, which can
-            shorten a distance to shadow by at most 0.24 km.
+            On the Moon, our 240 m grid slightly enlarges shadowed areas, which can shorten a distance to shadow by at
+            most 0.24 km.
           </p>
         </Detail>
       </Drawer>

@@ -1,0 +1,111 @@
+{
+  "_about": "Why each past mission went where it did, with sources, and why a rule of ours that it fails did not matter for it. Written 15 Nov 2026 (audit). Every statement was read on the page listed; where a page gave no reason for the site, we say so. Used by build_sites.py (validation cards) and docs/SCREENING_RESULTS.md.",
+  "mars": {
+    "Mars 3": {
+      "agency": "USSR", "year": 1971,
+      "purpose": "The Soviet Mars 3 lander reached the surface in 1971. We found no source for why this site was chosen.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/planetary/chronology_mars.html"],
+      "why": {
+        "winter_sun": "It came down at 45° S. Our band of ±30° is for a solar-powered mission that must work through winter.",
+        "pressure": "Its site is higher than the −1 km limit, which was written for a one-tonne rover on a parachute.",
+        "relief": "Rough highland ground. Nothing in our sources says the site was screened for hazards."
+      }
+    },
+    "Viking 1": {
+      "agency": "NASA", "year": 1976,
+      "purpose": "Viking went to image the surface, measure the atmosphere and soil, and search for signs of life. The site in western Chryse Planitia was chosen from pictures the Viking orbiter took of the candidate sites.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-075C", "https://science.nasa.gov/mission/viking/"],
+      "why": {}
+    },
+    "Viking 2": {
+      "agency": "NASA", "year": 1976,
+      "purpose": "The second Viking lander had the same goals as the first. Its site in Utopia Planitia, at 48° N, was chosen from orbiter pictures of the candidate sites.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-083C", "https://science.nasa.gov/mission/viking/"],
+      "why": {
+        "winter_sun": "Viking landers ran on nuclear generators, not solar panels, so a low winter Sun at 48° N did not matter."
+      }
+    },
+    "Mars Pathfinder": {
+      "agency": "NASA", "year": 1997,
+      "purpose": "Pathfinder's main goal was to show that a low-cost landing was possible. Ares Vallis was chosen because it looked relatively safe and a huge ancient flood had left a variety of rocks there to study.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1996-068A", "https://science.nasa.gov/mission/mars-pathfinder/"],
+      "why": {}
+    },
+    "Spirit": {
+      "agency": "NASA", "year": 2004,
+      "purpose": "Spirit looked for rocks and soils that record past water. Gusev crater was chosen because it looks like the bed of a crater lake, so sediments laid down in water might be there.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2003-027A"],
+      "why": {}
+    },
+    "Opportunity": {
+      "agency": "NASA", "year": 2004,
+      "purpose": "Opportunity looked for rocks and soils that record past water. Meridiani Planum was chosen for its coarse-grained hematite, a mineral that typically forms in water, and because it is one of the smoothest and so safest places to land.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2003-032A"],
+      "why": {}
+    },
+    "Phoenix": {
+      "agency": "NASA", "year": 2008,
+      "purpose": "Phoenix studied the history of water and whether the ground could support life at a high northern site. It landed farther north than any mission before it, because water ice is found in the polar ground.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-034A", "https://science.nasa.gov/mission/phoenix/"],
+      "why": {
+        "winter_sun": "It went to 68° N on purpose, to reach ice. Our ±30° band is for a mission that needs sunlight all year."
+      }
+    },
+    "Curiosity": {
+      "agency": "NASA", "year": 2012,
+      "purpose": "Curiosity explores whether Mars could once have supported life. Gale crater was chosen for its potential as a former habitat: the rover climbs the layered mountain in its centre.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2011-070A", "https://marsoweb.nas.nasa.gov/landingsites/msl/memoranda/MSL_Eng_User_Guide_v2.pdf"],
+      "why": {
+        "relief": "The mountain it came to study stands inside our 18 km window. Curiosity's guided entry was built to land within 10 km of its target, so the flat crater floor beside the mountain was enough."
+      }
+    },
+    "InSight": {
+      "agency": "NASA", "year": 2018,
+      "purpose": "InSight studied the interior of Mars with a seismometer and a heat probe. Elysium Planitia was chosen not for its surface features but for safety: flat, low and near the equator.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2018-042A", "https://science.nasa.gov/mission/insight/"],
+      "why": {}
+    },
+    "Perseverance": {
+      "agency": "NASA", "year": 2021,
+      "purpose": "Perseverance seeks signs of ancient life and collects rock samples for a possible return to Earth. Jezero crater was chosen because it once held a lake fed by a river, whose delta is still there.",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2020-052A", "https://science.nasa.gov/mission/mars-2020-perseverance/", "https://www.hou.usra.edu/meetings/lpsc2017/pdf/2163.pdf"],
+      "why": {
+        "relief": "The delta cliffs and the crater rim it came to study are inside our 18 km window (517 m against our limit of 500 m). The mission flew a new system that steers away from hazards during descent, so it could accept rougher ground."
+      }
+    },
+    "Zhurong": {
+      "agency": "CNSA", "year": 2021,
+      "purpose": "Zhurong is China's first Mars rover. It landed on the plains of southern Utopia Planitia; the science focus of the site is described by Liu et al. (2022).",
+      "sources": ["https://www.nature.com/articles/s41550-021-01519-5"],
+      "why": {}
+    }
+  },
+  "moon": {
+    "Chandrayaan-3": {
+      "agency": "ISRO", "year": 2023,
+      "purpose": "Chandrayaan-3 set out to show a safe, soft landing and a rover drive, and to run experiments on the surface, for one lunar day (about 14 Earth days). ISRO chose the site for gentle slopes, few boulders and craters, enough light for power and a clear line to Earth, in high southern latitudes that had hardly been explored.",
+      "sources": ["https://www.isro.gov.in/Chandrayaan3_Details.html", "https://www.unoosa.org/documents/pdf/copuos/stsc/2024/ListTechnicalPresentations/2024_STSC_technical_presentations_slides/9_26_--_4_INDIA_Chandrayaan3.pdf"],
+      "why": {
+        "illumination": "It was built to work for one lunar day, so it needed daylight for two weeks, not light all year. At 69° S the Sun rises and sets as it does on most of the Moon.",
+        "ice_distance": "It did not go to look for ice. No permanently shadowed area of 1 km² or more lies within 30 km."
+      }
+    },
+    "IM-1 Odysseus": {
+      "agency": "Intuitive Machines / NASA", "year": 2024,
+      "purpose": "Odysseus carried six NASA instruments on a commercial lander. NASA moved its site to Malapert A, a relatively flat and safe area of the southern highlands, to learn about the terrain and about radio links with Earth near the south pole before astronauts go there.",
+      "sources": ["https://www.nasa.gov/blogs/missions/2023/05/25/intuitive-machines-lunar-landing-site-moves-to-south-pole", "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/"],
+      "why": {
+        "illumination": "A short mission in daylight: it did not need light all year.",
+        "slope": "NASA's orbiter found it resting on a 12° slope inside a small, worn crater. Our map gives 11° for the same spot, just over our limit of 10°."
+      }
+    },
+    "IM-2 Athena": {
+      "agency": "Intuitive Machines / NASA", "year": 2025,
+      "purpose": "Athena carried NASA's PRIME-1 drill and mass spectrometer to Mons Mouton, to drill into the ground and test it for water ice. It came to rest on its side about 250 m from its target.",
+      "sources": ["https://www.nasa.gov/mission/polar-resources-ice-mining-experiment-1-prime-1/"],
+      "why": {
+        "illumination": "A short mission in daylight: it did not need light all year. Mons Mouton has better-lit ground nearby (up to 65 % on our map), which is why NASA lists it among the Artemis regions."
+      }
+    }
+  }
+}

@@ -96,9 +96,10 @@ export function LandingPage() {
               Mars and the Moon&apos;s south pole, filtered with safety rules taken from real missions. {mars} zones on Mars and{' '}
               {moon} ridges on the Moon passed.
             </BriefStep>
-            <BriefStep n={2} i={3} title="Check the rules against history" figure="11 + 7" unit="real sites tested">
-              The same rules ran on the 11 past Mars landings and on the 7 named features of NASA&apos;s Artemis III regions.
-              They agree where they should, and every miss has a reason we can name.
+            <BriefStep n={2} i={3} title="Check the rules against history" figure="21" unit="real sites tested">
+              The same rules ran on the 11 past Mars landings, the 7 named features of NASA&apos;s Artemis III regions and the
+              3 landers that reached the Moon&apos;s south polar region. They agree where they should, and for every miss we
+              asked why that mission went there.
             </BriefStep>
             <BriefStep n={3} i={4} title="Match each site to Earth" figure={`${areas}`} unit="training areas">
               For every site we ranked all land on Earth by terrain, rock, dryness and temperature and kept three places.
@@ -109,16 +110,16 @@ export function LandingPage() {
       </section>
 
       {/* 2 — Mars */}
-      <Feature stage={2} side="left" accent="var(--color-mars)" eyebrow="Step 1 · Mars" title={<>4.3 % of Mars is safe to land on. We kept {mars} zones.</>}>
+      <Feature stage={2} side="left" accent="var(--color-mars)" eyebrow="Step 1 · Mars" title={<>4.5 % of Mars is safe to land on. We kept {mars} zones.</>}>
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           A lander needs air thick enough to brake in, sunlight in winter, firm ground and a wide, flat plain. We tested every
-          part of the planet against five such rules. From the largest areas that pass, we took {mars} zones, each more than
-          500 km from any past landing.
+          part of the planet against five such rules. From the ground that passes, we took the {mars} points deepest inside
+          it, each more than 500 km from any past landing and 1,500 km from the others.
         </p>
         <div className="story-item mt-7" style={step(3)}>
           <Funnel zones={mars} />
         </div>
-        <Chips i={4} items={['Air to brake in', 'Winter sunlight', 'Firm, dust-free ground', 'Slope ≤ 2°', 'Relief ≤ 500 m']} />
+        <Chips i={4} items={['Air to brake in', 'Winter sunlight', 'Firm, dust-free ground', 'Slope ≤ 3°', 'Relief ≤ 500 m']} />
         <FeatureLink i={5} to="/explore/mars" className="bg-mars text-space hover:bg-mars/90">
           Explore the {mars} landing zones
         </FeatureLink>
@@ -135,7 +136,7 @@ export function LandingPage() {
           <Rule value="≥ 50 %" label="of the time in sunlight" />
           <Rule value="≥ 50 %" label="of the time Earth in view" />
           <Rule value="≤ 10°" label="slope" />
-          <Rule value="≤ 10 km" label="to permanent shadow" />
+          <Rule value="≤ 10 km" label="to a large permanent shadow" />
         </dl>
         <FeatureLink i={4} to="/explore/moon" className="bg-moon text-space hover:bg-moon/90">
           Explore the {moon} base sites
@@ -152,15 +153,15 @@ export function LandingPage() {
             Do the rules hold up against real missions?
           </h2>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
-            <Proof i={2} figure="4 of 11" title="past Mars landings pass every rule">
-              The other seven miss for reasons we can name: three aimed for high latitudes, three accepted dustier ground, and
-              Curiosity landed beside a mountain on purpose.
+            <Proof i={2} figure="6 of 11" title="past Mars landings pass every rule">
+              The other five went where they did on purpose: three aimed for high latitudes, and Curiosity and Perseverance
+              landed beside the mountain and the delta they came to study. Every landing passes its own mission&apos;s limits.
             </Proof>
             <Proof i={3} figure="16 km" title="from one of our lunar ridges to a NASA feature">
               Our screening never used NASA&apos;s Artemis III regions. Two of our three ridges still came out near one: 16 km
               and 38 km from the named feature of de Gerlache Rim 2.
             </Proof>
-            <Proof i={4} figure="100 checks" title="on our own numbers, 0 failed">
+            <Proof i={4} figure="100+ checks" title="on our own numbers, 0 failed">
               Every value was compared with a published figure, a known place or a fresh recomputation before it went on this
               site.
             </Proof>
@@ -388,7 +389,7 @@ function FeatureLink({ i, to, className, children }: { i: number; to: string; cl
   )
 }
 
-/** How much of Mars survives the rules, drawn to scale: the coloured part of the bar is 4.3 % of its width. */
+/** How much of Mars survives the rules, drawn to scale: the coloured part of the bar is 4.5 % of its width. */
 function Funnel({ zones }: { zones: number }) {
   return (
     <div className="space-y-3 font-mono text-xs text-ink-muted">
@@ -400,9 +401,9 @@ function Funnel({ zones }: { zones: number }) {
       <div className="flex items-center gap-3">
         <span className="w-32 shrink-0 whitespace-nowrap">Passes all rules</span>
         <span className="h-2 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
-          <span className="block h-full w-[4.3%] rounded-full bg-accent" />
+          <span className="block h-full w-[4.5%] rounded-full bg-accent" />
         </span>
-        <span className="w-14 text-right text-ink tabular-nums">4.3 %</span>
+        <span className="w-14 text-right text-ink tabular-nums">4.5 %</span>
       </div>
       <div className="flex items-center gap-3">
         <span className="w-32 shrink-0 whitespace-nowrap">Zones we kept</span>
