@@ -160,7 +160,7 @@ export function LandingPage() {
               Our screening never used NASA&apos;s Artemis III regions. Two of our three ridges still came out near one: 16 km
               and 38 km from the named feature of de Gerlache Rim 2.
             </Proof>
-            <Proof i={4} figure="98 checks" title="on our own numbers, 0 failed">
+            <Proof i={4} figure="100 checks" title="on our own numbers, 0 failed">
               Every value was compared with a published figure, a known place or a fresh recomputation before it went on this
               site.
             </Proof>
@@ -180,7 +180,7 @@ export function LandingPage() {
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           We scored all land on Earth against each site: slopes measured at the same map scale, rock type, rainfall, bare
           ground and temperature, and for the Moon a low Sun and frozen ground. The result is {areas} places, from basalt
-          plains in the Sahara to Ellesmere Island in the Arctic.
+          plains in the Sahara to the tundra of Victoria Island in the Arctic.
         </p>
         <p className="story-item mt-6 border-l-2 border-different/80 pl-4 text-[0.95rem] leading-relaxed text-ink/80" style={step(3)}>
           No place on Earth has lower gravity, a vacuum, Mars&apos; thin air or space radiation. Every match says where it stops.

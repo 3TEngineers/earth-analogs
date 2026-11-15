@@ -13,7 +13,8 @@ pipeline/.venv/Scripts/python pipeline/audit.py   # prints PASS / WARN / FAIL, w
 | | PASS | WARN | FAIL |
 |---|---|---|---|
 | First run | 84 | 2 | 5 |
-| After the fixes below | **98** | **2** | **0** |
+| After the fixes below (14 Nov) | 98 | 2 | 0 |
+| After error 10 (15 Nov) | **100** | **2** | **0** |
 
 The two remaining WARNs are explained under [Remaining limits](#remaining-limits).
 
@@ -27,7 +28,7 @@ The two remaining WARNs are explained under [Remaining limits](#remaining-limits
 | **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; every Moon candidate's sunlight recomputed | Mazarico et al. (2011), geometry |
 | **Earth terrain and rock** | Bonneville Salt Flats come out flat (0.03°), the Alps steep (24.6°); GLiM rock class at Iceland, Deccan Traps (basalt), Grand Erg Oriental (sand), Greenland (ice) | known geology |
 | **Earth climate** | GPM rainfall at Manaus, Istanbul, Eskişehir, London, In Salah, Atacama; MODIS surface temperature in the Lut Desert and at Dome Fuji (Antarctica); Greenland ice sheet excluded, McMurdo Dry Valleys kept | climatology, Dome Fuji station mean −54.4 °C |
-| **Outputs** | every "similar"/"different" sentence matches its score; country names match the coordinates; 3 analogs per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
+| **Outputs** | every training area is inland (≥ 90 % land, Natural Earth) and mostly bare ground (< 50 % ice, MODIS); every "similar"/"different" sentence matches its score; country names match the coordinates; 3 analogs per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
 
 ## Errors found and fixed
 
@@ -42,6 +43,8 @@ The two remaining WARNs are explained under [Remaining limits](#remaining-limits
 | 7 | `LANDING_CONSTRAINTS.md`: Mars 2020 elevation limit written as **below −0.5 km**; it is **below +0.5 km**. Thermal inertia limit is 100–150, not just 100 | Doc only; the code uses MSL's −1 km, which was right | Doc corrected, history line fixed (Phoenix −3.5 → MER −1.3 → MSL −1 → Mars 2020 +0.5 km) |
 | 8 | `PROJECT_PLAN.md` said MSL allowed **up to +1 km**; that was an early plan, the final limit was **below −1 km** | Doc only | Corrected |
 | 9 | "Done before at analog sites" examples (`KNOWN_ANALOGS.md` §3, shown in every report): each of the 16 claims was checked against its source page | 4 wrong, 3 imprecise | **Removed:** D-RATS 2022 night EVAs (not in the NASA record). **Corrected:** Mauna Kea → Hawaii and DLR removed (the page names NASA/CSA instruments); Lanzarote years removed (page gives none); Icebreaker years removed (page gives none). **Reworded:** Desert RATS, "Bridget" (a rover prototype carrying ExoMars instruments), RESOLVE (a NASA payload on CSA's Artemis Jr. rover) |
+
+| 10 | **Six training areas were on frozen sea** (found 15 Nov by looking at their satellite close-ups): all three for the Cabeus–Malapert ridge, two more for the Moon and one for Mars D, with 66–100 % water in their cells. The land mask only asked for surface temperature and rainfall data, and MODIS reports temperature over sea ice while GPM covers the oceans. Fixing that showed a second weakness: five Moon areas were ice caps (73–90 % permanent ice) let in by the "≥ 10 % bare rock" rule meant for the Dry Valleys | Training areas shown on the site were sea or ice | Land now needs < 10 % water (MODIS) **and** ≥ 90 % inside the Natural Earth 10 m coastline; picked areas need < 50 % permanent snow/ice. New audit checks for both. All 9 Moon areas and 1 Mars area changed; every close-up checked by eye |
 
 The Navarro-González et al. (2003, *Science* 302:1018) page could not be fetched (paywall); it is a well-known paper and stays, marked as read from the abstract.
 

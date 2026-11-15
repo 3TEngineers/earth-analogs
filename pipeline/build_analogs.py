@@ -34,6 +34,8 @@ MIN_ANALOG_KM_APART = 500.0  # ours: three clearly different places
 MIN_KM_FROM_OTHER_CANDIDATES = 300.0  # ours: an Earth place serves one candidate per body, so the
 # seven reports don't show the same three places; candidates take turns (round-robin) to stay fair
 KNOWN_MATCH_KM = 50.0  # KNOWN_ANALOGS.md: coordinates are often proxies
+MAX_PICK_ICE_PCT = 50.0  # ours: a training area is mostly bare ground, not an ice cap with a few outcrops.
+# B3 lets cells with >= 10 % barren through so known analogs like the Dry Valleys stay ranked; picks must do better.
 SIMILAR, DIFFERENT = 70, 40
 
 DIMENSIONS = [
@@ -197,11 +199,16 @@ def add_climate(e: dict, grid) -> None:
             e[key] = round(v, digits) if np.isfinite(v) else None
 
 
-def candidate_entries(rank: dict, known: list[dict]) -> list[dict]:
+def ice_pct(e: dict, grid) -> float:
+    r, c = int((90 - e["lat"]) / 0.25), int((e["lon"] + 180) / 0.25)
+    return float(grid["snow_ice_pct"][r, c])
+
+
+def candidate_entries(rank: dict, known: list[dict], grid) -> list[dict]:
     seen, entries = set(), []
     for e in rank["ranked"]:  # dedupe: a cell can be in both the climate and the rock pool
         key = (round(e["lat"], 2), round(e["lon"], 2))
-        if e["total"] is not None and key not in seen:
+        if e["total"] is not None and key not in seen and ice_pct(e, grid) < MAX_PICK_ICE_PCT:
             seen.add(key)
             entries.append(e)
     for e in entries:
@@ -210,9 +217,9 @@ def candidate_entries(rank: dict, known: list[dict]) -> list[dict]:
     return entries
 
 
-def pick_round_robin(sites: list[dict], rankings: dict, known: dict) -> dict[str, list[dict]]:
+def pick_round_robin(sites: list[dict], rankings: dict, known: dict, grid) -> dict[str, list[dict]]:
     """Each candidate takes its best remaining place in turn; places are not shared within a body."""
-    entries = {s["id"]: candidate_entries(rankings[s["id"]], known[s["body"]]) for s in sites}
+    entries = {s["id"]: candidate_entries(rankings[s["id"]], known[s["body"]], grid) for s in sites}
     picks: dict[str, list[dict]] = {s["id"]: [] for s in sites}
     for _ in range(3):
         for s in sites:
@@ -284,8 +291,8 @@ def main() -> None:
     rankings = json.loads((INTERIM / "earth_rankings.json").read_text(encoding="utf-8"))
     known, tests, namer = known_analogs(), test_mapping(), Namer()
     candidates = [s for s in sites if s["status"] == "candidate"]
-    picks = pick_round_robin(candidates, rankings, known)
     grid = np.load(INTERIM / "earth_grid.npz")
+    picks = pick_round_robin(candidates, rankings, known, grid)
     for ps in picks.values():
         for e in ps:
             add_climate(e, grid)

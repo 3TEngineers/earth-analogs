@@ -13,7 +13,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
-from shapely.geometry import Point
+from shapely.geometry import Point, box
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -228,6 +228,19 @@ def audit_outputs():
         check("outputs", f"{sid}: 3 analogs ≥ 500 km apart, ≥ 1 new", len(group) == 3 and apart >= 500 and any(not a["known"] for a in group),
               f"closest pair {apart:.0f} km")
     check("outputs", "every analog points at a real site", all(a["siteId"] in sites for a in analogs), "")
+    # Every training area must be inland: its 0.25° cell at least 90 % inside Natural Earth's 10 m country polygons
+    # (vector geometry here, independent of the raster mask the pipeline uses).
+    land = countries.union_all()
+    wet = []
+    for a in analogs:
+        cell = box(a["lon"] - 0.125, a["lat"] - 0.125, a["lon"] + 0.125, a["lat"] + 0.125)
+        share = cell.intersection(land).area / cell.area
+        if share < 0.9:
+            wet.append(f"{a['name']} ({share:.0%} land)")
+    check("outputs", "every training area is inland (≥ 90 % of its cell is land, Natural Earth 10 m)", not wet, "; ".join(wet[:4]))
+    grid = np.load(ROOT / "data" / "interim" / "earth_grid.npz")
+    icy = [a["name"] for a in analogs if build_analogs.ice_pct(a, grid) >= build_analogs.MAX_PICK_ICE_PCT]
+    check("outputs", "every training area is mostly bare ground (< 50 % permanent snow/ice, MODIS)", not icy, "; ".join(icy[:4]))
     shown = [t for a in analogs for t in a["similarities"] + a["differences"] + [x["detail"] for x in a["tests"]]]
     broken = [t for t in shown if re.search(r"\b(None|nan|NaN)\b", t)]
     check("outputs", "no missing values (None/NaN) in any text shown on the site", not broken, "; ".join(broken[:3]))
