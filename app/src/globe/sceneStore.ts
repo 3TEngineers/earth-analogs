@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { Insets, Pair } from './space/SpaceEngine'
 
 /**
@@ -71,9 +71,12 @@ export function useIsDesktop() {
  * `hold` keeps the last value (a bottom sheet pulled up to full height should not shrink the planet to nothing);
  * `active: false` withdraws the report (the element is not rendered at this screen size).
  */
-export function useSceneInset<T extends HTMLElement>(key: string, edge: keyof Insets, options: { hold?: boolean; active?: boolean } = {}) {
+export function useSceneInset<T extends HTMLElement>(name: string, edge: keyof Insets, options: { hold?: boolean; active?: boolean } = {}) {
   const { hold = false, active = true } = options
   const ref = useRef<T>(null)
+  // One key per mounted panel, not per name: when one panel replaces another (Earth list -> one training area),
+  // the old panel's late cleanup must not delete the new panel's report, or the planet re-centres on the full screen.
+  const key = `${name}:${useId()}`
   useLayoutEffect(() => {
     const el = ref.current
     if (!active) return sceneStore.setInset(key, null)
