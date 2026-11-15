@@ -47,6 +47,14 @@
       "description": "Day-night surface temperature swing and cold (MODIS land surface temperature)"
     },
     {
+      "id": "albedo",
+      "label": "Surface brightness",
+      "bodies": [
+        "mars"
+      ],
+      "description": "Broadband albedo of the ground: MGS TES at the site vs MODIS (snow-free) on Earth. Dark rock and gravel match Mars' plains; bright sand and salt do not"
+    },
+    {
       "id": "altitude",
       "label": "Thin air",
       "bodies": [
@@ -73,41 +81,41 @@
   ],
   "analogs": [
     {
-      "id": "moon-candidate-a-gabbro-and-anorthosite-plains-victoria-i",
+      "id": "moon-candidate-a-sandstone-mountains-taymyr-peninsula",
       "siteId": "moon-candidate-a",
       "rank": 1,
-      "name": "Gabbro and anorthosite plains — Victoria Island",
-      "country": "Canada",
-      "lat": 72.125,
-      "lon": -109.375,
+      "name": "Sandstone mountains — Taymyr Peninsula",
+      "country": "Russia",
+      "lat": 75.375,
+      "lon": 110.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 60,
+      "totalScore": 57,
       "scores": {
         "terrain": {
-          "score": 2,
+          "score": 61,
           "confidence": "high",
-          "note": "Earth median slope 1.49°, site 12.99°"
+          "note": "Earth median slope 10.87°, site 12.7°"
         },
         "mineralogy": {
-          "score": 100,
+          "score": 15,
           "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
+          "note": "Earth: siliciclastic sedimentary (GLiM, 0.5° map). Site: anorthositic highland crust"
         },
         "aridity": {
-          "score": 70,
+          "score": 71,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 6,
+          "score": 8,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 61,
+          "score": 77,
           "confidence": "high",
           "note": ""
         },
@@ -118,13 +126,167 @@
         }
       },
       "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "Very dry and bare (99 mm of rain a year, satellite estimate)",
-        "Ground frozen most of the year (mean surface -14 °C)"
+        "Very dry and bare (181 mm of rain a year, satellite estimate)",
+        "The Sun stays low all year at 75° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -15 °C)"
       ],
       "differences": [
-        "Terrain is much flatter than at the site (median slope 1.49° here vs 12.99°)",
-        "Mild day-night swing (2.0 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "Different rock type: siliciclastic sedimentary, not the anorthositic highland crust",
+        "Mild day-night swing (2.9 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
+          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-a-metamorphic-hills-baffin-island",
+      "siteId": "moon-candidate-a",
+      "rank": 2,
+      "name": "Metamorphic hills — Baffin Island",
+      "country": "Canada",
+      "lat": 70.875,
+      "lon": -75.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 50,
+      "scores": {
+        "terrain": {
+          "score": 4,
+          "confidence": "high",
+          "note": "Earth median slope 2.15°, site 12.7°"
+        },
+        "mineralogy": {
+          "score": 50,
+          "confidence": "low",
+          "note": "Earth: metamorphic (GLiM, 0.5° map). Site: anorthositic highland crust"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 9,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 54,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Very dry and bare (84 mm of rain a year, satellite estimate)",
+        "Ground frozen most of the year (mean surface -19 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 2.15° here vs 12.7°)",
+        "Mild day-night swing (3.1 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Metamorphosed crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-a-gabbro-and-anorthosite-hills-plateau-of-",
+      "siteId": "moon-candidate-a",
+      "rank": 3,
+      "name": "Gabbro and anorthosite hills — Plateau of Tibet",
+      "country": "China",
+      "lat": 35.125,
+      "lon": 88.625,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 49,
+      "scores": {
+        "terrain": {
+          "score": 7,
+          "confidence": "high",
+          "note": "Earth median slope 3.55°, site 12.7°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
+        },
+        "aridity": {
+          "score": 67,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 52,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 0,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 84,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Ground frozen most of the year (mean surface -6 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 3.55° here vs 12.7°)",
+        "The Sun climbs much higher than at the lunar pole",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -147,14 +309,15 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
       ]
     },
     {
-      "id": "moon-candidate-a-volcanic-mountains-chukchi-range",
-      "siteId": "moon-candidate-a",
-      "rank": 2,
+      "id": "moon-candidate-b-volcanic-mountains-chukchi-range",
+      "siteId": "moon-candidate-b",
+      "rank": 1,
       "name": "Volcanic mountains — Chukchi Range",
       "country": "Russia",
       "lat": 67.875,
@@ -163,12 +326,12 @@
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 57,
+      "totalScore": 62,
       "scores": {
         "terrain": {
-          "score": 46,
+          "score": 67,
           "confidence": "high",
-          "note": "Earth median slope 13.49°, site 12.99°"
+          "note": "Earth median slope 13.49°, site 13.06°"
         },
         "mineralogy": {
           "score": 60,
@@ -218,112 +381,29 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
       ]
     },
     {
-      "id": "moon-candidate-a-gabbro-and-anorthosite-plains",
-      "siteId": "moon-candidate-a",
-      "rank": 3,
-      "name": "Gabbro and anorthosite plains",
-      "country": "Russia",
-      "lat": 74.625,
-      "lon": 90.875,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 57,
-      "scores": {
-        "terrain": {
-          "score": 2,
-          "confidence": "high",
-          "note": "Earth median slope 1.29°, site 12.99°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
-        },
-        "aridity": {
-          "score": 10,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 9,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 73,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "The Sun stays low all year at 75° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -14 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 1.29° here vs 12.99°)",
-        "Wetter or greener than the Moon (302 mm of rain a year)",
-        "Mild day-night swing (3.2 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [
-        "Mafic plutonic crust"
-      ],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-b-gabbro-and-anorthosite-mountains-qeqerta",
+      "id": "moon-candidate-b-gabbro-and-anorthosite-mountains-cordill",
       "siteId": "moon-candidate-b",
-      "rank": 1,
-      "name": "Gabbro and anorthosite mountains — Qeqertarsuaq",
-      "country": "Greenland",
-      "lat": 70.125,
-      "lon": -54.125,
+      "rank": 2,
+      "name": "Gabbro and anorthosite mountains — Cordillera Occidental",
+      "country": "Peru",
+      "lat": -12.375,
+      "lon": -76.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 65,
+      "totalScore": 54,
       "scores": {
         "terrain": {
-          "score": 26,
+          "score": 75,
           "confidence": "high",
-          "note": "Earth median slope 18.15°, site 13.49°"
+          "note": "Earth median slope 13.51°, site 13.06°"
         },
         "mineralogy": {
           "score": 100,
@@ -336,39 +416,39 @@
           "note": ""
         },
         "temperature": {
-          "score": 10,
+          "score": 45,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 51,
+          "score": 0,
           "confidence": "high",
           "note": ""
         },
         "ice": {
-          "score": 100,
+          "score": 0,
           "confidence": "medium",
           "note": ""
         }
       },
       "similarities": [
+        "Slopes match at the same scale (median 13.51° here vs 13.06° at the site)",
         "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "Very dry and bare (195 mm of rain a year, satellite estimate)",
-        "Ground frozen most of the year (mean surface -14 °C)"
+        "Very dry and bare (113 mm of rain a year, satellite estimate)"
       ],
       "differences": [
-        "Terrain is rougher than at the site (median slope 18.15° here vs 13.49°)",
-        "Mild day-night swing (3.3 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "The Sun climbs much higher than at the lunar pole",
+        "No lasting frozen ground (mean surface 25 °C)",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
         {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
         },
         {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
         }
       ],
       "processes": [
@@ -381,265 +461,29 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
       ]
     },
     {
-      "id": "moon-candidate-b-gabbro-and-anorthosite-mountains-brooks-",
-      "siteId": "moon-candidate-b",
-      "rank": 2,
-      "name": "Gabbro and anorthosite mountains — Brooks Range",
-      "country": "United States of America",
-      "lat": 68.375,
-      "lon": -160.625,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 64,
-      "scores": {
-        "terrain": {
-          "score": 53,
-          "confidence": "high",
-          "note": "Earth median slope 15.13°, site 13.49°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
-        },
-        "aridity": {
-          "score": 18,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 14,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 42,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
-        "Ground frozen most of the year (mean surface -9 °C)"
-      ],
-      "differences": [
-        "Wetter or greener than the Moon (308 mm of rain a year)",
-        "Mild day-night swing (5.1 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [
-        "Mafic plutonic crust"
-      ],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-b-sandstone-mountains-king-frederik-viii-l",
+      "id": "moon-candidate-b-sedimentary-hills-queen-elizabeth-island",
       "siteId": "moon-candidate-b",
       "rank": 3,
-      "name": "Sandstone mountains — King Frederik VIII Land",
-      "country": "Greenland",
-      "lat": 80.625,
-      "lon": -20.375,
+      "name": "Sedimentary hills — Queen Elizabeth Islands",
+      "country": "Canada",
+      "lat": 78.375,
+      "lon": -95.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 55,
+      "totalScore": 47,
       "scores": {
         "terrain": {
-          "score": 25,
+          "score": 2,
           "confidence": "high",
-          "note": "Earth median slope 7.82°, site 13.49°"
-        },
-        "mineralogy": {
-          "score": 15,
-          "confidence": "low",
-          "note": "Earth: siliciclastic sedimentary (GLiM, 0.5° map). Site: anorthositic highland crust"
-        },
-        "aridity": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 5,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Very dry and bare (79 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 81° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -16 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 7.82° here vs 13.49°)",
-        "Different rock type: siliciclastic sedimentary, not the anorthositic highland crust",
-        "Mild day-night swing (1.7 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [
-        "Sedimentary layers"
-      ],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-c-metamorphic-mountains",
-      "siteId": "moon-candidate-c",
-      "rank": 1,
-      "name": "Metamorphic mountains",
-      "country": "Greenland",
-      "lat": 76.625,
-      "lon": -24.125,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 62,
-      "scores": {
-        "terrain": {
-          "score": 30,
-          "confidence": "high",
-          "note": "Earth median slope 8.07°, site 11.2°"
-        },
-        "mineralogy": {
-          "score": 50,
-          "confidence": "low",
-          "note": "Earth: metamorphic (GLiM, 0.5° map). Site: anorthositic highland crust"
-        },
-        "aridity": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 4,
-          "confidence": "medium",
-          "note": ""
-        },
-        "sun_angle": {
-          "score": 83,
-          "confidence": "high",
-          "note": ""
-        },
-        "ice": {
-          "score": 100,
-          "confidence": "medium",
-          "note": ""
-        }
-      },
-      "similarities": [
-        "Very dry and bare (96 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 77° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -14 °C)"
-      ],
-      "differences": [
-        "Terrain is much flatter than at the site (median slope 8.07° here vs 11.2°)",
-        "Mild day-night swing (1.5 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
-        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Navigation and EVAs under long shadows and low Sun (simulated with night walks and lights)",
-          "detail": "Done before at analog sites: NASA JETT5, San Francisco Volcanic Field (2024); JPL rover drives at dawn/dusk, Colorado Desert (2026)"
-        },
-        {
-          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
-          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
-        }
-      ],
-      "processes": [
-        "Metamorphosed crust"
-      ],
-      "image": null,
-      "sources": [
-        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
-      ]
-    },
-    {
-      "id": "moon-candidate-c-sedimentary-mountains-peary-land",
-      "siteId": "moon-candidate-c",
-      "rank": 2,
-      "name": "Sedimentary mountains — Peary Land",
-      "country": "Greenland",
-      "lat": 83.375,
-      "lon": -30.875,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 59,
-      "scores": {
-        "terrain": {
-          "score": 42,
-          "confidence": "high",
-          "note": "Earth median slope 10.96°, site 11.2°"
+          "note": "Earth median slope 1.52°, site 13.06°"
         },
         "mineralogy": {
           "score": 15,
@@ -647,17 +491,17 @@
           "note": "Earth: mixed sedimentary (GLiM, 0.5° map). Site: anorthositic highland crust"
         },
         "aridity": {
-          "score": 94,
+          "score": 95,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 2,
+          "score": 6,
           "confidence": "medium",
           "note": ""
         },
         "sun_angle": {
-          "score": 100,
+          "score": 92,
           "confidence": "high",
           "note": ""
         },
@@ -668,13 +512,14 @@
         }
       },
       "similarities": [
-        "Very dry and bare (107 mm of rain a year, satellite estimate)",
-        "The Sun stays low all year at 83° latitude, with long shadows",
-        "Ground frozen most of the year (mean surface -17 °C)"
+        "Very dry and bare (86 mm of rain a year, satellite estimate)",
+        "The Sun stays low all year at 78° latitude, with long shadows",
+        "Ground frozen most of the year (mean surface -19 °C)"
       ],
       "differences": [
+        "Terrain is much flatter than at the site (median slope 1.52° here vs 13.06°)",
         "Different rock type: mixed sedimentary, not the anorthositic highland crust",
-        "Mild day-night swing (0.8 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "Mild day-night swing (2.2 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -697,28 +542,29 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
       ]
     },
     {
-      "id": "moon-candidate-c-gabbro-and-anorthosite-plains-north-sibe",
+      "id": "moon-candidate-c-gabbro-and-anorthosite-plains-victoria-i",
       "siteId": "moon-candidate-c",
-      "rank": 3,
-      "name": "Gabbro and anorthosite plains — North Siberian Lowland",
-      "country": "Russia",
+      "rank": 1,
+      "name": "Gabbro and anorthosite plains — Victoria Island",
+      "country": "Canada",
       "lat": 72.125,
-      "lon": 110.875,
+      "lon": -109.375,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 56,
+      "totalScore": 61,
       "scores": {
         "terrain": {
-          "score": 2,
+          "score": 6,
           "confidence": "high",
-          "note": "Earth median slope 1.35°, site 11.2°"
+          "note": "Earth median slope 1.49°, site 10.23°"
         },
         "mineralogy": {
           "score": 100,
@@ -726,12 +572,12 @@
           "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
         },
         "aridity": {
-          "score": 28,
+          "score": 70,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 14,
+          "score": 6,
           "confidence": "medium",
           "note": ""
         },
@@ -748,12 +594,12 @@
       },
       "similarities": [
         "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Very dry and bare (99 mm of rain a year, satellite estimate)",
         "Ground frozen most of the year (mean surface -14 °C)"
       ],
       "differences": [
-        "Terrain is much flatter than at the site (median slope 1.35° here vs 11.2°)",
-        "Wetter or greener than the Moon (208 mm of rain a year)",
-        "Mild day-night swing (4.8 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "Terrain is much flatter than at the site (median slope 1.49° here vs 10.23°)",
+        "Mild day-night swing (2.0 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
         "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -776,28 +622,183 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
       ]
     },
     {
-      "id": "mars-candidate-a-basalt-plains-al-har-j-al-aswad",
-      "siteId": "mars-candidate-a",
-      "rank": 1,
-      "name": "Basalt plains — Al Harüj al Aswad",
-      "country": "Libya",
-      "lat": 27.125,
-      "lon": 16.875,
+      "id": "moon-candidate-c-gabbro-and-anorthosite-mountains",
+      "siteId": "moon-candidate-c",
+      "rank": 2,
+      "name": "Gabbro and anorthosite mountains",
+      "country": "Greenland",
+      "lat": 63.375,
+      "lon": -49.875,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 80,
+      "totalScore": 57,
       "scores": {
         "terrain": {
-          "score": 91,
+          "score": 41,
           "confidence": "high",
-          "note": "Earth median slope 0.38°, site 0.09°"
+          "note": "Earth median slope 7.5°, site 10.23°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic plutonic (gabbro, anorthosite) (GLiM, 0.5° map). Site: anorthositic highland crust"
+        },
+        "aridity": {
+          "score": 26,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 15,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 17,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Same rock family: basic plutonic (gabbro, anorthosite), like the anorthositic highland crust",
+        "Ground frozen most of the year (mean surface -9 °C)"
+      ],
+      "differences": [
+        "Wetter or greener than the Moon (734 mm of rain a year)",
+        "Mild day-night swing (5.2 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "The Sun climbs much higher than at the lunar pole",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Mafic plutonic crust"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "moon-candidate-c-basalt-hills-central-siberian-plateau",
+      "siteId": "moon-candidate-c",
+      "rank": 3,
+      "name": "Basalt hills — Central Siberian Plateau",
+      "country": "Russia",
+      "lat": 69.125,
+      "lon": 95.375,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 51,
+      "scores": {
+        "terrain": {
+          "score": 21,
+          "confidence": "high",
+          "note": "Earth median slope 5.0°, site 10.23°"
+        },
+        "mineralogy": {
+          "score": 60,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM, 0.5° map). Site: anorthositic highland crust"
+        },
+        "aridity": {
+          "score": 62,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 10,
+          "confidence": "medium",
+          "note": ""
+        },
+        "sun_angle": {
+          "score": 46,
+          "confidence": "high",
+          "note": ""
+        },
+        "ice": {
+          "score": 100,
+          "confidence": "medium",
+          "note": ""
+        }
+      },
+      "similarities": [
+        "Ground frozen most of the year (mean surface -16 °C)"
+      ],
+      "differences": [
+        "Terrain is much flatter than at the site (median slope 5.0° here vs 10.23°)",
+        "Mild day-night swing (3.6 K) — far from the airless Moon, whose surface swings by about 300 K at the equator",
+        "The Moon itself differs from every Earth site: no air at all, 0.17 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Drilling into ice-cemented ground; resource prospecting and water extraction (ISRU)",
+          "detail": "Done before at analog sites: Icebreaker drill in ice-cemented ground, Haughton Crater (Arctic) and University Valley (Antarctica); NASA RESOLVE payload on CSA's Artemis Jr. rover, prospecting near Hilo, Hawaii (2012)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      ]
+    },
+    {
+      "id": "mars-candidate-a-basalt-plains-lut-desert",
+      "siteId": "mars-candidate-a",
+      "rank": 1,
+      "name": "Basalt plains — Lut Desert",
+      "country": "Iran",
+      "lat": 33.125,
+      "lon": 57.875,
+      "radiusKm": 12.5,
+      "known": true,
+      "knownRef": null,
+      "knownName": "Lut Desert, 302 km away",
+      "totalScore": 79,
+      "scores": {
+        "terrain": {
+          "score": 82,
+          "confidence": "high",
+          "note": "Earth median slope 0.62°, site 0.09°"
         },
         "mineralogy": {
           "score": 100,
@@ -810,29 +811,34 @@
           "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 100,
+          "score": 99,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 39,
+          "score": 43,
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 81,
+          "confidence": "medium",
+          "note": "Earth 0.23 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
         "altitude": {
-          "score": 15,
+          "score": 21,
           "confidence": "high",
-          "note": "Mean elevation 728 m"
+          "note": "Mean elevation 1,064 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.38° here vs 0.09° at the site)",
+        "Slopes match at the same scale (median 0.62° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
-        "Very dry and bare (20 mm of rain a year, satellite estimate)"
+        "Very dry and bare (104 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.23 here, 0.19 there)"
       ],
       "differences": [
-        "Mild day-night swing (22.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 728 m: air about as thick as at sea level",
+        "Low ground at 1,064 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -860,182 +866,15 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-a-basalt-plains-baja-california",
+      "id": "mars-candidate-a-basalt-plains-sahara",
       "siteId": "mars-candidate-a",
       "rank": 2,
-      "name": "Basalt plains — Baja California",
-      "country": "Mexico",
-      "lat": 27.375,
-      "lon": -113.875,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 77,
-      "scores": {
-        "terrain": {
-          "score": 91,
-          "confidence": "high",
-          "note": "Earth median slope 0.28°, site 0.09°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: basic volcanic (basalt) (GLiM, 0.5° map). Site: lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)"
-        },
-        "water_history": {
-          "score": null,
-          "confidence": "low",
-          "note": "No global data we could compare"
-        },
-        "aridity": {
-          "score": 96,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 38,
-          "confidence": "medium",
-          "note": ""
-        },
-        "altitude": {
-          "score": 1,
-          "confidence": "high",
-          "note": "Mean elevation 53 m"
-        }
-      },
-      "similarities": [
-        "Slopes match at the same scale (median 0.28° here vs 0.09° at the site)",
-        "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
-        "Very dry and bare (69 mm of rain a year, satellite estimate)"
-      ],
-      "differences": [
-        "Mild day-night swing (21.8 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 53 m: air about as thick as at sea level",
-        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
-          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
-        },
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
-          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
-        }
-      ],
-      "processes": [
-        "Basaltic lava flows"
-      ],
-      "image": null,
-      "sources": [
-        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
-        "https://pubs.usgs.gov/sim/3292/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
-      ]
-    },
-    {
-      "id": "mars-candidate-a-basalt-plains-libyan-desert",
-      "siteId": "mars-candidate-a",
-      "rank": 3,
-      "name": "Basalt plains — Libyan Desert",
-      "country": "Sudan",
-      "lat": 17.625,
-      "lon": 32.375,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 76,
-      "scores": {
-        "terrain": {
-          "score": 86,
-          "confidence": "high",
-          "note": "Earth median slope 0.39°, site 0.09°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: basic volcanic (basalt) (GLiM, 0.5° map). Site: lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)"
-        },
-        "water_history": {
-          "score": null,
-          "confidence": "low",
-          "note": "No global data we could compare"
-        },
-        "aridity": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 32,
-          "confidence": "medium",
-          "note": ""
-        },
-        "altitude": {
-          "score": 7,
-          "confidence": "high",
-          "note": "Mean elevation 371 m"
-        }
-      },
-      "similarities": [
-        "Slopes match at the same scale (median 0.39° here vs 0.09° at the site)",
-        "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
-        "Very dry and bare (50 mm of rain a year, satellite estimate)"
-      ],
-      "differences": [
-        "Mild day-night swing (19.0 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 371 m: air about as thick as at sea level",
-        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
-          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
-        },
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
-          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
-        }
-      ],
-      "processes": [
-        "Basaltic lava flows"
-      ],
-      "image": null,
-      "sources": [
-        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
-        "https://pubs.usgs.gov/sim/3292/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
-      ]
-    },
-    {
-      "id": "mars-candidate-b-basalt-plains-sahara",
-      "siteId": "mars-candidate-b",
-      "rank": 1,
       "name": "Basalt plains — Sahara",
       "country": "Algeria",
       "lat": 25.125,
@@ -1044,12 +883,12 @@
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 82,
+      "totalScore": 79,
       "scores": {
         "terrain": {
-          "score": 97,
+          "score": 94,
           "confidence": "high",
-          "note": "Earth median slope 0.17°, site 0.2°"
+          "note": "Earth median slope 0.17°, site 0.09°"
         },
         "mineralogy": {
           "score": 100,
@@ -1071,6 +910,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 47,
+          "confidence": "medium",
+          "note": "Earth 0.30 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
         "altitude": {
           "score": 21,
           "confidence": "high",
@@ -1078,7 +922,7 @@
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.17° here vs 0.2° at the site)",
+        "Slopes match at the same scale (median 0.17° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
         "Very dry and bare (64 mm of rain a year, satellite estimate)"
       ],
@@ -1111,28 +955,29 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-b-basalt-plains-syrian-desert",
-      "siteId": "mars-candidate-b",
-      "rank": 2,
-      "name": "Basalt plains — Syrian Desert",
-      "country": "Jordan",
-      "lat": 32.875,
-      "lon": 37.875,
+      "id": "mars-candidate-a-basalt-plains-gobi-desert",
+      "siteId": "mars-candidate-a",
+      "rank": 3,
+      "name": "Basalt plains — Gobi Desert",
+      "country": "China",
+      "lat": 41.375,
+      "lon": 104.625,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 81,
+      "totalScore": 77,
       "scores": {
         "terrain": {
-          "score": 98,
+          "score": 88,
           "confidence": "high",
-          "note": "Earth median slope 0.25°, site 0.2°"
+          "note": "Earth median slope 0.51°, site 0.09°"
         },
         "mineralogy": {
           "score": 100,
@@ -1145,29 +990,33 @@
           "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 100,
+          "score": 94,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 33,
+          "score": 46,
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 56,
+          "confidence": "medium",
+          "note": "Earth 0.28 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
         "altitude": {
-          "score": 13,
+          "score": 16,
           "confidence": "high",
-          "note": "Mean elevation 652 m"
+          "note": "Mean elevation 790 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.25° here vs 0.2° at the site)",
+        "Slopes match at the same scale (median 0.51° here vs 0.09° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
-        "Very dry and bare (94 mm of rain a year, satellite estimate)"
+        "Very dry and bare (129 mm of rain a year, satellite estimate)"
       ],
       "differences": [
-        "Mild day-night swing (18.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 652 m: air about as thick as at sea level",
+        "Low ground at 790 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1195,18 +1044,110 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-b-basalt-plains-sahara",
+      "id": "mars-candidate-b-basalt-plains-al-har-j-al-aswad",
       "siteId": "mars-candidate-b",
-      "rank": 3,
-      "name": "Basalt plains — Sahara",
-      "country": "Chad",
-      "lat": 23.375,
-      "lon": 16.125,
+      "rank": 1,
+      "name": "Basalt plains — Al Harüj al Aswad",
+      "country": "Libya",
+      "lat": 27.125,
+      "lon": 16.875,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 81,
+      "scores": {
+        "terrain": {
+          "score": 95,
+          "confidence": "high",
+          "note": "Earth median slope 0.38°, site 0.2°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM, 0.5° map). Site: lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 39,
+          "confidence": "medium",
+          "note": ""
+        },
+        "albedo": {
+          "score": 75,
+          "confidence": "medium",
+          "note": "Earth 0.14 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
+        "altitude": {
+          "score": 15,
+          "confidence": "high",
+          "note": "Mean elevation 728 m"
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.38° here vs 0.2° at the site)",
+        "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
+        "Very dry and bare (20 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.14 here, 0.19 there)"
+      ],
+      "differences": [
+        "Mild day-night swing (22.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
+        "Low ground at 728 m: air about as thick as at sea level",
+        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://pubs.usgs.gov/sim/3292/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+      ]
+    },
+    {
+      "id": "mars-candidate-b-basalt-plains-arabian-peninsula",
+      "siteId": "mars-candidate-b",
+      "rank": 2,
+      "name": "Basalt plains — Arabian Peninsula",
+      "country": "Saudi Arabia",
+      "lat": 20.875,
+      "lon": 42.375,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
@@ -1214,9 +1155,9 @@
       "totalScore": 80,
       "scores": {
         "terrain": {
-          "score": 95,
+          "score": 85,
           "confidence": "high",
-          "note": "Earth median slope 0.24°, site 0.2°"
+          "note": "Earth median slope 0.6°, site 0.2°"
         },
         "mineralogy": {
           "score": 100,
@@ -1238,20 +1179,26 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 92,
+          "confidence": "medium",
+          "note": "Earth 0.17 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
         "altitude": {
-          "score": 13,
+          "score": 22,
           "confidence": "high",
-          "note": "Mean elevation 629 m"
+          "note": "Mean elevation 1,082 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.24° here vs 0.2° at the site)",
+        "Slopes match at the same scale (median 0.6° here vs 0.2° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
-        "Very dry and bare (5 mm of rain a year, satellite estimate)"
+        "Very dry and bare (95 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.17 here, 0.19 there)"
       ],
       "differences": [
-        "Mild day-night swing (18.4 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
-        "Low ground at 629 m: air about as thick as at sea level",
+        "Mild day-night swing (18.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
+        "Low ground at 1,082 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1279,6 +1226,98 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+      ]
+    },
+    {
+      "id": "mars-candidate-b-basalt-plains-syrian-desert",
+      "siteId": "mars-candidate-b",
+      "rank": 3,
+      "name": "Basalt plains — Syrian Desert",
+      "country": "Saudi Arabia",
+      "lat": 30.875,
+      "lon": 39.375,
+      "radiusKm": 12.5,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 80,
+      "scores": {
+        "terrain": {
+          "score": 90,
+          "confidence": "high",
+          "note": "Earth median slope 0.48°, site 0.2°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: basic volcanic (basalt) (GLiM, 0.5° map). Site: lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 100,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 34,
+          "confidence": "medium",
+          "note": ""
+        },
+        "albedo": {
+          "score": 77,
+          "confidence": "medium",
+          "note": "Earth 0.23 (MODIS shortwave), site 0.19 (MGS TES)"
+        },
+        "altitude": {
+          "score": 18,
+          "confidence": "high",
+          "note": "Mean elevation 903 m"
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.48° here vs 0.2° at the site)",
+        "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)",
+        "Very dry and bare (62 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.23 here, 0.19 there)"
+      ],
+      "differences": [
+        "Mild day-night swing (19.7 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
+        "Low ground at 903 m: air about as thick as at sea level",
+        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Basaltic lava flows"
+      ],
+      "image": null,
+      "sources": [
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://pubs.usgs.gov/sim/3292/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
@@ -1322,6 +1361,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 82,
+          "confidence": "medium",
+          "note": "Earth 0.23 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
         "altitude": {
           "score": 100,
           "confidence": "high",
@@ -1332,6 +1376,7 @@
         "Slopes match at the same scale (median 1.15° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
         "Very dry and bare (93 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.23 here, 0.20 there)",
         "High ground at 5,094 m: air pressure about 55 % of sea level, and stronger UV"
       ],
       "differences": [
@@ -1362,28 +1407,29 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-c-basalt-plains-lut-desert",
+      "id": "mars-candidate-c-basalt-plains-mongolian-plateau",
       "siteId": "mars-candidate-c",
       "rank": 2,
-      "name": "Basalt plains — Lut Desert",
-      "country": "Iran",
-      "lat": 33.125,
-      "lon": 57.875,
+      "name": "Basalt plains — Mongolian Plateau",
+      "country": "Mongolia",
+      "lat": 43.875,
+      "lon": 100.875,
       "radiusKm": 12.5,
-      "known": true,
+      "known": false,
       "knownRef": null,
-      "knownName": "Lut Desert, 302 km away",
-      "totalScore": 81,
+      "knownName": null,
+      "totalScore": 84,
       "scores": {
         "terrain": {
-          "score": 93,
+          "score": 94,
           "confidence": "high",
-          "note": "Earth median slope 0.62°, site 0.7°"
+          "note": "Earth median slope 0.73°, site 0.7°"
         },
         "mineralogy": {
           "score": 100,
@@ -1396,28 +1442,34 @@
           "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 99,
+          "score": 100,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 43,
+          "score": 46,
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 94,
+          "confidence": "medium",
+          "note": "Earth 0.21 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
         "altitude": {
-          "score": 21,
+          "score": 22,
           "confidence": "high",
-          "note": "Mean elevation 1,064 m"
+          "note": "Mean elevation 1,109 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.62° here vs 0.7° at the site)",
+        "Slopes match at the same scale (median 0.73° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
-        "Very dry and bare (104 mm of rain a year, satellite estimate)"
+        "Very dry and bare (100 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.21 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 1,064 m: air about as thick as at sea level",
+        "Low ground at 1,109 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1445,6 +1497,7 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
@@ -1461,7 +1514,7 @@
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 81,
+      "totalScore": 82,
       "scores": {
         "terrain": {
           "score": 93,
@@ -1488,6 +1541,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 86,
+          "confidence": "medium",
+          "note": "Earth 0.17 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
         "altitude": {
           "score": 15,
           "confidence": "high",
@@ -1497,7 +1555,8 @@
       "similarities": [
         "Slopes match at the same scale (median 0.79° here vs 0.7° at the site)",
         "Same rock family: basic volcanic (basalt), like the lava plains mapped at the site (USGS unit eHv, Early Hesperian volcanic)",
-        "Very dry and bare (95 mm of rain a year, satellite estimate)"
+        "Very dry and bare (95 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.17 here, 0.20 there)"
       ],
       "differences": [
         "Low ground at 740 m: air about as thick as at sea level",
@@ -1528,6 +1587,7 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
@@ -1571,6 +1631,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 76,
+          "confidence": "medium",
+          "note": "Earth 0.19 (MODIS shortwave), site 0.14 (MGS TES)"
+        },
         "altitude": {
           "score": 38,
           "confidence": "high",
@@ -1580,7 +1645,8 @@
       "similarities": [
         "Slopes match at the same scale (median 0.43° here vs 0.19° at the site)",
         "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
-        "Very dry and bare (61 mm of rain a year, satellite estimate)"
+        "Very dry and bare (61 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.19 here, 0.14 there)"
       ],
       "differences": [
         "Low ground at 1,904 m: air about as thick as at sea level",
@@ -1611,89 +1677,7 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
-        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
-      ]
-    },
-    {
-      "id": "mars-candidate-d-sedimentary-plains-mongolian-plateau",
-      "siteId": "mars-candidate-d",
-      "rank": 2,
-      "name": "Sedimentary plains — Mongolian Plateau",
-      "country": "Mongolia",
-      "lat": 42.875,
-      "lon": 103.125,
-      "radiusKm": 12.5,
-      "known": false,
-      "knownRef": null,
-      "knownName": null,
-      "totalScore": 84,
-      "scores": {
-        "terrain": {
-          "score": 96,
-          "confidence": "high",
-          "note": "Earth median slope 0.27°, site 0.19°"
-        },
-        "mineralogy": {
-          "score": 100,
-          "confidence": "low",
-          "note": "Earth: mixed sedimentary (GLiM, 0.5° map). Site: sediments of the highland-lowland transition (USGS unit lHt)"
-        },
-        "water_history": {
-          "score": null,
-          "confidence": "low",
-          "note": "No global data we could compare"
-        },
-        "aridity": {
-          "score": 100,
-          "confidence": "high",
-          "note": ""
-        },
-        "temperature": {
-          "score": 52,
-          "confidence": "medium",
-          "note": ""
-        },
-        "altitude": {
-          "score": 24,
-          "confidence": "high",
-          "note": "Mean elevation 1,205 m"
-        }
-      },
-      "similarities": [
-        "Slopes match at the same scale (median 0.27° here vs 0.19° at the site)",
-        "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
-        "Very dry and bare (94 mm of rain a year, satellite estimate)"
-      ],
-      "differences": [
-        "Low ground at 1,205 m: air about as thick as at sea level",
-        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
-      ],
-      "tests": [
-        {
-          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
-          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
-        },
-        {
-          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
-          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
-        },
-        {
-          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
-          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
-        }
-      ],
-      "processes": [
-        "Mixed sedimentary layers"
-      ],
-      "image": null,
-      "sources": [
-        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
-        "https://pubs.usgs.gov/sim/3292/",
-        "https://registry.opendata.aws/copernicus-dem/",
-        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
-        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
@@ -1701,7 +1685,7 @@
     {
       "id": "mars-candidate-d-sedimentary-plains-rigestan",
       "siteId": "mars-candidate-d",
-      "rank": 3,
+      "rank": 2,
       "name": "Sedimentary plains — Rigestan",
       "country": "Afghanistan",
       "lat": 30.125,
@@ -1710,7 +1694,7 @@
       "known": false,
       "knownRef": null,
       "knownName": null,
-      "totalScore": 82,
+      "totalScore": 78,
       "scores": {
         "terrain": {
           "score": 96,
@@ -1737,6 +1721,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 34,
+          "confidence": "medium",
+          "note": "Earth 0.27 (MODIS shortwave), site 0.14 (MGS TES)"
+        },
         "altitude": {
           "score": 18,
           "confidence": "high",
@@ -1749,6 +1738,7 @@
         "Very dry and bare (92 mm of rain a year, satellite estimate)"
       ],
       "differences": [
+        "Ground much brighter than at the site (albedo 0.27 vs 0.14)",
         "Low ground at 923 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
@@ -1777,33 +1767,34 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-e-sandstone-plains-qaidam-basin",
-      "siteId": "mars-candidate-e",
-      "rank": 1,
-      "name": "Sandstone plains — Qaidam Basin",
-      "country": "China",
-      "lat": 36.625,
-      "lon": 94.125,
+      "id": "mars-candidate-d-sedimentary-plains-garagum-desert",
+      "siteId": "mars-candidate-d",
+      "rank": 3,
+      "name": "Sedimentary plains — Garagum Desert",
+      "country": "Turkmenistan",
+      "lat": 40.375,
+      "lon": 61.625,
       "radiusKm": 12.5,
-      "known": true,
-      "knownRef": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6205091",
-      "knownName": "Qaidam Basin, Dalangtan playa, 284 km away",
-      "totalScore": 87,
+      "known": false,
+      "knownRef": null,
+      "knownName": null,
+      "totalScore": 77,
       "scores": {
         "terrain": {
-          "score": 88,
+          "score": 98,
           "confidence": "high",
-          "note": "Earth median slope 0.19°, site 0.5°"
+          "note": "Earth median slope 0.14°, site 0.19°"
         },
         "mineralogy": {
           "score": 100,
           "confidence": "low",
-          "note": "Earth: siliciclastic sedimentary (GLiM, 0.5° map). Site: layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)"
+          "note": "Earth: mixed sedimentary (GLiM, 0.5° map). Site: sediments of the highland-lowland transition (USGS unit lHt)"
         },
         "water_history": {
           "score": null,
@@ -1811,27 +1802,35 @@
           "note": "No global data we could compare"
         },
         "aridity": {
-          "score": 99,
+          "score": 100,
           "confidence": "high",
           "note": ""
         },
         "temperature": {
-          "score": 67,
+          "score": 40,
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 34,
+          "confidence": "medium",
+          "note": "Earth 0.27 (MODIS shortwave), site 0.14 (MGS TES)"
+        },
         "altitude": {
-          "score": 55,
+          "score": 3,
           "confidence": "high",
-          "note": "Mean elevation 2,761 m"
+          "note": "Mean elevation 161 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.19° here vs 0.5° at the site)",
-        "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
-        "Very dry and bare (91 mm of rain a year, satellite estimate)"
+        "Slopes match at the same scale (median 0.14° here vs 0.19° at the site)",
+        "Same rock family: mixed sedimentary, like the sediments of the highland-lowland transition (USGS unit lHt)",
+        "Very dry and bare (100 mm of rain a year, satellite estimate)"
       ],
       "differences": [
+        "Mild day-night swing (20.5 K) — far from the up to ~100 K on Mars' surface (Curiosity REMS)",
+        "Ground much brighter than at the site (albedo 0.27 vs 0.14)",
+        "Low ground at 161 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -1849,17 +1848,17 @@
         }
       ],
       "processes": [
-        "Sedimentary layers"
+        "Mixed sedimentary layers"
       ],
       "image": null,
       "sources": [
-        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6205091",
         "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
         "https://pubs.usgs.gov/sim/3292/",
         "https://registry.opendata.aws/copernicus-dem/",
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
@@ -1867,8 +1866,8 @@
     {
       "id": "mars-candidate-e-sandstone-plains-desierto-de-atacama",
       "siteId": "mars-candidate-e",
-      "rank": 2,
-      "name": "Sandstone plains — Desierto De Atacama",
+      "rank": 1,
+      "name": "Sandstone plains — Desierto de Atacama",
       "country": "Chile",
       "lat": -22.875,
       "lon": -69.625,
@@ -1876,7 +1875,7 @@
       "known": true,
       "knownRef": "https://astrobiology.nasa.gov/news/nasa-tests-life-detection-drill-in-the-atacama-desert/",
       "knownName": "Atacama, Yungay area, 139 km away",
-      "totalScore": 86,
+      "totalScore": 88,
       "scores": {
         "terrain": {
           "score": 97,
@@ -1903,6 +1902,11 @@
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 95,
+          "confidence": "medium",
+          "note": "Earth 0.21 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
         "altitude": {
           "score": 30,
           "confidence": "high",
@@ -1912,7 +1916,8 @@
       "similarities": [
         "Slopes match at the same scale (median 0.41° here vs 0.5° at the site)",
         "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
-        "Very dry and bare (23 mm of rain a year, satellite estimate)"
+        "Very dry and bare (23 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.21 here, 0.20 there)"
       ],
       "differences": [
         "Low ground at 1,511 m: air about as thick as at sea level",
@@ -1944,18 +1949,109 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]
     },
     {
-      "id": "mars-candidate-e-sandstone-plains-tarim-basin",
+      "id": "mars-candidate-e-sandstone-plains-qaidam-basin",
+      "siteId": "mars-candidate-e",
+      "rank": 2,
+      "name": "Sandstone plains — Qaidam Basin",
+      "country": "China",
+      "lat": 36.625,
+      "lon": 94.125,
+      "radiusKm": 12.5,
+      "known": true,
+      "knownRef": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6205091",
+      "knownName": "Qaidam Basin, Dalangtan playa, 284 km away",
+      "totalScore": 86,
+      "scores": {
+        "terrain": {
+          "score": 88,
+          "confidence": "high",
+          "note": "Earth median slope 0.19°, site 0.5°"
+        },
+        "mineralogy": {
+          "score": 100,
+          "confidence": "low",
+          "note": "Earth: siliciclastic sedimentary (GLiM, 0.5° map). Site: layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)"
+        },
+        "water_history": {
+          "score": null,
+          "confidence": "low",
+          "note": "No global data we could compare"
+        },
+        "aridity": {
+          "score": 99,
+          "confidence": "high",
+          "note": ""
+        },
+        "temperature": {
+          "score": 67,
+          "confidence": "medium",
+          "note": ""
+        },
+        "albedo": {
+          "score": 77,
+          "confidence": "medium",
+          "note": "Earth 0.24 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
+        "altitude": {
+          "score": 55,
+          "confidence": "high",
+          "note": "Mean elevation 2,761 m"
+        }
+      },
+      "similarities": [
+        "Slopes match at the same scale (median 0.19° here vs 0.5° at the site)",
+        "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
+        "Very dry and bare (91 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.24 here, 0.20 there)"
+      ],
+      "differences": [
+        "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
+      ],
+      "tests": [
+        {
+          "title": "Rover driving and autonomous navigation, EVA route rehearsal, landing-hazard detection",
+          "detail": "Done before at analog sites: NASA Desert RATS crewed rover field test, Black Point lava flow, AZ (2010); ESA self-driving rover trial, Erfoud, Morocco (2018); ESA rover prototype \"Bridget\" with ExoMars prototype instruments, Atacama (2013)"
+        },
+        {
+          "title": "Field geology training, sample selection, instrument calibration and prototype testing, ground truth for orbital spectra",
+          "detail": "Done before at analog sites: ESA astronaut geology training, Lanzarote; NASA/CSA field mineral instruments (Mössbauer, XRD, Raman), Hawaii (2008); rover-ops spectrometer test vs. orbital data, Green River, Utah (2016)"
+        },
+        {
+          "title": "Life-detection limits and drilling for life underground in near-sterile, dry soil",
+          "detail": "Done before at analog sites: NASA ARADS rover + 2 m drill, Atacama (2016–19); Viking-style tests found almost no organics in Atacama's dry core (Navarro-González et al., *Science* 2003)"
+        }
+      ],
+      "processes": [
+        "Sedimentary layers"
+      ],
+      "image": null,
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6205091",
+        "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif",
+        "https://pubs.usgs.gov/sim/3292/",
+        "https://registry.opendata.aws/copernicus-dem/",
+        "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
+        "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+        "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+      ]
+    },
+    {
+      "id": "mars-candidate-e-sandstone-plains-tian-shan",
       "siteId": "mars-candidate-e",
       "rank": 3,
-      "name": "Sandstone plains — Tarim Basin",
+      "name": "Sandstone plains — Tian Shan",
       "country": "China",
-      "lat": 39.625,
-      "lon": 79.625,
+      "lat": 41.625,
+      "lon": 90.125,
       "radiusKm": 12.5,
       "known": false,
       "knownRef": null,
@@ -1963,9 +2059,9 @@
       "totalScore": 84,
       "scores": {
         "terrain": {
-          "score": 97,
+          "score": 90,
           "confidence": "high",
-          "note": "Earth median slope 0.44°, site 0.5°"
+          "note": "Earth median slope 0.78°, site 0.5°"
         },
         "mineralogy": {
           "score": 100,
@@ -1983,23 +2079,29 @@
           "note": ""
         },
         "temperature": {
-          "score": 49,
+          "score": 50,
           "confidence": "medium",
           "note": ""
         },
+        "albedo": {
+          "score": 97,
+          "confidence": "medium",
+          "note": "Earth 0.20 (MODIS shortwave), site 0.20 (MGS TES)"
+        },
         "altitude": {
-          "score": 22,
+          "score": 25,
           "confidence": "high",
-          "note": "Mean elevation 1,103 m"
+          "note": "Mean elevation 1,250 m"
         }
       },
       "similarities": [
-        "Slopes match at the same scale (median 0.44° here vs 0.5° at the site)",
+        "Slopes match at the same scale (median 0.78° here vs 0.5° at the site)",
         "Same rock family: siliciclastic sedimentary, like the layered sandstone Opportunity found in the same mapped unit (USGS unit HNhu)",
-        "Very dry and bare (87 mm of rain a year, satellite estimate)"
+        "Very dry and bare (48 mm of rain a year, satellite estimate)",
+        "Ground about as dark as at the site (albedo 0.20 here, 0.20 there)"
       ],
       "differences": [
-        "Low ground at 1,103 m: air about as thick as at sea level",
+        "Low ground at 1,250 m: air about as thick as at sea level",
         "Mars itself differs from every Earth site: under 1 % of Earth's air pressure (mostly CO₂), 0.38 g gravity and no global magnetic field to block radiation"
       ],
       "tests": [
@@ -2027,6 +2129,7 @@
         "https://gpm.nasa.gov/data/imerg/precipitation-climatology",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11c3-061",
         "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061",
+        "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd43c3-061",
         "https://doi.pangaea.de/10.1594/PANGAEA.788537",
         "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
       ]

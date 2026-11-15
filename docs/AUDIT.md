@@ -15,9 +15,10 @@ pipeline/.venv/Scripts/python pipeline/audit.py   # prints PASS / WARN / FAIL, w
 | First run | 84 | 2 | 5 |
 | After the fixes below (14 Nov) | 98 | 2 | 0 |
 | After error 10 (15 Nov) | 100 | 2 | 0 |
-| After the full audit of the screening (15 Nov, errors 11–15), Mars and Moon sections only | **48** | **1** | **0** |
+| After the full audit of the screening (15 Nov, errors 11–15), Mars and Moon sections only | 48 | 1 | 0 |
+| After the Earth audit (15 Nov, errors 16–24), full run | **158** | **1** | **0** |
 
-The last row is a partial run (`audit.py mars moon`): the Earth sections need B3's files and the re-made training areas, so the **full count must be re-run after `earth_ranking.py` and `build_analogs.py`**. The remaining WARN is explained under [Remaining limits](#remaining-limits).
+The last row is the full run on the final data (math 4, inputs 50, outputs 20, Earth terrain and rock 12, Earth climate 23, Mars 37, Moon 12 + the WARN). The remaining WARN is explained under [Remaining limits](#remaining-limits).
 
 The Mars section reads the USGS 463 m DEM over the network. On 15 Nov one run out of four stopped there and reported a single FAIL ("section ran"); the three other runs gave 48 / 1 / 0. If that line appears, run the audit again before reading anything into it.
 
@@ -50,19 +51,52 @@ What the new checks confirmed:
 - Our slope map reads 11.0° where NASA's orbiter found the IM-1 lander on a 12° slope.
 - USGS Gazetteer: all 7 Artemis feature coordinates, Chandrayaan-3's site (Statio Shiv Shakti) and the names of all 8 candidates.
 
-Not done, and why: rock abundance (no global map we could download and verify); Zhurong's and the Vikings' own engineering limits (sources not reachable); the full audit count (needs the Earth sections).
+Not done, and why: rock abundance (no global map we could download and verify); Zhurong's and the Vikings' own engineering limits (sources not reachable). The full audit count came with the Earth audit below.
+
+## The Earth audit of 15 Nov
+
+The full audit above covered the Mars and Moon screening. The same was then done for the Earth side (`earth_pool.py`, `earth_ranking.py`, `build_analogs.py`): every input read again by an independent route, every rule asked "would this let a wrong place through?", and every picked area looked at from orbit. It found nine more errors. **All 24 training areas were made again** (`ANALOG_RESULTS.md`).
+
+| # | Error | Effect | Fix |
+|---|---|---|---|
+| 16 | **The rock we expected at Mars zones A and C was a guess, and wrong.** After the zones were chosen again (error 11) the table said "basin sediments" for Utopia and Isidis. The USGS global geologic map (SIM 3292, Tanaka et al. 2014), looked up at the coordinates, draws lava plains at both | A and C were matched to sedimentary basins on Earth instead of basalt plains | The rock class now follows the mapped unit: A and B `AHv`, C `eHv` (volcanic → basalt), D `lHt` (transition → mixed sediments), E `HNhu`, the same polygon Opportunity landed in (→ sandstone). The audit repeats the lookup from the map's GIS files |
+| 17 | **Earth slopes were read from one elevation tile only.** A 25 km box crosses the edge of a 1° Copernicus tile for most cells away from the equator; it was cut at the edge and the remaining pixels were treated as if they still spanned 25 km | East–west pixel size was wrong, so slopes came out up to ~40 % too steep at high latitudes (a Victoria Island cell: median 1.66° → 1.18°). Worst for the Arctic areas offered to the Moon sites | The box is assembled from every tile it touches, across the date line too. New checks: a box at 72° N is read without gaps; a box centred on a tile corner has the heights of its parts |
+| 18 | **A missing score helped a place.** The total was the average of whatever scores existed, so a cell with no rock data outranked one with a known mismatch | Places with gaps in the data floated up | A training area needs every weighted score. New checks: none is missing; every total is the weighted sum of the scores shown |
+| 19 | **Rain was one year (2023); vegetation and temperature were four months of it** | One year is noise in a desert (IMERG gives Death Valley 180 mm for 2023 and 100 mm a year on average); four months missed the green season in places | Rain is the NASA IMERG V07 climatology June 2000 – May 2023; vegetation and temperature use all 12 months. Closer to station values at the test points (Manaus 2,490 vs ~2,300 mm, was 1,596; Eskişehir 561 vs ~380, was 734). `pipeline/fetch_earth.py` now downloads every Earth input, so anyone can rebuild the pass |
+| 20 | **"New place" was claimed inside published analog regions.** The rule was "no known analog within 50 km", but the Atacama, Qaidam and Lut are whole regions | An area 139 km from Yungay in the Atacama was called new | A place in the same named region as a listed analog, within 400 km, is marked known and names the analog (`knownName`). Three of the 24 are now marked; the reports link the source |
+| 21 | **Candidates chose their places in list order** | The first site in the list got the best places whether or not they fitted it best | In each round the best (site, place) pair is settled first |
+| 22 | **Some Moon areas were green tundra (NDVI 0.4–0.6), glaciers or coastal strips**, and names said "plains" for mountains | Training areas that are neither bare nor what the name says | A picked area needs yearly maximum NDVI ≤ 0.30, under 25 % permanent ice (was 50 %) and ≥ 90 % land on the vector coastline itself; the landform word follows the measured slope. A check for each |
+| 23 | **LOLA's slope map has no value in 29 % of its pixels, and we read them as 45° slopes.** The map is made along the laser tracks; a pixel no track crossed stores 0, which the map's scaling turns into exactly 45.00°. The label declares another missing value, so nothing warned us. Found when the lunar slopes were recomputed from the elevation grid and one site disagreed | **Screening:** no unsafe ground passed (the false cliffs fail the 10° rule), but measured ground next to a gap failed too: the passing area was 19.4 km² and is **62.9 km²**. The three sites, their values, the 4 of 7 Artemis features and the three polar landings are unchanged. **Terrain matching:** 7 % of the box around the Cabeus–Malapert ridge was false 45° cliffs (90th percentile slope 20.6°, really 16.8°) | The empty pixels are left out of the screening's average, and a pixel with no measurement cannot pass. New check: none of the screening layer reads 45.00° |
+| 24 | **The Moon's terrain was not measured the way Earth's was.** The slope map gives slopes over 30–120 m along the tracks; the Earth side measures height differences 480 m apart | Smaller than feared: median slope 13.0 → 12.7°, 13.5 → 13.1° and (with error 23) 11.2 → 10.2° at the three sites. The Moon really is that steep | Lunar slopes for the comparison come from the LOLA 240 m elevation grid with the Earth recipe. New check: they follow the slope map where it has data (r = 0.94–0.98) |
+
+Smaller corrections: the Moon "different" sentence quoted the ~300 K day–night swing as if it held at the pole (it now says "at the equator"); "Desierto De Atacama" is spelled "Desierto de Atacama".
+
+Changes that are improvements rather than errors:
+
+- **Two new Mars factors.** "Surface brightness": TES albedo at the zone against MODIS snow-free albedo on Earth — it catches a cell the coarse rock map calls basalt but that is bright sand. "Thin air": mean elevation of the box. Mars weights are now terrain 30, rock 20, dryness 20, brightness 10, temperature 10, thin air 10.
+- **Wider pools:** 100 climate cells and 40 per rock class, 200 km apart (was 40 and 15, 300 km), so terrain and rock choose from more than a thin sample of the world's deserts.
+
+What the new checks confirmed:
+
+- **Every Earth raster is where we think it is.** After the Mars maps turned out to be shifted (errors 11, 12), each Earth layer was compared with an independent map at shifts of up to three cells and as a flipped, mirrored and half-turned copy: MODIS land cover, vegetation and surface temperature and the GLiM rock map against the Natural Earth coastline; rainfall and albedo against vegetation. The untouched, unshifted layer fits best every time.
+- The rain climatology and the single year 2023, two separate NASA files, agree in pattern (r = 0.98).
+- Albedo reads 0.43 on the Grand Erg Oriental sand sea, 0.13 on the Al Haruj basalt field and 0.13 over the Amazon.
+- `sites.json` and `landings.json` reproduce byte for byte on a second machine, and `sites.json` is unchanged by error 23's fix.
+- All 24 areas were looked at on their satellite close-ups: on land, bare, and what the name says (notes in `ANALOG_RESULTS.md`).
+
+One check was replaced: "albedo has a value" against the coastline is a blunt test (albedo also has values over shallow water, 6 % of sea pixels) and its best fit wandered by one cell; albedo against vegetation on land is sharp and sits at zero shift.
 
 ## What is checked
 
 | Section | Checks | Reference |
 |---|---|---|
 | **Math** | slope of a synthetic 10° plane; identical slope distributions score 1; equator winter noon Sun = 90° − 25.19°; pressure formula gives 610 Pa at the MOLA datum | geometry, Mars axial tilt, mean surface pressure |
-| **Inputs** | all 37 known-analog coordinates (`KNOWN_ANALOGS.md`) fall in the country the doc names; all 7 Artemis III feature coordinates match the USGS Gazetteer | Natural Earth countries, USGS Gazetteer of Planetary Nomenclature |
+| **Inputs** | all 37 known-analog coordinates (`KNOWN_ANALOGS.md`) fall in the country the doc names; all 7 Artemis III feature coordinates match the USGS Gazetteer; the rock class of every Mars zone against the USGS geologic map | Natural Earth countries, USGS Gazetteer of Planetary Nomenclature, USGS SIM 3292 |
 | **Mars data** | MOLA elevation under 7 landers vs published values, on the 463 m DEM and on our 16 px/deg screening grid; the grid's registration against the 463 m DEM around Gale; thermal inertia and albedo in four textbook regions; each landing against its own mission's limits; candidates unchanged when the map is cut elsewhere; no candidate in the dust mode; every Mars candidate's criteria recomputed from the raw grids | published landing-site elevations, USGS 463 m DEM, Mellon et al. (2000), Christensen et al. (2001), mission site-selection papers |
-| **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; the slope where IM-1 tipped over; the best-lit pixel is next to Shackleton; every Moon candidate's sunlight and distance to shadow recomputed | Mazarico et al. (2011), NASA/LRO (IM-1), geometry |
-| **Earth terrain and rock** | Bonneville Salt Flats come out flat (0.03°), the Alps steep (24.6°); GLiM rock class at Iceland, Deccan Traps (basalt), Grand Erg Oriental (sand), Greenland (ice) | known geology |
-| **Earth climate** | GPM rainfall at Manaus, Istanbul, Eskişehir, London, In Salah, Atacama; MODIS surface temperature in the Lut Desert and at Dome Fuji (Antarctica); Greenland ice sheet excluded, McMurdo Dry Valleys kept | climatology, Dome Fuji station mean −54.4 °C |
-| **Outputs** | every training area is inland (≥ 90 % land, Natural Earth) and mostly bare ground (< 50 % ice, MODIS); every "similar"/"different" sentence matches its score; country names match the coordinates; 3 analogs per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
+| **Moon data** | Shackleton floor is permanently shadowed; Earth is in view more on the near side than the far side; total shadowed area south of 80° S; the slope where IM-1 tipped over; no empty slope-map pixel is read as 45°; the best-lit pixel is next to Shackleton; every Moon candidate's sunlight and distance to shadow recomputed | Mazarico et al. (2011), NASA/LRO (IM-1), geometry |
+| **Earth terrain and rock** | Bonneville Salt Flats come out flat (0.03°) and at the right height, the Alps steep (20.9°); a box across elevation tiles is read whole; lunar slopes from the elevation grid follow LOLA's slope map; GLiM rock class at Iceland, Deccan Traps (basalt), Grand Erg Oriental (sand), Greenland (ice) | known geology, LOLA slope map |
+| **Earth climate** | GPM rainfall at Manaus, Istanbul, Eskişehir, London, Dalanzadgad, Resolute, In Salah, Atacama; MODIS surface temperature in the Lut Desert and at Dome Fuji (Antarctica); Greenland ice sheet excluded, McMurdo Dry Valleys kept; every raster's registration; albedo at a sand sea, a basalt field and a rainforest | climatology, Dome Fuji station mean −54.4 °C, Natural Earth coastline |
+| **Outputs** | every candidate has exactly 3 training areas; each is inland (≥ 90 % land, Natural Earth), under 25 % permanent ice and bare (NDVI ≤ 0.30); no weighted score is missing and every total is the weighted sum; "plains" only for flat ground; every "similar"/"different" sentence matches its score; country names match the coordinates; 3 areas per candidate ≥ 500 km apart with ≥ 1 new; no missing values (None/NaN) in any text; no life-detection tests for the Moon | `analogs.json`, `sites.json` |
 
 ## Errors found and fixed
 
@@ -86,13 +120,15 @@ The Navarro-González et al. (2003, *Science* 302:1018) page could not be fetche
 
 - **Coordinates written by the team are right:** all 37 known analogs lie in the stated country, and the 463 m MOLA elevation under 7 Mars landers matches the published values within **56 m** (Curiosity −4495 m vs −4500 m).
 - **The screening is reproducible:** all 5 Mars candidates' criteria and all 3 Moon candidates' sunlight and distance to shadow recompute exactly from the raw data, and the Mars candidates come out the same when the map is cut at another meridian.
-- **The Earth data behaves as expected:** flat salt flats, steep Alps, basalt in Iceland and the Deccan, rain within a factor of 2 of climatology outside the hyperarid deserts, Antarctic surface temperature 214.5 K vs the 218.8 K station air mean.
+- **The Earth data behaves as expected:** flat salt flats, steep Alps, basalt in Iceland and the Deccan, rain within a factor of 1.6 of climatology outside the hyperarid deserts, Antarctic surface temperature 213.8 K vs the 218.8 K station air mean.
 
 ## Remaining limits
 
 - ~~WARN — Curiosity on the 16 px/deg grid~~ — gone: it was the one-pixel shift of error 12.
 - **WARN — shadow area on our 240 m grid:** keeping a cell as "shadowed" if any of its 120 m sub-cells is shadowed inflates the area (39,149 km² over the whole 75° S map), but it is only used for "distance to shadow", which it can shorten by at most 0.24 km.
 - **Permanently shadowed area +22 %** vs Mazarico et al. (2011): we use the newer 120 m product (2016); their maps were 240 m.
-- **Rainfall is one year (2023)** and IMERG can be up to ~2× off in temperate places (Eskişehir 734 mm vs ~380 mm climatology). The training areas are all in deserts or polar regions, where the dryness score is saturated, so this does not change the picks.
+- **Satellite rainfall is a 25 km average**, not a station value: the 2000–2023 climatology is still ~1.5× high at Eskişehir (561 mm vs ~380 mm) and reads 36 mm in the Atacama where gauges record ~2 mm. Rain at or below 100 mm a year counts as fully dry for that reason.
+- **Vegetation, surface temperature and albedo are from one year (2023).**
+- **MOLA at 463 m is interpolated between orbit tracks**, so Mars looks smoother than it is at that scale and Mars terrain scores lean high.
 - **Lake Salda is not reproduced** as a Jezero analog: its similarity is mineral (carbonates) and setting (a lake with a delta), and no global dataset we have covers that. Stated in `ANALOG_RESULTS.md`.
-- Rock type is coarse (GLiM, 0.5°) and the planet-side rock family is our reading of the site's geology (confidence: low in every report).
+- Rock type is coarse (GLiM, 0.5°): a cell mapped as basalt can be mostly sand at the surface. The Mars rock class follows the mapped USGS unit, but turning a unit into a rock is our step (confidence: low in every report).

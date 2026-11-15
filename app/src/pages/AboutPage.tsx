@@ -61,7 +61,8 @@ export function AboutPage() {
                 dot="bg-mars"
                 items={[
                   'MOLA MEGDR topography, 16 px/deg, and MOLA 463 m DEM',
-                  'MGS TES thermal inertia',
+                  'MGS TES thermal inertia and albedo',
+                  'USGS global geologic map of Mars (SIM 3292, Tanaka et al. 2014)',
                   'THEMIS day IR mosaic (close-ups)',
                   'Viking MDIM 2.1 colour mosaic (globe)',
                   'Published landing constraints: Pathfinder, MER, Phoenix, MSL, InSight, Mars 2020',
@@ -71,7 +72,7 @@ export function AboutPage() {
                 name="Moon"
                 dot="bg-moon"
                 items={[
-                  'LOLA south-pole slope map, 240 m',
+                  'LOLA south-pole slope map and elevation, 240 m',
                   'LOLA sunlit time, Earth visibility and permanent shadow (NASA PGDA)',
                   'LRO WAC mosaics (close-ups)',
                   'NASA SVS CGI Moon Kit (globe)',
@@ -82,8 +83,8 @@ export function AboutPage() {
                 name="Earth"
                 dot="bg-earth"
                 items={[
-                  'GPM IMERG precipitation',
-                  'MODIS land surface temperature, vegetation (NDVI) and land cover',
+                  'GPM IMERG precipitation climatology, 2000–2023',
+                  'MODIS land surface temperature, vegetation (NDVI), albedo and land cover',
                   'Copernicus DEM GLO-30',
                   'GLiM global lithological map (Hartmann & Moosdorf 2012)',
                   'Sentinel-2 cloudless 2020 by EOX (close-ups), NASA Blue Marble (globe)',

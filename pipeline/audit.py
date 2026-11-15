@@ -177,6 +177,14 @@ def audit_moon():
     r, c = mo.to_pixel(crs, transform, -80.13, 1.44)
     im1 = float(np.nanmedian(layers["slope"][r - 1:r + 2, c - 1:c + 2]))
     check("moon", "slope where IM-1 Odysseus tipped over vs NASA's 12°", abs(im1 - 12) <= 3, f"ours {im1:.1f}° at 240 m")
+    # --- added 15 Nov (Earth audit): the slope map stores 0 where no laser track crossed a pixel, and 0 reads as
+    # exactly 45 deg. Count them in the file, and make sure none is left in the layer the screening uses.
+    with rasterio.open(RAW / "moon" / "ldsm_75s_240m.lbl") as src:
+        stored = src.read(1)
+    empty = float((stored == mo.SLOPE_MISSING).mean())
+    left = float((np.abs(layers["slope"] - 45.0) < 0.005).mean())
+    check("moon", "slope-map pixels with no measurement are not read as 45° slopes", 0.2 < empty < 0.4 and left < 1e-4,
+          f"{100 * empty:.0f} % of the map has no measurement; {100 * left:.3f} % of the screening layer reads 45.00°")
     # The brightest ground on the map is on the rims and ridges next to Shackleton crater, as every published
     # study finds (Mazarico et al. 2011; Gläser et al. 2014)
     best = np.unravel_index(np.nanargmax(layers["sunlit"]), layers["sunlit"].shape)
@@ -271,8 +279,10 @@ def audit_earth():
     glim_land = np.isin(glim, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16]) * 100.0
     ok, detail = fit(ne_half, glim_land)
     check("earth", "registered: GLiM rock map (has a rock class) vs Natural Earth coastline", ok, detail)
-    ok, detail = fit(ne, np.isfinite(g["albedo"]) * 100.0, temperate)
-    check("earth", "registered: MODIS albedo (has a value) vs Natural Earth coastline", ok, detail)
+    # Albedo also has values over shallow water (6 % of sea pixels), so "has a value" is a blunt coastline test: its
+    # best fit wanders by one cell. The values themselves are sharp: on land, green ground is dark.
+    ok, detail = fit(g["ndvi_max"].astype("float64"), -g["albedo"].astype("float64"), land)
+    check("earth", "registered: MODIS albedo vs MODIS vegetation on land (green ground is dark)", ok, detail)
     # albedo values at textbook surfaces: a sand sea is bright, a basalt field and a rainforest are dark
     for name, lat, lon, lo, hi in [("Grand Erg Oriental sand sea", 30.5, 7.5, 0.30, 0.55), ("Al Haruj basalt field, Libya", 27.25, 17.5, 0.05, 0.22),
                                    ("Amazon rainforest", -3.0, -62.0, 0.08, 0.18)]:
@@ -311,6 +321,27 @@ def audit_terrain():
         check("terrain", "box across a tile corner has the heights of its parts (Gobi)",
               west is not None and abs(float(np.nanmean(whole[:, : n // 2])) - float(np.nanmean(west[:, : west.shape[1] // 2 * 2]))) < 60,
               f"west half mean {np.nanmean(whole[:, : n // 2]):.0f} m" if west is not None else "no data")
+    # The Moon side of the terrain comparison is computed from LOLA's elevation grid with the Earth recipe. Where
+    # LOLA's own slope map has a measurement the two must agree in pattern, and ours must hold no false cliffs.
+    import rasterio
+    from pyproj import CRS, Transformer
+    from rasterio.windows import Window
+    import moon_screening as mo
+    for s in json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]:
+        if s["body"] != "moon" or s["status"] != "candidate":
+            continue
+        ours = earth_ranking.moon_slopes(s["lat"], s["lon"])
+        with rasterio.open(RAW / "moon" / "ldsm_75s_240m.lbl") as src:
+            crs = CRS.from_wkt(src.crs.to_wkt())
+            row, col = src.index(*Transformer.from_crs(crs.geodetic_crs, crs, always_xy=True).transform(s["lon"], s["lat"]))
+            half = int(earth_ranking.WINDOW_KM * 1000 / 2 / abs(src.transform.a))
+            stored = src.read(1, window=Window(col - half, row - half, 2 * half, 2 * half))
+            theirs = stored.ravel() * src.scales[0] + src.offsets[0]
+        measured = (stored != mo.SLOPE_MISSING).ravel()
+        r = float(np.corrcoef(ours[measured], theirs[measured])[0, 1]) if ours.size == theirs.size else float("nan")
+        check("terrain", f"{s['id']}: slopes from the LOLA elevation grid follow LOLA's slope map", r > 0.9 and float((ours > 40).mean()) < 0.01,
+              f"r = {r:.2f} over measured pixels; median {np.median(ours):.1f}° (ours, 480 m) vs {np.median(theirs[measured]):.1f}° "
+              f"(map, 30-120 m); {100 * (1 - measured.mean()):.0f} % of the box has no measurement in the map")
     header, glim = earth_ranking.glim_grid()
     for name, lat, lon, want in [("Iceland basalt", 64.85, -16.83, {"vb"}), ("Deccan Traps", 19.0, 75.0, {"vb"}),
                                  ("Grand Erg Oriental sand sea", 30.5, 7.5, {"su", "ss", "sm"}), ("Greenland ice", 72.0, -40.0, {"ig"})]:

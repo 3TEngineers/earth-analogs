@@ -2,7 +2,7 @@
 
 Dimensions (0-1 here; B5 turns them into 0-100 scores and text):
   terrain      slope distribution over a ~25 km window, both sides at the same pixel size
-               (Mars: MOLA 463 m, Earth averaged to 463 m; Moon: LOLA 240 m slope map, Earth to 240 m),
+               (Mars: MOLA 463 m, Earth averaged to 463 m; Moon: LOLA 240 m elevation, Earth to 240 m),
                compared with the 1-D Wasserstein distance
   mineralogy   rock-type match: the rock class of the unit mapped at the candidate (Mars: USGS SIM 3292,
                Tanaka et al. 2014; Moon: anorthositic highland crust) vs GLiM (Hartmann & Moosdorf 2012, 0.5 deg)
@@ -39,7 +39,7 @@ OUT = ROOT / "data" / "interim"
 SITES = json.loads((ROOT / "app" / "public" / "data" / "sites.json").read_text(encoding="utf-8"))["sites"]
 
 MOLA_463 = "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"
-LOLA_SLOPE = RAW / "moon" / "ldsm_75s_240m.lbl"
+LOLA_DEM = RAW / "moon" / "ldem_75s_240m.lbl"  # elevation; same PDS folder and grid as the screening's slope map
 COP = "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_{ns}{lat:02d}_00_{ew}{lon:03d}_00_DEM/" \
       "Copernicus_DSM_COG_10_{ns}{lat:02d}_00_{ew}{lon:03d}_00_DEM.tif"
 MARS_GEOLOGY = RAW / "mars" / "sim3292" / "geology" / "SIM3292_Global_Geology.shp"  # pubs.usgs.gov/sim/3292
@@ -119,13 +119,26 @@ def mars_slopes(lat: float, lon: float) -> np.ndarray:
 
 
 def moon_slopes(lat: float, lon: float) -> np.ndarray:
-    with rasterio.open(LOLA_SLOPE) as src:
+    """Slopes from the LOLA 240 m elevation grid, with the recipe used for Mars and Earth (height differences
+    two pixels apart). The grid is polar stereographic, true at the pole: at 84 S a pixel is 0.3 % off 240 m.
+
+    Until the 15 Nov Earth audit this read LOLA's own slope map (ldsm_75s_240m). That map measures along the
+    laser tracks over 30-120 m and stores 0, which reads as 45 deg, in every pixel no track crossed (29 % of
+    the map, 7 % of the box around moon-candidate-c): a different scale from the Earth side, and false cliffs.
+    """
+    if not LOLA_DEM.exists():
+        from moon_screening import LOLA_POLAR, local
+        for extension in (".lbl", ".img"):  # 29 MB, once
+            local(f"{LOLA_POLAR}/{LOLA_DEM.stem}{extension}")
+    with rasterio.open(LOLA_DEM) as src:
         crs = CRS.from_wkt(src.crs.to_wkt())
         x, y = Transformer.from_crs(crs.geodetic_crs, crs, always_xy=True).transform(lon, lat)
         row, col = src.index(x, y)
-        half = int(WINDOW_KM * 1000 / 2 / abs(src.transform.a))
-        data = src.read(1, window=Window(col - half, row - half, 2 * half, 2 * half), masked=True)
-        return (data.astype("float64") * (src.scales[0] or 1) + (src.offsets[0] or 0)).compressed()
+        pixel = abs(src.transform.a)
+        half = int(WINDOW_KM * 1000 / 2 / pixel)
+        z = src.read(1, window=Window(col - half, row - half, 2 * half, 2 * half), masked=True)
+        s = slope_deg(z.astype("float64").filled(np.nan) * (src.scales[0] or 1), pixel, pixel).ravel()
+        return s[np.isfinite(s)]
 
 
 def earth_window(lat: float, lon: float, pixel_m: float) -> np.ndarray | None:

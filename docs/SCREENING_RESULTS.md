@@ -102,7 +102,7 @@ Extra check: **Oxia Planum**, ESA's selected landing site for the Rosalind Frank
 | Distance to permanent shadow | ≤ 10 km to a shadowed area of **at least 1 km²** | **Ours.** Until 15 Nov any shadowed pixel counted; the grid holds 35 996 shadow patches and only 3 864 are ≥ 1 km² |
 | Area | All of the above over 2 × 2 pixels (~480 m) | **Ours** — 720 m left almost nothing, because well-lit ground is narrow ridges |
 
-Data: NASA PGDA LOLA average illumination, Earth visibility and permanently shadowed regions (75° S, 120 m), LOLA slope map (75° S, 240 m), resampled to 240 m over the whole 75° S product. Passing area: 19.4 km².
+Data: NASA PGDA LOLA average illumination, Earth visibility and permanently shadowed regions (75° S, 120 m), LOLA slope map (75° S, 240 m), resampled to 240 m over the whole 75° S product. Passing area: 62.9 km². (It read 19.4 km² until the 15 Nov Earth audit: 29 % of the slope map's pixels hold no measurement and were being read as 45° slopes, which failed the measured ground next to them. The candidates, their values and the validation below did not change — `AUDIT.md`, error 23.)
 
 ### Why 50 % sunlight only means something near the pole
 

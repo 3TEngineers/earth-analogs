@@ -37,6 +37,7 @@ SOURCES = {
     "slope": f"{LOLA_POLAR}/ldsm_75s_240m.lbl",  # slope, degrees
 }
 
+SLOPE_MISSING = 0  # stored value of a slope-map pixel with no measurement (not in the label; found by counting)
 MOON_RADIUS_M = 1737400.0
 PIXEL_M = 240.0
 # The whole 75 S product (~75 deg S at the edges). 250 km + 854 x 240 m, so pixel boundaries match the
@@ -111,10 +112,15 @@ def target_grid(crs) -> tuple[Affine, int]:
     return Affine(PIXEL_M, 0, -HALF_EXTENT_M, 0, -PIXEL_M, HALF_EXTENT_M), size
 
 
-def read_layer(path: Path, crs, transform: Affine, size: int, resampling: Resampling) -> np.ndarray:
+def read_layer(path: Path, crs, transform: Affine, size: int, resampling: Resampling,
+               missing: int | None = None) -> np.ndarray:
+    """One layer on the target grid. `missing` is a stored value that means "no measurement" where the label
+    does not declare one."""
     with rasterio.open(path) as src:
         scale, offset = src.scales[0] or 1.0, src.offsets[0] or 0.0  # all layers are scaled int16
-        with WarpedVRT(src, crs=crs, transform=transform, width=size, height=size, resampling=resampling) as vrt:
+        gaps = {} if missing is None else {"src_nodata": missing, "nodata": -32768}
+        with WarpedVRT(src, crs=crs, transform=transform, width=size, height=size, resampling=resampling,
+                       **gaps) as vrt:
             data = vrt.read(1, masked=True).astype("float32") * scale + offset
             return data.filled(np.nan)
 
@@ -130,7 +136,11 @@ def load_layers():
         "sunlit": read_layer(paths["sunlit"], crs, transform, size, Resampling.average),
         "earth": read_layer(paths["earth"], crs, transform, size, Resampling.average),
         "psr": read_layer(paths["psr"], crs, transform, size, Resampling.max),
-        "slope": read_layer(paths["slope"], crs, transform, size, Resampling.average),
+        # The slope map stores 0 in the 29 % of its pixels no laser track crossed, and with its scaling 0 reads as
+        # exactly 45 deg. Those pixels are left out of the average; a pixel with no measurement at all stays empty
+        # and cannot pass. (Until the 15 Nov Earth audit they counted as 45 deg slopes: no unsafe ground passed,
+        # but measured ground next to a gap failed.)
+        "slope": read_layer(paths["slope"], crs, transform, size, Resampling.average, missing=SLOPE_MISSING),
     }
     return crs, transform, size, layers
 

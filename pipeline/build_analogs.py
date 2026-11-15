@@ -165,7 +165,7 @@ class Namer:
     def _title(name: str) -> str:
         if not name.isupper():
             return name
-        return " ".join(w.capitalize() if w not in ("OF", "AND") else w.lower() for w in name.split())
+        return " ".join(w.capitalize() if w not in ("OF", "AND", "DE") else w.lower() for w in name.split())
 
     def region_name(self, lat: float, lon: float) -> str | None:
         """Most specific Natural Earth region at the point, or the nearest one within ~1.5 degrees."""
