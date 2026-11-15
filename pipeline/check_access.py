@@ -36,9 +36,9 @@ class RasterCheck:
     url: str
     lon: float
     lat: float
-    expect: str  # what a plausible value looks like, for the reader
-    half: int = 16  # half window size in pixels
-    download: bool = False  # True when the server has no range-readable copy
+    expect: str
+    half: int = 16
+    download: bool = False
 
 
 CHECKS = [
@@ -58,8 +58,6 @@ CHECKS = [
         "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif",
         32.32, -69.37, "a few hundred to a few thousand m",
     ),
-    # PGDA links its *_COG.TIF files but the server returns 404 for them (checked 2026-11-14);
-    # the plain TIFs exist and are small, so they are downloaded once into data/raw.
     RasterCheck(
         "Moon sunlit time: PGDA 75S 120 m near Mons Mouton",
         f"{PGDA}/AVGVISIB_75S_120M_201608.TIF",
@@ -126,7 +124,6 @@ def check_tes() -> str:
             response.raise_for_status()
             target.write_bytes(response.content)
     with rasterio.open(RAW / "global_ti_60n_50s_8ppd.lbl") as ds:
-        # Label: east-positive longitude, -180..180, centred on 0
         row, col = to_pixel(ds, 77.45, 18.44)
         sample = ds.read(1, window=Window(col - 2, row - 2, 5, 5), masked=True)
         return (
@@ -158,7 +155,7 @@ def search_earthdata() -> list[str]:
             size = sum(float(g.size) if not callable(g.size) else g.size() for g in granules)
             lines.append(f"OK   {label} ({short_name}): {len(granules)} files, {size:.0f} MB total "
                          f"[{time.perf_counter() - start:.1f}s]")
-        except Exception as error:  # report and keep going
+        except Exception as error:
             lines.append(f"FAIL {label} ({short_name}): {error}")
     return lines
 

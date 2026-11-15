@@ -9,23 +9,15 @@ import { GroupTitle, SidePanel, Tabs } from './ui'
 type Tab = 'match' | 'tests' | 'limits'
 
 interface Props {
-  /** The site this place stands in for. */
   site: Site
   analog: Analog
-  /** The site's training areas, by rank: the switcher at the top. */
   siblings: Analog[]
   dimensions: Dimension[]
   onSelect: (analogId: string) => void
   back: { label: string; onClick: () => void }
-  /** Extra action under the header (the Earth page links to the site here). */
   action?: ReactNode
 }
 
-/**
- * Report for one training area on Earth, used by the explore flow (`earth` phase) and by the Earth page.
- * Three tabs keep it short: how close the match is, what a crew can test there, and where the likeness stops.
- * Sentences are shown exactly as the pipeline wrote them into analogs.json, never recomputed from the scores.
- */
 export function AnalogReport({ site, analog, siblings, dimensions, onSelect, back, action }: Props) {
   const [tab, setTab] = useState<Tab>('match')
   const step = (i: number) => ({ '--i': i }) as CSSProperties
@@ -212,7 +204,6 @@ export function AnalogReport({ site, analog, siblings, dimensions, onSelect, bac
   )
 }
 
-/** Score bar, 0–100. Plain white fill: scores are relative, not alarms. */
 function Meter({ score }: { score: number | null }) {
   return (
     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.08]" aria-hidden="true">

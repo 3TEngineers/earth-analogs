@@ -7,22 +7,8 @@ import { EarthPage } from './pages/EarthPage'
 import ExplorePage from './pages/ExplorePage'
 import { LandingPage } from './pages/LandingPage'
 
-/**
- * Layers, back to front:
- *   SpaceScene  — the one 3D scene (stars, Moon, Earth, Mars); never unmounts, so page changes animate
- *   loader      — one quiet line until the planet textures are in
- *   page        — text and panels; empty areas let clicks through to the planets
- *
- * Pages:
- *   /                 LandingPage       — what the project is, as a scroll story over the planets
- *   /explore/:body    ExplorePage       — Moon or Mars in focus: its sites, one site, then its Earth training areas
- *   /earth, /earth/:analogId  EarthPage — Earth in focus with every training area
- *   /calculations     CalculationsPage  — how the sites were found and matched
- *   /about            AboutPage         — team, data, AI usage
- */
 export default function App() {
   const { pathname } = useLocation()
-  // A new page starts at its top (the landing story reads the scroll position).
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [pathname])

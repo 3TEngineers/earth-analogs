@@ -2,11 +2,6 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { AnalogsFile, LandingsFile, SitesFile } from '../types/data'
 import { assetUrl } from './assetUrl'
 
-/**
- * Loads the pipeline output (app/public/data/*.json) once and shares it.
- * Components read it with useData(); nobody fetches the JSON directly.
- */
-
 type DataState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
@@ -25,7 +20,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false
-    // landings.json only adds name tags to the globes, so if it is missing the app still runs without them.
     const landings = fetchJson<LandingsFile>('data/landings.json').catch(() => ({ version: 0, landings: [] }) as LandingsFile)
     Promise.all([fetchJson<SitesFile>('data/sites.json'), fetchJson<AnalogsFile>('data/analogs.json'), landings])
       .then(([sites, analogs, landings]) => {

@@ -8,23 +8,8 @@ import type { Pair } from '../globe/space/SpaceEngine'
 import { formatLatLon, placeOf } from '../panels/format'
 import type { Analog, Body, Site } from '../types/data'
 
-/** How long one site ↔ Earth pair stays on the first screen. */
 const PAIR_MS = 8000
 
-/**
- * Landing page ("/"): what the project is, told in one scroll over the fixed 3D scene.
- *   0 hero      the question, what an analog is, and a live pair: one of our sites linked to its match on Earth
- *   1 brief     the whole method in three steps
- *   2 mars      step 1 on Mars: the planet screened, 5 zones kept
- *   3 moon      step 1 on the Moon: 3 ridges at the south pole (the Moon tips its pole toward the viewer)
- *   4 check     step 2: the same rules run on real landings
- *   5 earth     step 3: 24 training areas
- *   6 doors     where to go next
- * Each section carries data-stage with the number above; the scene blends the planet poses of globe/space/story.ts
- * from the scroll position between section centres, so sections may be any height.
- * The page ignores pointer events except on links and buttons, so the planets stay clickable.
- * Facts follow docs/SCREENING_RESULTS.md, docs/ANALOG_RESULTS.md and docs/AUDIT.md; counts come from the data files.
- */
 export function LandingPage() {
   const data = useData()
   const sites = useMemo(() => (data.status === 'ready' ? data.sites.sites : []), [data])
@@ -40,7 +25,6 @@ export function LandingPage() {
     <main ref={root} className="pointer-events-none relative z-10">
       <SiteHeader />
 
-      {/* 0 — hero */}
       <section data-stage="0" className="relative flex min-h-svh flex-col justify-end px-6 pt-[46svh] pb-20 sm:px-10 md:justify-center md:pt-20 md:pb-20 lg:px-16">
         <div className="on-sky w-full max-w-[42rem]">
           <p className="reveal eyebrow text-ink-muted" style={step(0)}>
@@ -81,7 +65,6 @@ export function LandingPage() {
         </button>
       </section>
 
-      {/* 1 — the method in three steps */}
       <section data-stage="1" className="flex min-h-svh items-center px-6 py-24 sm:px-10 lg:px-16">
         <div className="on-sky mx-auto w-full max-w-6xl">
           <p className="story-item eyebrow text-ink-muted" style={step(0)}>
@@ -109,7 +92,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 2 — Mars */}
       <Feature stage={2} side="left" accent="var(--color-mars)" eyebrow="Step 1 · Mars" title={<>4.5 % of Mars is safe to land on. We kept {mars} zones.</>}>
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           A lander needs air thick enough to brake in, sunlight in winter, firm ground and a wide, flat plain. We tested every
@@ -125,7 +107,6 @@ export function LandingPage() {
         </FeatureLink>
       </Feature>
 
-      {/* 3 — Moon */}
       <Feature stage={3} side="right" accent="var(--color-moon)" eyebrow="Step 1 · Moon" title={<>{moon === 3 ? 'Three' : moon} ridges at the south pole could host a base.</>}>
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           A base needs power, a radio link and water. At the pole the Sun circles the horizon, so a few high ridges stay lit
@@ -143,7 +124,6 @@ export function LandingPage() {
         </FeatureLink>
       </Feature>
 
-      {/* 4 — the check */}
       <section data-stage="4" className="flex min-h-[90svh] items-center px-6 py-24 sm:px-10 lg:px-16">
         <div className="on-sky mx-auto w-full max-w-6xl">
           <p className="story-item eyebrow text-ink-muted" style={step(0)}>
@@ -177,7 +157,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 5 — Earth */}
       <Feature stage={5} side="left" accent="var(--color-earth)" eyebrow="Step 3 · Earth" title={<>Every site gets three training areas on Earth.</>}>
         <p className="story-item text-[1.05rem] leading-relaxed text-ink/90 sm:text-lg" style={step(2)}>
           We scored all land on Earth against each site: slopes measured at the same map scale, rock type, rainfall, bare
@@ -192,7 +171,6 @@ export function LandingPage() {
         </FeatureLink>
       </Feature>
 
-      {/* 6 — where next */}
       <section data-stage="6" className="px-6 pt-24 pb-10 sm:px-10 lg:px-16">
         <div className="mx-auto w-full max-w-6xl">
           <h2 className="story-item on-sky headline text-4xl sm:text-5xl" style={step(0)}>
@@ -232,12 +210,6 @@ interface PairItem {
   analog: Analog
 }
 
-/**
- * The live pair on the first screen: one of our sites and its top-ranked training area, switching every few seconds.
- * The 3D scene draws the same pair as an arc between the two bodies (sceneStore.setPair).
- * Switching stops while the pointer or keyboard focus is on the card, while the tab is hidden, once the page has
- * scrolled past the first screen, and for visitors who asked for reduced motion; the arrows always work.
- */
 function PairCard({ sites, analogs }: { sites: Site[]; analogs: Analog[] }) {
   const pairs = useMemo<PairItem[]>(() => {
     const top = (body: Body) =>
@@ -247,7 +219,6 @@ function PairCard({ sites, analogs }: { sites: Site[]; analogs: Analog[] }) {
           const analog = analogs.find((a) => a.siteId === site.id && a.rank === 1)
           return analog ? [{ site, analog }] : []
         })
-    // Mars and Moon sites take turns, so both arcs show early.
     const m = top('mars')
     const l = top('moon')
     return Array.from({ length: Math.max(m.length, l.length) }, (_, i) => [m[i], l[i]])
@@ -319,7 +290,6 @@ function PairCard({ sites, analogs }: { sites: Site[]; analogs: Analog[] }) {
         <Link to={`/explore/${site.body}?site=${site.id}`} className="press inline-flex items-center gap-1.5 font-display text-sm font-medium hover:text-accent">
           Open this site on {site.body === 'mars' ? 'Mars' : 'the Moon'} <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
-        {/* Time left before the next pair. */}
         <span className="h-0.5 w-20 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
           {auto && <span key={index} className="block h-full origin-left animate-[pair-timer_linear_both] bg-ink/60" style={{ animationDuration: `${PAIR_MS}ms` }} />}
         </span>
@@ -357,7 +327,6 @@ function BriefStep({ n, i, title, figure, unit, children }: { n: number; i: numb
   )
 }
 
-/** One planet's chapter: the planet (drawn by the scene) on one side, text on the other; on phones the planet sits above. */
 function Feature(props: { stage: number; side: 'left' | 'right'; accent: string; eyebrow: string; title: ReactNode; children: ReactNode }) {
   return (
     <section
@@ -390,7 +359,6 @@ function FeatureLink({ i, to, className, children }: { i: number; to: string; cl
   )
 }
 
-/** How much of Mars survives the rules, drawn to scale: the coloured part of the bar is 4.5 % of its width. */
 function Funnel({ zones }: { zones: number }) {
   return (
     <div className="space-y-3 font-mono text-xs text-ink-muted">
@@ -474,11 +442,6 @@ function Door(props: { i: number; to: string; accent: string; name: string; figu
   )
 }
 
-/**
- * Drives the scroll story. Reports the scroll position to the 3D scene as a stage number (the data-stage of the
- * section whose centre is at mid-screen, blended toward the next one), and marks each section with data-in-view
- * while a good part of it is on screen, which lets its .story-item children in.
- */
 function useStory() {
   const ref = useRef<HTMLElement>(null)
   useEffect(() => {

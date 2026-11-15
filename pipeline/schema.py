@@ -17,9 +17,8 @@ class Criterion(BaseModel):
     value: float | None
     unit: str
     rule: str
-    pass_: bool | None = Field(alias="pass")  # "pass" is a keyword; dump with by_alias=True
+    pass_: bool | None = Field(alias="pass")
     source: str
-    # Past landings only: why a rule the site fails did not matter for that mission. null otherwise.
     why: str | None = None
 
 
@@ -28,7 +27,6 @@ class Selection(BaseModel):
     role: Literal["candidate", "validation"]
     criteria: list[Criterion]
     note: str
-    # Past landings only: the limits the mission's own team set (elevation, latitude), checked with our data.
     missionRules: list[Criterion] = []
 
 
@@ -104,7 +102,7 @@ class Analog(BaseModel):
     radiusKm: float
     known: bool
     knownRef: str | None
-    knownName: str | None = None  # the published analog it is, or the one whose region it lies in ("…, 135 km away")
+    knownName: str | None = None
     totalScore: float = Field(ge=0, le=100)
     scores: dict[str, DimensionScore]
     similarities: list[str]

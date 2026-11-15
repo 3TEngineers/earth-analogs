@@ -39,17 +39,16 @@ OUT = ROOT / "data" / "interim"
 SITES = json.loads((ROOT / "app" / "public" / "data" / "sites.json").read_text(encoding="utf-8"))["sites"]
 
 MOLA_463 = "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"
-LOLA_DEM = RAW / "moon" / "ldem_75s_240m.lbl"  # elevation; same PDS folder and grid as the screening's slope map
+LOLA_DEM = RAW / "moon" / "ldem_75s_240m.lbl"
 COP = "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_{ns}{lat:02d}_00_{ew}{lon:03d}_00_DEM/" \
       "Copernicus_DSM_COG_10_{ns}{lat:02d}_00_{ew}{lon:03d}_00_DEM.tif"
-MARS_GEOLOGY = RAW / "mars" / "sim3292" / "geology" / "SIM3292_Global_Geology.shp"  # pubs.usgs.gov/sim/3292
+MARS_GEOLOGY = RAW / "mars" / "sim3292" / "geology" / "SIM3292_Global_Geology.shp"
 WINDOW_KM = 25.0
 PIXEL_M = {"mars": 463.0, "moon": 240.0}
-WASSERSTEIN_SCALE_DEG = 3.0  # ours: a 3 deg mean shift in the slope distribution -> similarity 1/e
-ALBEDO_SCALE = 0.20  # ours: an albedo 0.20 away from the site's scores 0 (dark basalt ~0.12, sand seas ~0.40)
-FULL_ALTITUDE_M = 5000.0  # ours: Earth's high deserts and plateaus top out near here (air pressure ~54 % of sea level)
+WASSERSTEIN_SCALE_DEG = 3.0
+ALBEDO_SCALE = 0.20
+FULL_ALTITUDE_M = 5000.0
 
-# GLiM classes (Classnames.txt) and how related they are, for the rock-type match
 GLIM = {1: "su", 2: "vb", 3: "ss", 4: "pb", 5: "sm", 6: "sc", 7: "va", 8: "mt", 9: "pa", 10: "vi",
         11: "wb", 12: "py", 13: "pi", 14: "ev", 15: "nd", 16: "ig"}
 GLIM_NAMES = {"su": "unconsolidated sediments", "vb": "basic volcanic (basalt)", "ss": "siliciclastic sedimentary",
@@ -61,11 +60,6 @@ FAMILY = {"vb": "mafic", "pb": "mafic", "py": "volcanic", "vi": "volcanic", "va"
           "su": "sediment", "ss": "sediment", "sm": "sediment", "sc": "sediment", "ev": "sediment",
           "mt": "crystalline", "pa": "crystalline", "pi": "crystalline"}
 
-# Rock class expected at each candidate: (GLiM class, wording for the report, mapped unit).
-# Mars: the unit the USGS global geologic map (SIM 3292, Tanaka et al. 2014) draws at the candidate's coordinates,
-# looked up from its GIS files on 15 Nov; audit.py repeats the lookup. Volcanic units -> basalt; the transition
-# unit -> mixed sediments; e lies in the same mapped polygon as Opportunity, which found layered sandstone there.
-# (The first table after the screening re-run guessed basin sediments for a and c; the map shows lava plains.)
 EXPECTED_ROCK = {
     "mars-candidate-a": ("vb", "lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)", "AHv"),
     "mars-candidate-b": ("vb", "lava plains mapped at the site (USGS unit AHv, Amazonian and Hesperian volcanic)", "AHv"),
@@ -96,7 +90,7 @@ def rock_similarity(expected: str, earth: str | None) -> float | None:
     if earth == expected:
         return 1.0
     if expected == "pb" and earth == "mt":
-        return 0.5  # impact-processed highland crust is partly metamorphic
+        return 0.5
     if FAMILY.get(earth) and FAMILY.get(earth) == FAMILY.get(expected):
         return 0.6
     if {FAMILY.get(earth), FAMILY.get(expected)} == {"mafic", "volcanic"}:
@@ -128,7 +122,7 @@ def moon_slopes(lat: float, lon: float) -> np.ndarray:
     """
     if not LOLA_DEM.exists():
         from moon_screening import LOLA_POLAR, local
-        for extension in (".lbl", ".img"):  # 29 MB, once
+        for extension in (".lbl", ".img"):
             local(f"{LOLA_POLAR}/{LOLA_DEM.stem}{extension}")
     with rasterio.open(LOLA_DEM) as src:
         crs = CRS.from_wkt(src.crs.to_wkt())
@@ -162,10 +156,10 @@ def earth_window(lat: float, lon: float, pixel_m: float) -> np.ndarray | None:
             r0, r1 = round((north - nn) / (north - south) * n), round((north - s) / (north - south) * n)
             if c1 <= c0 or r1 <= r0 or not -90 <= tile_lat < 90:
                 continue
-            name_lon = (tile_lon + 180) % 360 - 180  # tiles are named by their south-west corner
+            name_lon = (tile_lon + 180) % 360 - 180
             url = COP.format(ns="N" if tile_lat >= 0 else "S", lat=abs(tile_lat),
                              ew="E" if name_lon >= 0 else "W", lon=abs(name_lon))
-            shift = name_lon - tile_lon  # read across the date line in the tile's own longitudes
+            shift = name_lon - tile_lon
             for attempt in range(3):
                 try:
                     with rasterio.open(url) as dem:
@@ -175,7 +169,7 @@ def earth_window(lat: float, lon: float, pixel_m: float) -> np.ndarray | None:
                                         masked=True)
                     z[r0:r1, c0:c1] = part.astype("float64").filled(np.nan)
                     break
-                except Exception as error:  # a tile that does not exist is sea; anything else is worth a retry
+                except Exception as error:
                     if "404" in str(error) or "does not exist" in str(error) or attempt == 2:
                         break
     return None if np.isnan(z).mean() > 0.3 else z
@@ -186,7 +180,7 @@ def earth_terrain(lat: float, lon: float, pixel_m: float) -> tuple[np.ndarray, f
     z = earth_window(lat, lon, pixel_m)
     if z is None:
         return None
-    pixel = WINDOW_KM * 1000 / z.shape[0]  # the box is WINDOW_KM wide on the ground in both directions
+    pixel = WINDOW_KM * 1000 / z.shape[0]
     s = slope_deg(z, pixel, pixel).ravel()
     return s[np.isfinite(s)], float(np.nanmean(z))
 
@@ -211,12 +205,11 @@ def glim_at(header, data, lat: float, lon: float) -> str | None:
     return GLIM.get(value)
 
 
-# Share of each dimension in the total (ours). audit.py recomputes every total from these.
 WEIGHTS = {
     "mars": {"terrain": 0.30, "mineralogy": 0.20, "albedo": 0.10, "aridity": 0.20, "temperature": 0.10, "altitude": 0.10},
     "moon": {"terrain": 0.25, "mineralogy": 0.25, "aridity": 0.10, "temperature": 0.05, "sun_angle": 0.20, "ice": 0.15},
 }
-ROCK_POOL_SIZE = 40  # ours: per expected rock class, the best-climate cells of that class
+ROCK_POOL_SIZE = 40
 ROCK_POOL_MIN_KM_APART = 200.0
 
 
@@ -262,7 +255,6 @@ def main() -> None:
     by_rock = rock_pools(header, glim)
     candidates = [s for s in SITES if s["status"] == "candidate"]
 
-    # Every Earth cell any candidate will look at, read once per body (the pixel size differs per body).
     cells = {b: {} for b in ("mars", "moon")}
     for site in candidates:
         for cell in pool[site["body"]] + by_rock[(site["body"], EXPECTED_ROCK[site["id"]][0])]:

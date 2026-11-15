@@ -1,20 +1,8 @@
 import { assetUrl } from '../data/assetUrl'
 import type { Body } from '../types/data'
 
-/**
- * Orbital / satellite images around a spot, cut live from public map servers (WMS) when the data file has no image.
- * The box is centred on the spot; MissionCard and ReportPanel draw a crosshair at the centre and a scale bar.
- *
- * - Mars: THEMIS daytime infrared mosaic, ~100 m/px (USGS Astrogeology, simple cylindrical).
- * - Moon near the south pole: LRO WAC mosaic in polar stereographic (USGS, map `moon_spole`); x = ρ·sin λ, y = ρ·cos λ,
- *   ρ = 2R·tan((90° − |φ|) / 2). Checked by centring Shackleton crater (89.67° S, 129.78° E).
- * - Moon elsewhere: LRO WAC global mosaic (USGS, simple cylindrical).
- * - Earth: Sentinel-2 cloudless 2020 by EOX (CC BY-NC-SA 4.0, credit shown under the image).
- */
-
 export interface OrbitalImage {
   src: string
-  /** Width of the box on the ground, for the scale bar. */
   widthKm: number
   credit: string
 }
@@ -41,7 +29,6 @@ function wms(base: string, layer: string, srs: string, bbox: number[]) {
   return `${base}${base.includes('?') ? '&' : '?'}${params}`
 }
 
-/** Lat/lon box of WIDTH_KM × HEIGHT_KM around a spot on a sphere with `kmPerDeg` per degree of latitude. */
 function lonLatBox(lat: number, lon: number, kmPerDeg: number) {
   const dLat = HEIGHT_KM / 2 / kmPerDeg
   const dLon = WIDTH_KM / 2 / (kmPerDeg * Math.max(Math.cos((lat * Math.PI) / 180), 0.05))

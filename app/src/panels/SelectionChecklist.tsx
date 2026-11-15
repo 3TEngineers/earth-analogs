@@ -2,15 +2,10 @@ import { Check, Minus, X } from 'lucide-react'
 import type { Criterion, Selection } from '../types/data'
 import { pretty } from './format'
 
-/**
- * The rules a site was tested against, one row each: pass or fail, what was measured, the limit, the value and the
- * data it comes from. Past landings may fail some rows on purpose: that shows the rules tell sites apart.
- */
 export function SelectionChecklist({ selection }: { selection: Selection }) {
   return <RuleList criteria={selection.criteria} />
 }
 
-/** The same rows for any list of rules: ours, or the limits a mission's own team set. */
 export function RuleList({ criteria }: { criteria: Criterion[] }) {
   return (
     <ul className="divide-y divide-line">

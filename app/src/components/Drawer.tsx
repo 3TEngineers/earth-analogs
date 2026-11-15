@@ -1,13 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 
-/**
- * A panel that slides in from the right over the page, for detail that would break the flow of the page itself
- * (the "Details" buttons on the calculations page). A native <dialog>: focus stays inside, Esc and a click on the
- * dimmed page close it. Styled by `dialog.drawer` in index.css.
- * While it is open the page behind it is locked: the wheel over the dimmed page does nothing, and scrolling
- * past the end of the drawer's own content does not carry over to the page (overscroll-contain).
- */
 export function Drawer({ open, onClose, eyebrow, title, children }: { open: boolean; onClose: () => void; eyebrow: string; title: string; children: ReactNode }) {
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
@@ -19,7 +12,6 @@ export function Drawer({ open, onClose, eyebrow, title, children }: { open: bool
     if (!open && dialog.open) dialog.close()
   }, [open])
 
-  // Lock the page scroll while open; keep the scrollbar's space so the page doesn't jump sideways.
   useEffect(() => {
     if (!open) return
     const root = document.documentElement

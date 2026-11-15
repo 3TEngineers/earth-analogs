@@ -31,31 +31,30 @@ RAW = ROOT / "data" / "raw"
 OUT = ROOT / "data" / "interim"
 
 MOLA_URL = "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg016"
-MOLA_NAME = "megt90n000eb"  # topography, 16 px/deg (~3.7 km), int16 metres above the areoid
+MOLA_NAME = "megt90n000eb"
 TES_URL = "https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-special-v1"
-TES_TI = "global_ti_60n_50s_8ppd"  # thermal inertia, 8 px/deg, 60 N..50 S
-TES_ALBEDO = "global_albedo_8ppd"  # bolometric albedo, 8 px/deg, global
+TES_TI = "global_ti_60n_50s_8ppd"
+TES_ALBEDO = "global_albedo_8ppd"
 
 MARS_RADIUS_KM = 3389.5
 OBLIQUITY_DEG = 25.19
 
-# Thresholds (published unless marked as ours)
-MAX_ELEVATION_M = -1000.0  # MSL
-MAX_ABS_LAT_DEG = 30.0  # MSL, Mars 2020
-MIN_THERMAL_INERTIA = 100.0  # MSL engineering guide, Mars 2020
-DUSTY_BELOW_INERTIA = 150.0  # Mars 2020: below ~150 a high albedo means "possibly dusty"
-MAX_ALBEDO_IF_LOW_INERTIA = 0.25  # MSL engineering guide: the dust mode has albedo > 0.25
-ELLIPSE_KM = 25.0  # Mars 2020 initial ellipse 25 x 20 km, rounded up to a square
-MAX_SLOPE_DEG = 3.0  # MSL engineering guide: "three degrees or less over a 2 to 5 km length scale"
-MAX_RELIEF_M = 500.0  # ours, over ~18 km: no crater wall or mountain inside the landing area
-MIN_KM_FROM_PAST_LANDING = 500.0  # ours: candidates must be new places, not next door to a lander
-MIN_KM_BETWEEN_CANDIDATES = 1500.0  # ours: clearly different regions, not four spots on one plain
-MIN_SAFE_AREA_KM2 = 40_000.0  # ours: only large safe areas qualify
-MIN_INTERIOR_KM = 40.0  # ours: the pick sits >= 40 km inside the safe area, so a 25 km ellipse fits easily
-MAX_CANDIDATES = 8  # a ceiling only: the rules above decide how many there are
+MAX_ELEVATION_M = -1000.0
+MAX_ABS_LAT_DEG = 30.0
+MIN_THERMAL_INERTIA = 100.0
+DUSTY_BELOW_INERTIA = 150.0
+MAX_ALBEDO_IF_LOW_INERTIA = 0.25
+ELLIPSE_KM = 25.0
+MAX_SLOPE_DEG = 3.0
+MAX_RELIEF_M = 500.0
+MIN_KM_FROM_PAST_LANDING = 500.0
+MIN_KM_BETWEEN_CANDIDATES = 1500.0
+MIN_SAFE_AREA_KM2 = 40_000.0
+MIN_INTERIOR_KM = 40.0
+MAX_CANDIDATES = 8
 MOLA_463_URL = "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"
 
-LANDINGS = [  # docs/LANDING_CONSTRAINTS.md §2; "rover" = within the ±30° rover-style rules
+LANDINGS = [
     ("Mars 3", -45.04, -157.98, False),
     ("Viking 1", 22.269, -47.951, True),
     ("Viking 2", 47.668, 134.280, False),
@@ -66,24 +65,17 @@ LANDINGS = [  # docs/LANDING_CONSTRAINTS.md §2; "rover" = within the ±30° rov
     ("Curiosity", -4.5895, 137.4417, True),
     ("InSight", 4.5024, 135.6234, True),
     ("Perseverance", 18.4447, 77.4508, True),
-    ("Zhurong", 25.066, 109.925, True),  # CNSA / Liu et al. 2022 (audit: was 25.102, 109.914, ~2 km off)
+    ("Zhurong", 25.066, 109.925, True),
 ]
-# A site an agency has selected but not yet flown to: a further check on the rules
 OTHER_SITES = [
-    # ESA: 18.275 N, 335.368 E
     ("Oxia Planum", 18.275, -24.632, "ESA's selected site for the Rosalind Franklin (ExoMars) rover"),
 ]
-# Landers that reached the surface without a working mission. Not used for validation, but a candidate
-# next to one would not be a new place (audit, 15 Nov). Positions are good to a few km.
 OTHER_TOUCHDOWNS = [
-    ("Beagle 2", 11.52, 90.44),  # ESA/UK 2003, found intact in Isidis Planitia; HiRISE image ESP_039308_1915
-    ("Schiaparelli", -2.07, -6.21),  # ESA 2016, impact in Meridiani Planum: 353.79 E, 2.07 S (ESA)
+    ("Beagle 2", 11.52, 90.44),
+    ("Schiaparelli", -2.07, -6.21),
 ]
 
 
-# What each mission's own team required of its site (docs/LANDING_CONSTRAINTS.md §1): highest allowed
-# elevation in km (MOLA) and the latitude band. Checked with our data in validate_own_rules(): a landing
-# that fails OUR rules should still pass ITS OWN, because it flew a different mission.
 MISSION_RULES = {
     "Mars Pathfinder": (0.0, 10.0, 20.0, "Golombek et al. 1997"),
     "Spirit": (-1.3, -15.0, 5.0, "Golombek et al. 2003 (MER-A)"),
@@ -132,13 +124,13 @@ def download(name: str, url: str) -> Path:
 
 @dataclass
 class Grids:
-    lat: np.ndarray  # degrees, per row
-    lon: np.ndarray  # degrees east, -180..180, per column
+    lat: np.ndarray
+    lon: np.ndarray
     elevation: np.ndarray
     thermal_inertia: np.ndarray
     albedo: np.ndarray
-    slope: np.ndarray  # degrees between neighbouring pixels (3.7 km apart)
-    relief: np.ndarray  # metres, max - min over a ~18 km window
+    slope: np.ndarray
+    relief: np.ndarray
 
 
 def label_value(label: Path, key: str) -> float:
@@ -179,17 +171,10 @@ def load_grids() -> Grids:
     height, width = elevation.shape
     ppd = label_value(label, "MAP_RESOLUTION")
     assert (height, width) == (round(180 * ppd), round(360 * ppd))
-    # Pixel centres from the label: row r is 90 - (r + 0.5)/16 deg N, column c is (c + 0.5)/16 deg E (0..360).
-    # GDAL's PDS driver is NOT used for positions: it places these grids one pixel off (3.7 km for MOLA,
-    # 7.4 km for TES). Audit, 15 Nov: checked against the USGS 463 m MOLA GeoTIFF around Gale crater, where
-    # the label geometry fits with 89 m RMS and a one-pixel shift with 190-260 m.
     lat = 90.0 - (np.arange(height) + 0.5) / ppd
     lon_east = (np.arange(width) + 0.5) / ppd
     thermal_inertia = read_tes(TES_TI, lat, lon_east)
     albedo = read_tes(TES_ALBEDO, lat, lon_east)
-    # Roll every layer half a turn so the columns run -180..180. Audit, 15 Nov: only the elevation used to
-    # be rolled, which left thermal inertia 180 deg of longitude away from it (Pathfinder read 80 instead of
-    # 400, our Amazonis pick 122 instead of 51).
     elevation = np.roll(elevation, width // 2, axis=1)
     thermal_inertia = np.roll(thermal_inertia, width // 2, axis=1)
     albedo = np.roll(albedo, width // 2, axis=1)
@@ -197,7 +182,6 @@ def load_grids() -> Grids:
     thermal_inertia[thermal_inertia <= 0] = np.nan
     albedo[(albedo <= 0) | (albedo > 1)] = np.nan
 
-    # Slope between neighbouring pixels (3.7 km apart), the 2-5 km scale of the MSL rule; wraps across +-180 deg
     pixel_deg = 180.0 / height
     dy = np.radians(pixel_deg) * MARS_RADIUS_KM * 1000.0
     dx = dy * np.cos(np.radians(lat))[:, None]
@@ -219,7 +203,7 @@ def site_values(grids: Grids, lat: float, lon: float) -> dict:
     """Criteria values at a site, as the median over a ~11 km window (landing-ellipse scale)."""
     row, col = pixel_of(grids, lat, lon)
     rows = slice(max(row - 1, 0), row + 2)
-    cols = np.arange(col - 1, col + 2) % grids.elevation.shape[1]  # wraps across +-180 deg
+    cols = np.arange(col - 1, col + 2) % grids.elevation.shape[1]
 
     def window(layer: np.ndarray) -> np.ndarray:
         return layer[rows][:, cols]
@@ -294,7 +278,7 @@ def screen(grids: Grids, max_slope: float, max_relief: float) -> np.ndarray:
         & (grids.relief <= max_relief)
     )
     pixel_km = np.radians(180.0 / grids.elevation.shape[0]) * MARS_RADIUS_KM
-    size = int(np.ceil(ELLIPSE_KM / pixel_km)) | 1  # odd window that covers the ellipse
+    size = int(np.ceil(ELLIPSE_KM / pixel_km)) | 1
     return ndimage.binary_erosion(ok, structure=np.ones((size, size), bool))
 
 
@@ -310,9 +294,6 @@ def pick_candidates(grids: Grids, safe: np.ndarray, max_count: int = MAX_CANDIDA
     Meridiani, the 2nd and 3rd largest safe areas, were dropped whole: that point is near Viking 1 and
     Opportunity. And the largest area, which runs from Isidis to Elysium, could hold only one pick.)
     """
-    # The left and right edges of the grid are the same meridian (+-180 deg). Cut the map where there
-    # is no safe ground instead, so an area that crosses +-180 deg is not split in two and distances to
-    # its edge are not measured from a cut that isn't there (audit, 15 Nov).
     shift = int(np.argmin(safe.sum(axis=0)))
     if safe[:, shift].any():
         print(f"  note: every meridian has safe ground; cutting at {grids.lon[shift]:.1f} deg E "
@@ -323,9 +304,8 @@ def pick_candidates(grids: Grids, safe: np.ndarray, max_count: int = MAX_CANDIDA
     labels, n = ndimage.label(safe)
     if n == 0:
         return []
-    depth = ndimage.distance_transform_edt(safe)  # in pixels; ranks how far inside a point is
+    depth = ndimage.distance_transform_edt(safe)
     pixel_km = np.radians(180.0 / safe.shape[0]) * MARS_RADIUS_KM
-    # True area: pixels get narrower away from the equator
     pixel_area = np.broadcast_to((pixel_km**2 * np.cos(np.radians(grids.lat)))[:, None], safe.shape)
     areas = ndimage.sum(pixel_area, labels, index=np.arange(1, n + 1))
     area_of = np.where(labels > 0, areas[np.maximum(labels, 1) - 1], 0.0)
@@ -334,7 +314,7 @@ def pick_candidates(grids: Grids, safe: np.ndarray, max_count: int = MAX_CANDIDA
 
     def km_to_edge(row: int, col: int) -> float:
         """Great-circle distance from a pixel to the nearest unsafe pixel."""
-        half = int(depth[row, col] * 1.3) + 3  # lon pixels shrink by <= 13 % inside +-30 deg
+        half = int(depth[row, col] * 1.3) + 3
         rows = slice(max(row - half, 0), row + half + 1)
         cols = slice(max(col - half, 0), col + half + 1)
         unsafe = ~safe[rows, cols]
@@ -343,7 +323,6 @@ def pick_candidates(grids: Grids, safe: np.ndarray, max_count: int = MAX_CANDIDA
         d = great_circle_km(grids.lat[row], lon_axis[col], lat2d[rows, cols][unsafe], lon2d[rows, cols][unsafe])
         return float(d.min())
 
-    # A new place: far from every successful landing and every other known touchdown or impact site
     allowed = safe & (area_of >= MIN_SAFE_AREA_KM2)
     for _, la, lo, *_ in LANDINGS + OTHER_TOUCHDOWNS:
         allowed &= great_circle_km(lat2d, lon2d, la, lo) >= MIN_KM_FROM_PAST_LANDING
@@ -410,7 +389,6 @@ def main() -> None:
             print(f"  {'PASS' if all(r['pass'] for r in v['own_rules']) else 'FAIL'} {v['name']:16s} "
                   + "; ".join(f"{r['value']} {r['unit']} ({r['rule']})" for r in v["own_rules"]))
 
-    # Sites chosen by others that never flew or have not flown yet: a further check on the rules
     print("\nOther selected or shortlisted sites (point check, no 25 km area test):")
     others = []
     for name, lat, lon, note in OTHER_SITES:
@@ -432,7 +410,6 @@ def main() -> None:
         print(f"Candidate: {pick['lat']:.2f}, {pick['lon']:.2f} (safe area {pick['safe_area_km2']:.0f} km2, "
               f"{pick['interior_km']} km inside) — all pass: {all(c['pass'] for c in pick['criteria'])}")
 
-    # Second look at 463 m for the candidates and the successful landings, to compare like with like
     reference = [(v["name"], v["lat"], v["lon"]) for v in validation
                  if v["name"] in ("Viking 1", "Spirit", "InSight", "Perseverance")]
     fine = fine_check([(f"candidate {i}", c["lat"], c["lon"]) for i, c in enumerate(candidates)] + reference)

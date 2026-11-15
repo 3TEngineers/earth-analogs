@@ -4,25 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { PLANET_IDS, PLANETS, type PlanetId } from './planets'
 import { STAGES, type Pose } from './story'
 
-/**
- * Imperative three.js engine behind <SpaceScene>: one scene, one camera, three globes, a deep star field.
- * React decides *what* to show (layout, markers, the pair on the landing page); this class decides *how* it moves.
- *
- * Layouts:
- *  - story: the planets hold the poses of the landing page's scroll story (story.ts) and drift with the mouse.
- *           On the first stage a glowing arc links one of our sites to its best match on Earth (setPair); both
- *           bodies turn so the two spots face the viewer. Other pages use the quiet "backdrop" stage.
- *  - focus: one planet flies to the middle of the free area (the screen minus the panels, see setInsets),
- *           the others drift far away; the user can orbit it, and the camera can fly to a lat/lon on it.
- *
- * Journey: flying from a spot on one planet to a spot on another (site → its Earth training area, and back) draws
- * the same kind of arc between the two spots while the planets swap places.
- *
- * Motion (after Emil Kowalski's rules): enter/settle moves use a strong ease-out, on-screen moves an
- * ease-in-out; the field of view "breathes" during long flights for a sense of speed; reduced motion
- * turns every flight into a cut and disables parallax, spin and the intro.
- */
-
 export type Layout = { kind: 'story' } | { kind: 'focus'; planet: PlanetId; target: LatLon | null }
 
 export interface LatLon {
@@ -30,7 +11,6 @@ export interface LatLon {
   lon: number
 }
 
-/** One end of the landing-page pair: a spot on a body and the name shown beside it. */
 export interface PairEnd extends LatLon {
   planet: PlanetId
   label: string
@@ -41,7 +21,6 @@ export interface Pair {
   to: PairEnd
 }
 
-/** Screen space taken by panels, in px from each edge. A focused planet is centred in what is left. */
 export interface Insets {
   top: number
   right: number
@@ -52,13 +31,8 @@ export interface Insets {
 export interface Marker extends LatLon {
   id: string
   label: string
-  /**
-   * strong = our candidates / training areas; muted = past landings we validate against (clickable);
-   * landing = every other past landing, a name tag only (not clickable, no fly-to).
-   */
   emphasis: 'strong' | 'muted' | 'landing'
   active: boolean
-  /** Overrides the planet's accent (Earth markers take the colour of the body they stand in for). */
   color?: string
 }
 
@@ -66,11 +40,9 @@ export interface EngineEvents {
   onPlanetClick: (planet: PlanetId) => void
   onMarkerClick: (planet: PlanetId, markerId: string) => void
   onHover: (hover: { label: string; x: number; y: number } | null) => void
-  /** All textures are in and the intro has started. */
   onReady: () => void
 }
 
-/** Point marker as stored inside three-globe (it adds bookkeeping fields to each datum). */
 type PointDatum = Marker & { planet: PlanetId }
 
 const CAMERA_Z = 1000
@@ -79,34 +51,28 @@ const INTRO_CAMERA = new THREE.Vector3(0, 260, 3400)
 const BASE_FOV = 45
 const FLY_MS = 1500
 const INTRO_MS = 3200
-/** Share of the free area's smaller side that a focused planet's diameter fills; a selected spot comes closer. */
 const FOCUS_FILL = 0.8
 const CLOSE_UP = 0.72
-/** How far the story camera drifts with the mouse (world units). */
 const PARALLAX = { x: 60, y: 40 }
 
-/** The pair arc shows while the story is on its first stage; it fades as the page scrolls on. */
 const PAIR_REACH = 0.55
-/** Each spot of a pair is turned this far (degrees) toward the other body, so the arc starts on the near side. */
 const PAIR_BIAS = 24
 const PAIR_SWAP_MS = 350
 const PAIR_TURN_MS = 800
 const PAIR_GROW_MS = 1400
 
-/** Arc resolution and the fade of a journey arc after landing. */
 const ARC_POINTS = 96
 const JOURNEY_FADE_MS = 1100
 
 const rad = THREE.MathUtils.degToRad
 const clamp01 = (t: number) => Math.min(Math.max(t, 0), 1)
-const easeOut = (t: number) => 1 - (1 - t) ** 4 // close to cubic-bezier(0.23, 1, 0.32, 1)
+const easeOut = (t: number) => 1 - (1 - t) ** 4
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
 interface PlanetState {
   globe: ThreeGlobe
   group: THREE.Group
   ready: boolean
-  /** Scale from the layout; hover multiplies on top of it. */
   base: number
   hover: number
   from: { position: THREE.Vector3; scale: number; tilt: number }
@@ -117,7 +83,6 @@ interface Tween {
   start: number
   duration: number
   ease: (t: number) => number
-  /** Peak extra field of view mid-flight, in degrees. */
   fovKick: number
   camFrom: THREE.Vector3
   camTo: THREE.Vector3
@@ -133,32 +98,25 @@ export class SpaceEngine {
   private planets = {} as Record<PlanetId, PlanetState>
   private stars = new THREE.Group()
   private layout: Layout = { kind: 'story' }
-  /** Scroll story: target from the page, smoothed value used for drawing (both in stages). */
   private storyTarget = 0
   private story = 0
   private pendingLayout: Layout | null = null
   private ready = false
   private tween: Tween | null = null
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 }
-  /** Picture shift that centres a focused planet in the free area, eased toward its target (px). */
   private offset = new THREE.Vector2()
   private offsetTarget = new THREE.Vector2()
   private raycaster = new THREE.Raycaster()
   private pointer = new THREE.Vector2()
-  /** Mouse position for parallax, -1..1, smoothed toward `mouseTarget`. */
   private mouse = new THREE.Vector2()
   private mouseTarget = new THREE.Vector2()
   private hoveredPlanet: PlanetId | null = null
-  /** HTML name tags that follow the markers on screen (hidden on the far side, overlaps dropped by priority). */
   private labelLayer = document.createElement('div')
   private labels: { el: HTMLElement; datum: PointDatum; width: number }[] = []
-  /** Additive glow sprites under the markers; the active one pulses. */
   private glows: { sprite: THREE.Sprite; size: number; active: boolean }[] = []
   private glowTexture = makeGlowTexture()
-  /** The site → Earth arc of a flight between two bodies; null when no journey is running. */
   private journey: { from: { planet: PlanetId } & LatLon; to: { planet: PlanetId } & LatLon; start: number; duration: number } | null = null
   private journeyTrail: Trail
-  /** The landing-page pair: the one on screen, the one waiting for the old arc to fade, and when the current one began. */
   private pair: Pair | null = null
   private pairQueued: Pair | null | undefined = undefined
   private pairSwapAt = 0
@@ -200,12 +158,9 @@ export class SpaceEngine {
     this.controls.rotateSpeed = 0.5
     this.controls.autoRotateSpeed = 0.35
     this.controls.enabled = false
-    // OrbitControls claims every touch gesture; in the story the page has to scroll (see applyLayout).
     this.renderer.domElement.style.touchAction = 'pan-y'
 
-    // Key light from the upper left, a cool rim light from behind, a low fill so night sides aren't flat black.
     this.scene.add(new THREE.AmbientLight(0x9fb4d9, 0.35))
-    // Lights ride with the camera, so whatever spot we fly to is lit from the upper left, never on the night side.
     this.scene.add(this.camera)
     const sun = new THREE.DirectionalLight(0xfff4e6, 2.6)
     sun.position.set(-700, 450, 300)
@@ -252,7 +207,6 @@ export class SpaceEngine {
     this.glowTexture.dispose()
   }
 
-  /** Moves planets and camera to a new layout with one smooth flight. Waits for the textures first. */
   setLayout(layout: Layout) {
     if (!this.ready) {
       this.pendingLayout = layout
@@ -261,13 +215,11 @@ export class SpaceEngine {
     this.applyLayout(layout, FLY_MS, easeInOut, 9)
   }
 
-  /** Scroll-story position in stages (see story.ts). Planets follow it smoothly. */
   setStory(stage: number) {
     this.storyTarget = Math.max(0, Math.min(stage, STAGES.length - 1))
     if (this.reduceMotion || !this.ready) this.story = this.storyTarget
   }
 
-  /** The site ↔ Earth pair shown on the first story stage; null clears it. The old arc fades before the new one grows. */
   setPair(pair: Pair | null) {
     const current = this.pairQueued !== undefined ? this.pairQueued : this.pair
     if (JSON.stringify(current) === JSON.stringify(pair)) return
@@ -275,7 +227,6 @@ export class SpaceEngine {
     this.pairSwapAt = performance.now() + (this.pair && !this.reduceMotion ? PAIR_SWAP_MS : 0)
   }
 
-  /** Screen space covered by panels. A focused planet re-centres in what is left and name tags stay out of it. */
   setInsets(insets: Insets) {
     const same = (Object.keys(insets) as (keyof Insets)[]).every((k) => Math.abs(insets[k] - this.insets[k]) < 1)
     if (same) return
@@ -287,7 +238,6 @@ export class SpaceEngine {
     if (this.tween) {
       this.tween.camTo.setLength(distance)
     } else if (this.ready) {
-      // Keep the viewing direction, only step back or in so the planet fits the new free area.
       const direction = this.camera.position.clone().sub(this.controls.target).normalize()
       this.controls.enabled = false
       this.tween = {
@@ -307,7 +257,6 @@ export class SpaceEngine {
     }
   }
 
-  /** Camera distance at which the focused planet fills FOCUS_FILL of the free area. */
   private focusDistance(closeUp: boolean) {
     const { clientWidth: w, clientHeight: h } = this.container
     const free = Math.max(160, Math.min(w - this.insets.left - this.insets.right, h - this.insets.top - this.insets.bottom))
@@ -316,7 +265,6 @@ export class SpaceEngine {
     return closeUp ? Math.max(distance * CLOSE_UP, 200) : distance
   }
 
-  /** Where every planet sits at a (fractional) story stage: the two neighbouring stages, blended with an ease. */
   private storyPoses(stage: number) {
     const i = Math.min(Math.floor(stage), STAGES.length - 2)
     const t = easeInOut(clamp01(stage - i))
@@ -336,10 +284,6 @@ export class SpaceEngine {
     return { position: new THREE.Vector3(pose.x * halfH * this.camera.aspect, pose.y * halfH, pose.z), scale: pose.scale }
   }
 
-  /**
-   * Markers per planet. Each is a bright disc with a soft glow, radar rings for candidates and the active one.
-   * The planet named in `labelled` also gets an HTML name tag beside every marker (see updateLabels).
-   */
   setMarkers(sets: Partial<Record<PlanetId, Marker[]>>, labelled: PlanetId | null) {
     this.glows = []
     for (const id of PLANET_IDS) {
@@ -394,7 +338,6 @@ export class SpaceEngine {
     this.labels = []
     if (!planet) return
     const accent = PLANETS[planet].accent
-    // Priority: active first, then candidates, then the muted ones; later tags give way when they overlap.
     const rank = (m: Marker) => (m.active ? 0 : m.emphasis === 'strong' ? 1 : m.emphasis === 'muted' ? 2 : 3)
     for (const m of [...markers].sort((a, b) => rank(a) - rank(b))) {
       const el = document.createElement('button')
@@ -428,7 +371,6 @@ export class SpaceEngine {
     }
   }
 
-  /** Places the name tags next to their markers; hides tags on the far side, under a panel, or overlapping a higher-priority tag. */
   private updateLabels() {
     const show = this.layout.kind === 'focus'
     this.labelLayer.style.visibility = show ? 'visible' : 'hidden'
@@ -448,7 +390,6 @@ export class SpaceEngine {
       const px = ((ndc.x + 1) / 2) * w
       const y = ((1 - ndc.y) / 2) * h
       if (!label.width) label.width = label.el.offsetWidth
-      // Right of the marker if it fits, else left of it; the active tag is never dropped, only nudged into the free area.
       let x = px + 14 + label.width > free.right ? px - 14 - label.width : px + 14
       if (label.datum.active) x = Math.max(free.left, Math.min(x, free.right - label.width))
       const box = { x0: x, x1: x + label.width, y0: y - 12, y1: y + 12 }
@@ -469,7 +410,6 @@ export class SpaceEngine {
     const previous = this.layout
     this.layout = layout
 
-    // Spot on one planet → spot on another: draw the journey arc during the flight.
     if (
       !this.reduceMotion &&
       previous.kind === 'focus' &&
@@ -505,7 +445,6 @@ export class SpaceEngine {
     if (layout.kind === 'story') {
       camTo = STORY_CAMERA.clone()
     } else {
-      // Look at the target spot if there is one; otherwise keep the current viewing direction.
       const samePlanet = previous.kind === 'focus' && previous.planet === layout.planet
       const direction =
         layout.target !== null
@@ -513,12 +452,10 @@ export class SpaceEngine {
           : samePlanet
             ? this.camera.position.clone().sub(this.controls.target).normalize()
             : new THREE.Vector3(...PLANETS[layout.planet].focusFrom).normalize()
-      // A selected spot is a close-up: the camera comes in low over it (the panel shows the orbital image).
       const distance = this.focusDistance(layout.target !== null)
       this.controls.maxDistance = Math.max(900, distance * 1.6)
       camTo = direction.multiplyScalar(distance)
     }
-    // A flight between two spots on the same planet is short; don't kick the field of view.
     const sameFocus = previous.kind === 'focus' && layout.kind === 'focus' && previous.planet === layout.planet
 
     this.controls.enabled = false
@@ -579,7 +516,6 @@ export class SpaceEngine {
   private planetReady(id: PlanetId) {
     const p = this.planets[id]
     p.ready = true
-    // Sharper surfaces at glancing angles (the limb, close-ups): sample the textures anisotropically.
     const material = p.globe.globeMaterial() as THREE.MeshPhongMaterial
     for (const map of [material.map, material.bumpMap]) {
       if (!map) continue
@@ -590,17 +526,11 @@ export class SpaceEngine {
     this.ready = true
     this.story = this.storyTarget
     this.events.onReady()
-    // Intro: a slow push-in from deep space to wherever the page wants us.
     this.applyLayout(this.pendingLayout ?? { kind: 'story' }, INTRO_MS, easeOut, 0)
     this.pendingLayout = null
     this.loadSharpTextures()
   }
 
-  /**
-   * After the intro has started, swap each planet's surface for its 8192 × 4096 version, one planet at a time so
-   * the downloads don't compete with the first frames. Skipped on small screens, on data-saver connections and on
-   * GPUs that can't hold an 8K texture; those keep the 2K/4K images.
-   */
   private async loadSharpTextures() {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
     const small = Math.min(window.screen.width, window.screen.height) < 700
@@ -618,12 +548,10 @@ export class SpaceEngine {
         material.needsUpdate = true
         old?.dispose()
       } catch {
-        // Keep the smaller texture if the large one can't be loaded.
       }
     }
   }
 
-  /** Three shells of stars at different depths, so they parallax against each other. */
   private createStars() {
     const layers = [
       { count: 1400, radius: [2500, 5000], size: 1.1, opacity: 0.55 },
@@ -656,7 +584,6 @@ export class SpaceEngine {
     this.scene.add(this.stars)
   }
 
-  /** Unit vector from the planet's center to a spot on its surface once the planet stands upright (tilt eased out). */
   private directionTo(planet: PlanetId, spot: LatLon) {
     const p = this.planets[planet]
     const local = p.globe.getCoords(spot.lat, spot.lon, 0)
@@ -667,9 +594,8 @@ export class SpaceEngine {
   private animate = (time: number) => {
     const dt = Math.min((time - this.lastTime) / 1000, 0.1)
     this.lastTime = time
-    const smooth = (rate: number) => 1 - Math.exp(-rate * dt) // frame-rate independent easing toward a target
+    const smooth = (rate: number) => 1 - Math.exp(-rate * dt)
 
-    // Planets: layout tween + hover lift.
     if (this.tween) {
       const raw = this.tween.duration === 0 ? 1 : Math.min((time - this.tween.start) / this.tween.duration, 1)
       const t = this.tween.ease(raw)
@@ -677,7 +603,6 @@ export class SpaceEngine {
         const p = this.planets[id]
         p.group.position.lerpVectors(p.from.position, p.to.position, t)
         p.base = p.from.scale + (p.to.scale - p.from.scale) * t
-        // In focus every planet stands upright, so orbiting it feels like a globe on a stand.
         if (this.layout.kind === 'focus') p.group.rotation.x = p.from.tilt * (1 - t)
       }
       this.controls.target.lerpVectors(this.tween.centerFrom, this.tween.centerTo, t)
@@ -693,7 +618,6 @@ export class SpaceEngine {
         }
       }
     }
-    // Story: planets follow the scroll once no flight is running.
     if (this.layout.kind === 'story' && !this.tween) {
       this.story += (this.storyTarget - this.story) * smooth(5)
       const poses = this.storyPoses(this.story)
@@ -712,7 +636,6 @@ export class SpaceEngine {
     if (this.layout.kind === 'story') {
       this.turnPlanets(dt, smooth)
       if (!this.reduceMotion) {
-        // Parallax: the camera drifts a little with the mouse, so near planets slide against far stars.
         this.mouse.lerp(this.mouseTarget, smooth(3))
         if (!this.tween) {
           this.camera.position.set(STORY_CAMERA.x + this.mouse.x * PARALLAX.x, STORY_CAMERA.y + this.mouse.y * PARALLAX.y, STORY_CAMERA.z)
@@ -731,7 +654,6 @@ export class SpaceEngine {
     this.drawJourney(time)
     this.drawPair(time)
 
-    // The active marker's glow breathes.
     if (!this.reduceMotion) {
       const pulse = 1 + 0.18 * Math.sin(time / 260)
       for (const g of this.glows) if (g.active) g.sprite.scale.setScalar(g.size * pulse)
@@ -741,11 +663,6 @@ export class SpaceEngine {
     this.frame = requestAnimationFrame(this.animate)
   }
 
-  /**
-   * Story only: a planet with a spot to show (the pair on the first stage, or the stage's own `face`) turns that
-   * spot toward the viewer; the others spin slowly and stand upright.
-   * A globe shows longitude L at its centre when turned by -L around its axis, and latitude φ when tipped by φ.
-   */
   private turnPlanets(dt: number, smooth: (rate: number) => number) {
     for (const id of PLANET_IDS) {
       const rotation = this.planets[id].group.rotation
@@ -765,7 +682,6 @@ export class SpaceEngine {
     if (this.pair && this.story < PAIR_REACH) {
       const end = this.pair.from.planet === id ? this.pair.from : this.pair.to.planet === id ? this.pair.to : null
       if (end) {
-        // Lean the spot toward the other body: right of centre if the partner is to the right, lower if it is below.
         const partner = end === this.pair.from ? this.pair.to.planet : this.pair.from.planet
         const toward = this.planets[partner].group.position.clone().sub(this.planets[id].group.position).setZ(0).normalize()
         return { lat: end.lat, lon: end.lon, yaw: PAIR_BIAS * toward.x, tilt: -PAIR_BIAS * toward.y }
@@ -776,7 +692,6 @@ export class SpaceEngine {
     return face && Math.abs(this.story - stage) < 0.6 ? { ...face, yaw: 0, tilt: 0 } : null
   }
 
-  /** World position of a lat/lon spot on a planet, as the planet is placed right now. */
   private worldSpot(planet: PlanetId, spot: LatLon, altitude = 0.01) {
     const p = this.planets[planet]
     p.group.updateMatrixWorld()
@@ -784,7 +699,6 @@ export class SpaceEngine {
     return new THREE.Vector3(local.x, local.y, local.z).applyMatrix4(p.group.matrixWorld)
   }
 
-  /** A curve that leaves the first planet straight up from its spot and comes down onto the second planet's spot. */
   private arcBetween(from: { planet: PlanetId } & LatLon, to: { planet: PlanetId } & LatLon) {
     const a = this.worldSpot(from.planet, from)
     const b = this.worldSpot(to.planet, to)
@@ -794,7 +708,6 @@ export class SpaceEngine {
     return new THREE.CubicBezierCurve3(a, a.clone().addScaledVector(na, lift), b.clone().addScaledVector(nb, lift), b)
   }
 
-  /** The journey arc: drawn as it grows (head = a glowing dot), then fading out once the flight has landed. */
   private drawJourney(time: number) {
     const j = this.journey
     if (!j) return this.journeyTrail.hide()
@@ -808,17 +721,12 @@ export class SpaceEngine {
     this.journeyTrail.draw(this.arcBetween(j.from, j.to), PLANETS[j.from.planet].accent, PLANETS[j.to.planet].accent, grow, fade, 18 * (1 - 0.4 * grow))
   }
 
-  /**
-   * The landing-page pair: once both bodies have turned their spots forward, the arc grows from our site to its
-   * match on Earth and stays. Name tags sit above the start and below the end. Fades out as the page scrolls on.
-   */
   private drawPair(time: number) {
     if (this.pairQueued !== undefined && (!this.pair || time >= this.pairSwapAt)) {
       this.pair = this.pairQueued
       this.pairQueued = undefined
       this.pairStart = time
     }
-    // Wait for flights (the intro, coming back from another page) to finish before the arc starts.
     if (this.tween) this.pairStart = time
     const pair = this.pair
     const swapFade = this.pairQueued !== undefined ? clamp01((this.pairSwapAt - time) / PAIR_SWAP_MS) : 1
@@ -849,7 +757,6 @@ export class SpaceEngine {
       material.opacity = opacity * shown[i]
       sprite.visible = true
 
-      // Name tag: above the start, below the end, kept inside the screen.
       const tag = this.pairTags[i]
       const name = tag.lastElementChild as HTMLElement
       if (name.textContent !== end.label) {
@@ -893,7 +800,6 @@ export class SpaceEngine {
     this.applyViewOffset()
   }
 
-  /** In focus mode the picture shifts so the planet sits in the middle of the free area; the shift itself is eased in animate(). */
   private updateViewOffset() {
     const focus = this.layout.kind === 'focus'
     this.offsetTarget.set(focus ? (this.insets.right - this.insets.left) / 2 : 0, focus ? (this.insets.bottom - this.insets.top) / 2 : 0)
@@ -925,7 +831,6 @@ export class SpaceEngine {
         if (obj.userData.planet) planet = obj.userData.planet as PlanetId
         obj = obj.parent
       }
-      // Name-only landing markers are not clickable: treat a hit on them as a hit on the planet.
       if (planet) return { planet, point: point?.emphasis === 'landing' ? null : point }
     }
     return null
@@ -942,7 +847,7 @@ export class SpaceEngine {
   private handlePointerUp = (event: PointerEvent) => {
     const down = this.pointerDown
     this.pointerDown = null
-    if (!down || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 5) return // a drag, not a click
+    if (!down || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 5) return
     const result = this.hit(event)
     if (!result) return
     if (result.point) this.events.onMarkerClick(result.planet, result.point.id)
@@ -957,7 +862,6 @@ export class SpaceEngine {
     const storyPlanet = result && this.layout.kind === 'story' ? result.planet : null
     this.hoveredPlanet = storyPlanet
     if (result?.point && this.layout.kind === 'focus') {
-      // Markers carry their own name tags in focus, so no tooltip here.
       this.renderer.domElement.style.cursor = 'pointer'
       this.events.onHover(null)
     } else if (result?.point) {
@@ -978,10 +882,6 @@ export class SpaceEngine {
   }
 }
 
-/**
- * A glowing arc between two points: a 1 px line, soft dots on the same geometry so it reads as a trail of light,
- * and a bright head at the growing end. Coloured from the first body's accent to the second's.
- */
 class Trail {
   private line: THREE.Line
   private glow: THREE.Points
@@ -1020,7 +920,6 @@ class Trail {
     this.head.visible = false
   }
 
-  /** `grow` 0..1 = how much of the curve is drawn; `headSize` 0 hides the head (the arc has arrived). */
   draw(curve: THREE.Curve<THREE.Vector3>, fromColor: string, toColor: string, grow: number, opacity: number, headSize: number) {
     const colorA = new THREE.Color(fromColor)
     const colorB = new THREE.Color(toColor)
@@ -1032,7 +931,6 @@ class Trail {
       const along = i / (ARC_POINTS - 1)
       curve.getPoint(along * grow, point)
       positions.setXYZ(i, point.x, point.y, point.z)
-      // Brighter toward the head, so the arc reads as something travelling.
       color.copy(colorA).lerp(colorB, along * grow).multiplyScalar(0.35 + 0.65 * along)
       colors.setXYZ(i, color.r, color.g, color.b)
     }
@@ -1057,13 +955,11 @@ function tagged(obj: THREE.Object3D, type: string) {
   return (obj as THREE.Object3D & { __globeObjType?: string }).__globeObjType === type
 }
 
-/** Signed angle (radians) to turn from `from` to `to` the short way round. */
 function shortestTurn(from: number, to: number) {
   const turn = (to - from) % (Math.PI * 2)
   return turn > Math.PI ? turn - Math.PI * 2 : turn < -Math.PI ? turn + Math.PI * 2 : turn
 }
 
-/** Moves along an arc around `center` (so the camera never cuts through a planet). */
 function slerpAround(from: THREE.Vector3, to: THREE.Vector3, center: THREE.Vector3, t: number) {
   const a = from.clone().sub(center)
   const ra = a.length()
@@ -1077,7 +973,6 @@ function hexToRgb(hex: string) {
   return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`
 }
 
-/** Soft white dot fading to transparent; tinted per marker through the sprite color. */
 function makeGlowTexture() {
   const size = 128
   const canvas = document.createElement('canvas')

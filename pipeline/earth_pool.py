@@ -37,13 +37,10 @@ OUT = ROOT / "data" / "interim"
 EARTH_RADIUS_KM = 6371.0
 
 CELL_DEG = 0.25
-# The pool is what B4 measures terrain and rock on, so it must be wide: with 40 cells 300 km apart (first version)
-# terrain and rock could only reorder a thin sample of the world's deserts.
-POOL_SIZE = 100  # cells per body
-POOL_MIN_KM_APART = 200.0  # ours: pool entries come from different places
-# A training area must be inland, not a coastal strip. Two independent sources must agree (ours):
-MAX_WATER_PCT = 10.0  # MODIS land cover, IGBP water class (sea ice included)
-MIN_LAND_PCT = 90.0  # Natural Earth 10 m country polygons
+POOL_SIZE = 100
+POOL_MIN_KM_APART = 200.0
+MAX_WATER_PCT = 10.0
+MIN_LAND_PCT = 90.0
 
 
 def block_mean(a: np.ndarray, k: int) -> np.ndarray:
@@ -71,7 +68,7 @@ def read_modis(path: Path, sds_name: str, scale: float, fill) -> np.ndarray:
     data = sd.select(sds_name).get().astype("float64")
     sd.end()
     data[data == fill] = np.nan
-    return data * scale  # 3600 x 7200, 0.05 deg, row 0 = 90 N, col 0 = 180 W
+    return data * scale
 
 
 def load_features() -> dict[str, np.ndarray]:
@@ -84,34 +81,33 @@ def load_features() -> dict[str, np.ndarray]:
             for f in sorted((RAW / "MOD13C2").glob("*.hdf"))]
     day, night = np.array(day), np.array(night)
 
-    year = None  # 2023 alone: only used where the climatology has no value
+    year = None
     for f in sorted((RAW / "GPM_3IMERGM").glob("*.HDF5")):
         month = int(re.search(r"\.2023(\d\d)01-", f.name).group(1))
         with h5py.File(f, "r") as h5:
-            rate = h5["Grid/precipitation"][0].astype("float64")  # (lon 3600, lat 1800), mm/hr, lat ascending
+            rate = h5["Grid/precipitation"][0].astype("float64")
         rate[rate < 0] = np.nan
-        mm = rate.T[::-1] * 24 * calendar.monthrange(2023, month)[1]  # to (lat desc, lon), mm per month
+        mm = rate.T[::-1] * 24 * calendar.monthrange(2023, month)[1]
         year = mm if year is None else year + mm
     import rasterio
     with rasterio.open(next((RAW / "imerg_clim").glob("IMERG-Final.CLIM.*.tif"))) as src:
-        clim = src.read(1).astype("float64")  # 1800 x 3600, mm/yr, row 0 = 90 N, col 0 = 180 W; missing = -9999.9
+        clim = src.read(1).astype("float64")
     clim[clim < 0] = np.nan
     precip = np.where(np.isfinite(clim), clim, year)
-    # 0.1 deg -> 0.05 deg by repetition, then the same 0.25 deg blocks as MODIS
     precip = block_mean(np.repeat(np.repeat(precip, 2, axis=0), 2, axis=1), k)
     precip_2023 = block_mean(np.repeat(np.repeat(year, 2, axis=0), 2, axis=1), k)
 
     albedo = []
     for f in sorted((RAW / "MCD43C3").glob("*.hdf")):
         white_sky = read_modis(f, "Albedo_WSA_shortwave", 0.001, 32767)
-        white_sky[read_modis(f, "Percent_Snow", 1.0, 255) > 0] = np.nan  # the ground, not the snow on it
+        white_sky[read_modis(f, "Percent_Snow", 1.0, 255) > 0] = np.nan
         albedo.append(block_mean(white_sky, k))
 
     cover = SD(str(next((RAW / "MCD12C1").glob("*.hdf"))), SDC.READ)
     percent = cover.select("Land_Cover_Type_1_Percent")
-    water = block_mean(percent[:, :, 0].astype("float64"), k)  # IGBP class 0: water (sea ice included)
-    snow_ice = block_mean(percent[:, :, 15].astype("float64"), k)  # IGBP class 15: permanent snow and ice
-    barren = block_mean(percent[:, :, 16].astype("float64"), k)  # IGBP class 16: barren
+    water = block_mean(percent[:, :, 0].astype("float64"), k)
+    snow_ice = block_mean(percent[:, :, 15].astype("float64"), k)
+    barren = block_mean(percent[:, :, 16].astype("float64"), k)
     cover.end()
 
     with np.errstate(invalid="ignore", all="ignore"):
@@ -140,23 +136,16 @@ def clip01(a):
 
 def scores(f: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     """0-1 score per dimension (ours), and a pool score per body."""
-    # MODIS LST also reports sea ice and GPM covers the oceans, so both being present doesn't make a cell land:
-    # frozen Arctic sea looked like bare, dry, cold ground until the 15 Nov fix. Land = inland on both maps.
     land = (np.isfinite(f["mean_lst_k"]) & np.isfinite(f["precip_mm"])
             & (f["water_pct"] < MAX_WATER_PCT) & (f["ne_land_pct"] >= MIN_LAND_PCT))
-    # Exposed ground: >= 10 % barren, or < 50 % snow/ice where vegetation data exists. Ice shelves and the
-    # polar plateau have empty land-cover and no NDVI, so the second test alone would let them in.
     exposed = (f["barren_pct"] >= 10) | ((f["snow_ice_pct"] < 50) & np.isfinite(f["ndvi_max"]))
     s = {
-        # <= 100 mm/yr -> 1: GPM IMERG reports 40-70 mm over the hyperarid Atacama where gauges record ~1-2 mm
-        # (audit), so below 100 mm satellite rainfall cannot rank deserts; 350 mm/yr (semi-arid) -> 0
         "aridity": clip01(1 - (f["precip_mm"] - 100.0) / 250.0),
-        # bare ground: low NDVI, or land cover that says barren
         "barren": np.maximum(clip01(1 - (np.nan_to_num(f["ndvi_max"], nan=0) - 0.05) / 0.25), f["barren_pct"] / 100.0),
-        "swing": clip01(f["swing_k"] / 35.0),  # Earth's largest day-night LST swings are ~35-40 K
-        "cold": clip01((300.0 - f["mean_lst_k"]) / 50.0),  # 300 K -> 0, 250 K -> 1
-        "frozen": clip01((280.0 - f["mean_lst_k"]) / 15.0),  # mean below ~265 K: frozen most of the year
-        "polar": clip01((np.abs(f["lat"]) - 60.0) / 20.0),  # low Sun: 60 deg -> 0, 80 deg -> 1
+        "swing": clip01(f["swing_k"] / 35.0),
+        "cold": clip01((300.0 - f["mean_lst_k"]) / 50.0),
+        "frozen": clip01((280.0 - f["mean_lst_k"]) / 15.0),
+        "polar": clip01((np.abs(f["lat"]) - 60.0) / 20.0),
     }
     valid = land & exposed
     s["mars"] = np.where(valid, 0.35 * s["aridity"] + 0.30 * s["barren"] + 0.20 * s["swing"] + 0.15 * s["cold"], np.nan)
@@ -207,11 +196,9 @@ def build_pool(f, s, body: str, known: list[dict]) -> list[dict]:
         pool.append(cell_record(f, s, body, r, c, source="screened"))
         if len(pool) == POOL_SIZE:
             break
-    for k in known:  # known analogs join the pool so B5 can check they rank well (validation)
-        # Best cell within ~50 km: KNOWN_ANALOGS.md coordinates are often proxies (its suggested match radius)
+    for k in known:
         r0, c0 = int((90 - k["lat"]) / CELL_DEG), int((k["lon"] + 180) / CELL_DEG)
         best, r, c = -1.0, r0, c0
-        # cells narrow towards the poles, so widen the column window to keep ~50 km
         reach = int(np.ceil(50 / (111.2 * CELL_DEG * max(np.cos(np.radians(k["lat"])), 0.05))))
         for dr in range(-2, 3):
             for dc in range(-reach, reach + 1):

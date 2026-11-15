@@ -10,20 +10,8 @@ import { PLANETS, type PlanetId } from './space/planets'
 import { SpaceEngine, type Layout, type Marker } from './space/SpaceEngine'
 import { BACKDROP_STAGE } from './space/story'
 
-/** Space kept free under the fixed header when a planet is in focus (px). */
 const HEADER_PX = 64
 
-/**
- * The one 3D scene behind every page. It never unmounts, so moving from the landing page to /explore/mars is a
- * single continuous animation: Mars flies to the center, the other planets drift away, the landing sites appear.
- *
- *   /                    → story: the planets follow the page scroll; the first screen links a site to its Earth match
- *   /calculations, /about→ story, parked on the quiet backdrop stage
- *   /explore/:body       → focus on that body; markers = its sites (candidates bright, validation sites muted)
- *                          plus every other past landing from landings.json as a name-only tag
- *        phase "earth"   → focus on Earth; markers = the selected site's training areas
- *   /earth, /earth/:id   → focus on Earth; markers = all training areas, coloured by the body they stand in for
- */
 export function SpaceScene() {
   const containerRef = useRef<HTMLDivElement>(null)
   const engineRef = useRef<SpaceEngine | null>(null)
@@ -33,7 +21,6 @@ export function SpaceScene() {
   const { phase, selectSite, selectAnalog } = useAppState()
   const { sitesForBody, site, analogs, analog } = useSelection()
   const data = useData()
-  // Stable references: a fresh [] on every render would rebuild every marker on every render.
   const landings = useMemo(() => (data.status === 'ready' ? data.landings.landings : []), [data])
   const allSites = useMemo(() => (data.status === 'ready' ? data.sites.sites : []), [data])
   const allAnalogs = useMemo(() => (data.status === 'ready' ? data.analogs.analogs : []), [data])
@@ -44,7 +31,6 @@ export function SpaceScene() {
   const earthId = earthRoute?.[1] ?? null
   const earthPick = useMemo(() => allAnalogs.find((a) => a.id === earthId) ?? null, [allAnalogs, earthId])
 
-  // Latest handlers for the engine's events, without recreating the engine.
   const onMarker = (planet: PlanetId, id: string) => {
     if (planet === 'earth') {
       if (body) selectAnalog(id)
@@ -64,7 +50,6 @@ export function SpaceScene() {
       onPlanetClick: (planet) => handlers.current.navigate(PLANETS[planet].href),
       onMarkerClick: (planet, id) => handlers.current.onMarker(planet, id),
       onHover: setHover,
-      // Pages fade their text in once the planets are there (see .reveal in index.css).
       onReady: () => {
         document.documentElement.dataset.sceneReady = 'true'
       },
@@ -121,7 +106,6 @@ export function SpaceScene() {
       emphasis: s.selection.role === 'candidate' ? 'strong' : 'muted',
       active: s.id === site?.id,
     }))
-    // Every other past landing: name and year only. Skip ones already shown as a validation site (within ~1°).
     const near = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
       Math.abs(a.lat - b.lat) < 1 && Math.abs(((a.lon - b.lon + 540) % 360) - 180) < 1
     const landingMarkers: Marker[] = landings
@@ -130,7 +114,6 @@ export function SpaceScene() {
     return { sets: { [body]: [...siteMarkers, ...landingMarkers] }, labelled: body }
   }, [onEarthPage, earthPick, body, phase, analogs, analog, sitesForBody, site, landings, allSites, allAnalogs])
 
-  // Compare by value so re-renders with equal content don't restart the animation.
   const layoutKey = JSON.stringify(layout)
   useEffect(() => {
     engineRef.current?.setLayout(JSON.parse(layoutKey) as Layout)
@@ -140,7 +123,6 @@ export function SpaceScene() {
     engineRef.current?.setMarkers(markers.sets, markers.labelled)
   }, [markers])
 
-  // Scroll story, the landing pair and the panel insets come from the pages through the scene store.
   const onLanding = pathname === '/'
   useEffect(() => {
     const engine = engineRef.current

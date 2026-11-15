@@ -4,19 +4,15 @@ import type { Analog, Dimension, Site } from '../types/data'
 import { useAppState } from './AppState'
 
 export interface Selection {
-  /** All sites of the body chosen in the Moon | Mars tab. */
   sitesForBody: Site[]
   site: Site | null
-  /** The selected site's analogs, sorted by rank (1..3). */
   analogs: Analog[]
   analog: Analog | null
-  /** Dimensions that apply to the selected site's body. */
   dimensions: Dimension[]
 }
 
 const empty: Selection = { sitesForBody: [], site: null, analogs: [], analog: null, dimensions: [] }
 
-/** Resolves the ids in the shared state to full objects from the data files. */
 export function useSelection(): Selection {
   const data = useData()
   const { body, siteId, analogId } = useAppState()

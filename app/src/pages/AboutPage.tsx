@@ -3,17 +3,11 @@ import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router'
 import { SiteHeader } from '../components/SiteHeader'
 
-/**
- * About page ("/about"): the challenge, the team, the data and image credits, and how AI was used.
- * The method and its limits live on the calculations page. Facts follow docs/DATA_SOURCES.md and the AI log in
- * docs/PROJECT_HISTORY.md §13 — keep them in sync.
- */
 export function AboutPage() {
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
   return (
     <main className="relative z-10 min-h-svh px-6 pt-28 pb-24 sm:px-10">
-      {/* Veil over the 3D scene, the size of the screen (a blur as tall as the page is costly to paint). */}
       <div className="fixed inset-0 -z-10 bg-space/75 backdrop-blur-[6px]" aria-hidden="true" />
       <SiteHeader />
       <article className="mx-auto max-w-5xl">

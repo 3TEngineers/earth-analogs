@@ -9,13 +9,6 @@ import { BodyToggle } from './BodyToggle'
 import { candidateLetter, formatLatLon, placeOf } from './format'
 import { RuleTicks, SidePanel } from './ui'
 
-/**
- * Browsing a world (`browse` phase): what you are looking at, and its sites to pick from.
- * - Desktop: a short introduction floats at the top left, the sites sit in a dock along the bottom as a row of
- *   cards, and the planet turns freely in the space between (the scene centres it there, see useSceneInset).
- * - Phones: the same content as a list in the bottom sheet.
- * Our candidates come first; the past landings we tested with the same rules follow, quieter.
- */
 export function SiteDock() {
   const desktop = useIsDesktop()
   const { body, selectSite } = useAppState()

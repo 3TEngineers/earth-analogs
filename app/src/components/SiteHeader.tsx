@@ -10,15 +10,9 @@ const LINKS = [
   { to: '/about', label: 'About', dot: '', bar: 'after:bg-ink' },
 ]
 
-/**
- * Top bar on every page: the project name (back to the landing page) and the five places to go.
- * The three worlds carry their colour as a dot, the same colour their markers and accents use everywhere else.
- * Below 768 px the links fold into a full-screen menu.
- */
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
-  // Following a link closes the menu.
   const [menuPath, setMenuPath] = useState(pathname)
   if (menuPath !== pathname) {
     setMenuPath(pathname)
@@ -33,7 +27,6 @@ export function SiteHeader() {
 
   return (
     <header className="reveal pointer-events-none fixed inset-x-0 top-0 z-30">
-      {/* Page text scrolling under the bar blurs out and fades instead of colliding with the links. */}
       <div
         className="absolute inset-x-0 top-0 -z-10 h-24 bg-gradient-to-b from-space/95 via-space/60 to-transparent backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_55%,transparent)]"
         aria-hidden="true"
@@ -94,7 +87,6 @@ export function SiteHeader() {
   )
 }
 
-/** The three bodies as dots in their real size ratio (Moon 0.27 : Earth 1 : Mars 0.53) and their colours. */
 function BrandMark() {
   return (
     <span className="flex items-center gap-[3px]" aria-hidden="true">

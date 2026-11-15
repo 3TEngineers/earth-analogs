@@ -1,7 +1,4 @@
 #!/bin/sh
-# Runs after every `git pull` / `git merge`. If the app's dependencies changed,
-# installs them so `npm run dev` keeps working without anyone remembering to.
-# Enabled by the same one-time setup as pre-push:  git config core.hooksPath .githooks
 
 changed=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD 2>/dev/null)
 

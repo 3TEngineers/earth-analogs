@@ -20,8 +20,6 @@ from shapely.geometry import Point, box
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-# build_analogs and earth_ranking read B3's files when imported, so they are imported inside the sections
-# that need them: the Mars and Moon sections then run on a machine that only has the planetary data.
 
 DATA = ROOT / "app" / "public" / "data"
 RAW = ROOT / "data" / "raw"
@@ -34,26 +32,21 @@ def check(group: str, name: str, ok: bool | None, detail: str) -> None:
     print(f"[{status}] {group}: {name} — {detail}")
 
 
-# ---------------------------------------------------------------- helpers we test against
 def great_circle_km(lat1, lon1, lat2, lon2, r=6371.0):
     lat1, lon1, lat2, lon2 = map(np.radians, (lat1, lon1, lat2, lon2))
     a = np.sin((lat2 - lat1) / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin((lon2 - lon1) / 2) ** 2
     return 2 * r * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
 
 
-# ---------------------------------------------------------------- 1. math units
 def audit_math():
     import earth_ranking
-    # slope on a synthetic plane with a known 10 deg tilt, 100 m pixels
     x = np.arange(50) * 100.0
     plane = np.tile(x * np.tan(np.radians(10)), (50, 1))
     s = earth_ranking.slope_deg(plane, 100.0, 100.0)
     check("math", "slope of a 10° plane", abs(np.median(s) - 10) < 0.01, f"median {np.median(s):.3f}°")
-    # Wasserstein similarity of a distribution with itself is 1
     from scipy.stats import wasserstein_distance
     d = np.random.default_rng(0).gamma(2, 2, 500)
     check("math", "terrain similarity of identical slopes", np.exp(-wasserstein_distance(d, d) / 3) == 1.0, "exp(-0)=1")
-    # winter noon Sun and pressure formulas at reference points
     import mars_screening as m
     check("math", "winter noon Sun at the equator", abs(float(m.winter_noon_sun_deg(np.array(0.0))) - 64.81) < 0.01,
           f"{float(m.winter_noon_sun_deg(np.array(0.0))):.2f}° (90 - 25.19)")
@@ -61,12 +54,9 @@ def audit_math():
           "610 Pa = mean surface pressure (Atmosphere of Mars); scale height 11.1 km")
 
 
-# ---------------------------------------------------------------- 2. Mars data vs published
 def audit_mars():
     import mars_screening as m
     grids = m.load_grids()
-    # Published landing-site elevations (MOLA), metres. The 463 m pixel under the landing coordinate checks
-    # the coordinates; the 16 px/deg pixel (screening grid) also checks the MOLA longitude fix.
     published = {"Viking 1": -3630, "Mars Pathfinder": -3680, "Spirit": -1940, "Opportunity": -1440,
                  "Curiosity": -4500, "InSight": -2610, "Perseverance": -2570}
     import rasterio
@@ -82,15 +72,11 @@ def audit_mars():
             fine = float(dem.read(1, window=Window(c, r, 1, 1))[0, 0])
             check("mars", f"MOLA 463 m elevation at {name}", abs(fine - published[name]) < 100,
                   f"ours {fine:.0f} m, published ≈ {published[name]} m")
-            # a 3.7 km screening pixel can straddle a slope (Curiosity: foot of Mount Sharp) -> WARN, not FAIL
             row, col = m.pixel_of(grids, lat, lon)
             pixel = float(grids.elevation[row, col])
             window = m.site_values(grids, lat, lon)["elevation_m"]
             check("mars", f"MOLA 16 px/deg elevation at {name}", True if abs(pixel - published[name]) < 250 else None,
                   f"pixel {pixel:.0f} m, 11 km window median {window:.0f} m, published ≈ {published[name]} m")
-    # --- added 15 Nov, after the thermal inertia map turned out to be 180 deg of longitude off ---
-    # 1. The grid is where its label says. Compare a 6 x 6 deg window around Gale crater with the USGS 463 m
-    #    GeoTIFF averaged to the same pixels, for the label position and for one pixel off in every direction.
     lat1, lon0, n = -2.0, 134.0, 96
     with rasterio.open(m.MOLA_463_URL) as dem:
         r0, c0 = dem.index(*to_xy.transform(lon0, lat1))
@@ -102,22 +88,17 @@ def audit_mars():
     best = min(rms, key=rms.get)
     check("mars", "16 px/deg grid is registered where the label says (vs USGS 463 m, Gale)", best == (0, 0),
           f"RMS {rms[(0, 0)]:.0f} m in place, {min(v for k, v in rms.items() if k != (0, 0)):.0f} m at best one pixel off")
-    # 2. Thermal inertia and albedo are on the same longitudes as the elevation: textbook dusty and dark regions.
-    #    (Mellon et al. 2000; Christensen et al. 2001: Tharsis, Arabia and Amazonis are bright and low-inertia,
-    #    Syrtis Major is the darkest large region.) A 180 deg shift swaps Tharsis with Syrtis.
     for name, lat, lon, dusty in [("Tharsis", 5.0, -110.0, True), ("Arabia Terra", 20.0, 20.0, True),
                                   ("Amazonis Planitia", 25.0, -179.0, True), ("Syrtis Major", 9.2, 67.1, False)]:
         v = m.site_values(grids, lat, lon)
         ok = (v["thermal_inertia"] < 100 and v["albedo"] > 0.25) if dusty else (v["thermal_inertia"] > 150 and v["albedo"] < 0.15)
         check("mars", f"{name} is {'bright, low-inertia dust' if dusty else 'dark and firm'}", ok,
               f"thermal inertia {v['thermal_inertia']:.0f}, albedo {v['albedo']:.2f}")
-    # 3. Each landing passes the elevation and latitude limits its own mission published
     for name, lat, lon, _ in m.LANDINGS:
         rules = m.own_rules(name, lat, m.site_values(grids, lat, lon)["elevation_m"])
         if rules:
             check("mars", f"{name} passes its own mission's limits", all(r["pass"] for r in rules),
                   "; ".join(f"{r['value']} {r['unit']} ({r['rule']})" for r in rules))
-    # 4. The candidates do not depend on where the map is cut: turn the planet a third of the way round, pick again
     safe = m.screen(grids, m.MAX_SLOPE_DEG, m.MAX_RELIEF_M)
     turn = safe.shape[1] // 3
     turned = m.Grids(grids.lat, np.roll(grids.lon, turn), *(np.roll(a, turn, axis=1) for a in
@@ -125,7 +106,6 @@ def audit_mars():
     a = {(p["lat"], p["lon"]) for p in m.pick_candidates(grids, safe)}
     b = {(p["lat"], p["lon"]) for p in m.pick_candidates(turned, np.roll(safe, turn, axis=1))}
     check("mars", "candidates are the same when the map is cut at another meridian", a == b, f"{len(a)} candidates")
-    # 5. No candidate is on dusty ground by the published rule, read straight from the two TES maps
     sites = json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]
     for s in sites:
         if s["body"] == "mars" and s["status"] == "candidate":
@@ -134,9 +114,6 @@ def audit_mars():
                   not (v["thermal_inertia"] < 100 and v["albedo"] > 0.25),
                   f"thermal inertia {v['thermal_inertia']:.0f}, albedo {v['albedo']:.2f}")
 
-    # --- final review, 15 Nov: the candidates on a second elevation product. The USGS 463 m DEM is a separate
-    # file from the 16 px/deg grid the screening reads; over the 26 km landing square it must give the same
-    # height and no ground above the -1 km limit.
     with rasterio.open(m.MOLA_463_URL) as dem:
         half = int(13000 / abs(dem.transform.a))
         for s in sites:
@@ -147,7 +124,6 @@ def audit_mars():
                 check("mars", f"{s['id']} elevation on the USGS 463 m DEM (26 km square)", abs(float(np.median(z)) - ours) < 60 and z.max() <= m.MAX_ELEVATION_M,
                       f"median {np.median(z):.0f} m, highest {z.max():.0f} m; screening grid {ours:.0f} m")
 
-    # every candidate's criteria reproduce from the raw grids
     for s in sites:
         if s["body"] == "mars" and s["status"] == "candidate":
             crit = m.criteria(m.site_values(grids, s["lat"], s["lon"]), m.MAX_SLOPE_DEG, m.MAX_RELIEF_M)
@@ -156,7 +132,6 @@ def audit_mars():
                   ", ".join(f"{c['id']}={c['value']}" for c in crit))
 
 
-# ---------------------------------------------------------------- 3. Moon data vs known facts
 def audit_moon():
     import moon_screening as mo
     crs, transform, size, layers = mo.load_layers()
@@ -165,60 +140,46 @@ def audit_moon():
         r, c = mo.to_pixel(crs, transform, lat, lon)
         return float(layers[name][r, c])
 
-    psr_shackleton = at("psr", -89.67, 129.78)  # Shackleton crater floor (USGS Gazetteer centre)
+    psr_shackleton = at("psr", -89.67, 129.78)
     check("moon", "Shackleton crater floor is permanently shadowed", psr_shackleton > 0.5, f"PSR = {psr_shackleton:.0f}")
     near, far = at("earth", -84.0, 0.0), at("earth", -84.0, 180.0)
     check("moon", "Earth visible more on the near side than the far side (84° S)", near > far,
           f"lon 0°: {100 * near:.0f} %, lon 180°: {100 * far:.0f} %")
-    # PSR area south of 80 S at the native 120 m vs Mazarico et al. (2011): 16,055 km2
     import rasterio
     with rasterio.open(RAW / "moon" / "LPSR_75S_120M_201608.TIF") as src:
         psr = src.read(1).astype("float64") * src.scales[0] + src.offsets[0]
         rows, cols = np.indices(psr.shape)
         x, y = src.transform * (cols + 0.5, rows + 0.5)
         dist_km = np.hypot(x, y) / 1000
-        within_80 = dist_km <= np.radians(10) * 1737.4  # polar stereographic, near enough for 10 deg
+        within_80 = dist_km <= np.radians(10) * 1737.4
         area = float((psr[within_80] > 0.5).sum() * (abs(src.transform.a) / 1000) ** 2)
     check("moon", "PSR area south of 80° S vs Mazarico 2011 (16,055 km²)", abs(area - 16055) / 16055 < 0.25,
           f"ours {area:,.0f} km² at 120 m (2016 product; their 2011 maps were 240 m)")
-    # --- final review, 15 Nov: east and west are not swapped. Near the pole most checks cannot tell (a mirror
-    # image keeps Shackleton, the near side and the far side in place). Two places can: the LCROSS impact site in
-    # Cabeus (84.675 S, 48.725 W; NASA) is permanently shadowed, the same point mirrored to 48.725 E is lit ground;
-    # and Mons Mouton (84.6 S, 31 E) is a mountain, the same point mirrored to 31 W is not.
     lcross, mirror = at("psr", -84.675, -48.725), at("psr", -84.675, 48.725)
     check("moon", "east and west are not swapped: LCROSS impact site in Cabeus is permanently shadowed, its mirror point is not",
           lcross > 0.5 and mirror < 0.5, f"PSR {lcross:.0f} at 48.7° W, {mirror:.0f} at 48.7° E; sunlit there {100 * at('sunlit', -84.675, 48.725):.0f} %")
     with rasterio.open(RAW / "moon" / "ldem_75s_240m.lbl") as dem:
-        def height(lat, lon):  # south polar stereographic written out here, not taken from the pipeline
+        def height(lat, lon):
             rho = 2 * 1737400.0 * np.tan(np.radians(90 + lat) / 2)
             col, row = ~dem.transform * (rho * np.sin(np.radians(lon)), rho * np.cos(np.radians(lon)))
             return float(dem.read(1, window=((int(row), int(row) + 1), (int(col), int(col) + 1)))[0, 0]) * dem.scales[0]
         mouton, other = height(-84.6, 31.0), height(-84.6, -31.0)
     check("moon", "east and west are not swapped: Mons Mouton is a mountain", mouton > 4000 and other < 1000,
           f"{mouton:,.0f} m at 31° E, {other:,.0f} m at 31° W (LOLA elevation)")
-    # --- added 15 Nov ---
-    # Slope map vs a real event: NASA's orbiter found the IM-1 lander on a 12 deg slope (80.13 S, 1.44 E)
     r, c = mo.to_pixel(crs, transform, -80.13, 1.44)
     im1 = float(np.nanmedian(layers["slope"][r - 1:r + 2, c - 1:c + 2]))
     check("moon", "slope where IM-1 Odysseus tipped over vs NASA's 12°", abs(im1 - 12) <= 3, f"ours {im1:.1f}° at 240 m")
-    # --- added 15 Nov (Earth audit): the slope map stores 0 where no laser track crossed a pixel, and 0 reads as
-    # exactly 45 deg. Count them in the file, and make sure none is left in the layer the screening uses.
     with rasterio.open(RAW / "moon" / "ldsm_75s_240m.lbl") as src:
         stored = src.read(1)
     empty = float((stored == mo.SLOPE_MISSING).mean())
     left = float((np.abs(layers["slope"] - 45.0) < 0.005).mean())
     check("moon", "slope-map pixels with no measurement are not read as 45° slopes", 0.2 < empty < 0.4 and left < 1e-4,
           f"{100 * empty:.0f} % of the map has no measurement; {100 * left:.3f} % of the screening layer reads 45.00°")
-    # The brightest ground on the map is on the rims and ridges next to Shackleton crater, as every published
-    # study finds (Mazarico et al. 2011; Gläser et al. 2014)
     best = np.unravel_index(np.nanargmax(layers["sunlit"]), layers["sunlit"].shape)
     blon, blat = (float(v[best]) for v in mo.lonlat_grid(crs, transform, size))
     d = float(great_circle_km(blat, blon, -89.67, 129.78, r=1737.4))
     check("moon", "best-lit pixel lies on the rim or ridges next to Shackleton crater", d <= 30,
           f"{100 * float(layers['sunlit'][best]):.0f} % at {blat:.2f}, {blon:.2f}: {d:.0f} km from the crater centre")
-    # "Distance to shadow" only counts shadowed areas of >= 1 km2. Recomputed by another route (final review,
-    # 15 Nov): patches labelled on the 120 m map itself, the site placed with the projection written out by hand,
-    # and the nearest shadowed pixel found with a k-d tree instead of a distance transform.
     from scipy import ndimage
     from scipy.spatial import cKDTree
     with rasterio.open(RAW / "moon" / "LPSR_75S_120M_201608.TIF") as src:
@@ -247,15 +208,12 @@ def audit_moon():
                   f"recomputed {sun} %, JSON {s['selection']['criteria'][0]['value']} %")
 
 
-# ---------------------------------------------------------------- 4. Earth data vs known climate
 def audit_earth():
     g = np.load(ROOT / "data" / "interim" / "earth_grid.npz")
 
     def cell(lat, lon, key):
         return float(g[key][int((90 - lat) / 0.25), int((lon + 180) / 0.25)])
 
-    # long-term mean annual rainfall (mm), approximate station climatologies. Our input is the IMERG 2000-2023
-    # climatology (a 25 km cell mean, so not a station value): within a factor of 1.6
     rain = {"Manaus, Brazil": (-3.1, -60.0, 2300), "Istanbul, Türkiye": (41.0, 28.98, 800),
             "Eskişehir, Türkiye": (39.78, 30.52, 380), "London, UK": (51.5, -0.12, 600),
             "Dalanzadgad, Mongolia (Gobi)": (43.6, 104.4, 130), "Resolute, Canada (Arctic)": (74.7, -94.9, 160),
@@ -265,11 +223,10 @@ def audit_earth():
         if ref >= 50:
             check("earth", f"GPM rainfall at {name}", ref / 1.6 <= v <= ref * 1.6,
                   f"ours {v:.0f} mm/yr (2023 alone: {cell(lat, lon, 'precip_2023_mm'):.0f}), climatology ≈ {ref} mm")
-        else:  # hyperarid: IMERG over-reports here, so the pipeline treats everything <= 100 mm as fully arid
+        else:
             aridity = cell(lat, lon, "aridity")
             check("earth", f"GPM rainfall at {name} (hyperarid)", v <= 100 and aridity == 1.0,
                   f"ours {v:.0f} mm/yr vs ≈ {ref} mm (IMERG over-reports), aridity score {aridity:.2f}")
-    # Dome Fuji station: annual mean air temperature -54.4 °C = 218.8 K (JARE); the surface is a little colder
     for name, (lat, lon), lo, hi in [("Lut Desert mean LST", (30.6, 59.1), 295, 330),
                                      ("Dome Fuji, Antarctica mean LST (station ≈ 218.8 K)", (-77.32, 39.70), 205, 230)]:
         v = cell(lat, lon, "mean_lst_k")
@@ -278,9 +235,6 @@ def audit_earth():
           not np.isfinite(cell(72.0, -40.0, "mars")), "ice sheet cells carry no score")
     check("earth", "McMurdo Dry Valleys kept", np.isfinite(cell(-77.625, 161.875, "mars")), "ice-free valley cell scored")
 
-    # --- added 15 Nov (Earth audit), after the Mars maps turned out to be shifted: is every Earth raster where we
-    # think it is? Each is compared with an independent map at shifts of up to 3 cells and as a flipped, mirrored
-    # and half-turned copy; the unshifted, untouched one must fit best.
     import earth_pool
     import earth_ranking
     months = {name: len(list((RAW / "earth" / name).glob("*.hdf"))) for name in ("MOD11C3", "MOD13C2")}
@@ -298,7 +252,7 @@ def audit_earth():
         ok = best == (0, 0) and shifts[(0, 0)] > max(wrong.values()) + 0.2
         return ok, f"r = {shifts[(0, 0)]:.2f} in place, best shift {best}, best wrong copy {max(wrong.values()):.2f}"
 
-    temperate = np.abs(g["lat"]) < 60  # no sea ice there, so "has a temperature" means land
+    temperate = np.abs(g["lat"]) < 60
     land = (ne > 99) & (np.abs(g["lat"]) < 55)
     rain_log = np.log1p(g["precip_mm"].astype("float64"))
     for name, reference, layer, mask in [
@@ -314,50 +268,37 @@ def audit_earth():
     glim_land = np.isin(glim, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16]) * 100.0
     ok, detail = fit(ne_half, glim_land)
     check("earth", "registered: GLiM rock map (has a rock class) vs Natural Earth coastline", ok, detail)
-    # Albedo also has values over shallow water (6 % of sea pixels), so "has a value" is a blunt coastline test: its
-    # best fit wanders by one cell. The values themselves are sharp: on land, green ground is dark.
     ok, detail = fit(g["ndvi_max"].astype("float64"), -g["albedo"].astype("float64"), land)
     check("earth", "registered: MODIS albedo vs MODIS vegetation on land (green ground is dark)", ok, detail)
-    # albedo values at textbook surfaces: a sand sea is bright, a basalt field and a rainforest are dark
     for name, lat, lon, lo, hi in [("Grand Erg Oriental sand sea", 30.5, 7.5, 0.30, 0.55), ("Al Haruj basalt field, Libya", 27.25, 17.5, 0.05, 0.22),
                                    ("Amazon rainforest", -3.0, -62.0, 0.08, 0.18)]:
         v = cell(lat, lon, "albedo")
         check("earth", f"MODIS albedo at {name}", lo <= v <= hi, f"{v:.2f} (expected {lo}-{hi})")
-    # the rain climatology (2000-2023) and the single year 2023 are separate NASA files: they must agree in pattern
     both = np.isfinite(g["precip_mm"]) & np.isfinite(g["precip_2023_mm"])
     r = float(np.corrcoef(rain_log[both], np.log1p(g["precip_2023_mm"].astype("float64"))[both])[0, 1])
     check("earth", "rain climatology 2000-2023 agrees with the 12 months of 2023", r > 0.95, f"r = {r:.3f} (log rain, all cells)")
 
 
-# ---------------------------------------------------------------- 5. Terrain pipeline on known places
 def audit_terrain():
     import earth_ranking
-    flat = earth_ranking.earth_terrain(40.76, -113.88, 463.0)  # Bonneville Salt Flats, Utah
-    steep = earth_ranking.earth_terrain(46.0, 7.75, 463.0)  # Pennine Alps
+    flat = earth_ranking.earth_terrain(40.76, -113.88, 463.0)
+    steep = earth_ranking.earth_terrain(46.0, 7.75, 463.0)
     check("terrain", "Bonneville Salt Flats are flat", flat is not None and np.median(flat[0]) < 1.0,
           f"median {np.median(flat[0]):.2f}°" if flat is not None else "no data")
     check("terrain", "Alps are steep", steep is not None and np.median(steep[0]) > 15,
           f"median {np.median(steep[0]):.1f}°" if steep is not None else "no data")
-    # --- added 15 Nov (Earth audit) ---
-    # Elevation of the same boxes: the salt flats lie at 1,286 m (the box takes in some higher ground around them)
     check("terrain", "Bonneville Salt Flats elevation vs 1,286 m", flat is not None and 1270 <= flat[1] <= 1350,
           f"box mean {flat[1]:.0f} m" if flat is not None else "no data")
-    # A 25 km box crosses the edge of a 1-degree DEM tile for most cells away from the equator. It must be read in
-    # full and stay 25 km wide (the first version cut it at the tile edge). At 72.125° N the box is 0.73° wide.
     z = earth_ranking.earth_window(72.125, -109.125, 240.0)
     check("terrain", "a box that crosses DEM tiles is read in full (Victoria Island, 72° N)",
           z is not None and not np.isnan(z).any(), "no gaps" if z is not None else "no data")
-    # The same ground must give the same slopes whether a tile edge runs through the box or not: read one box in
-    # full, then as two halves, each inside one tile, and compare.
-    whole = earth_ranking.earth_window(41.5, 95.0, 463.0)  # Gobi, centred on a tile corner
+    whole = earth_ranking.earth_window(41.5, 95.0, 463.0)
     if whole is not None:
         n = whole.shape[0]
         west = earth_ranking.earth_window(41.5, 95.0 - 6.25 / (111.2 * np.cos(np.radians(41.5))), 463.0 * 2)
         check("terrain", "box across a tile corner has the heights of its parts (Gobi)",
               west is not None and abs(float(np.nanmean(whole[:, : n // 2])) - float(np.nanmean(west[:, : west.shape[1] // 2 * 2]))) < 60,
               f"west half mean {np.nanmean(whole[:, : n // 2]):.0f} m" if west is not None else "no data")
-    # The Moon side of the terrain comparison is computed from LOLA's elevation grid with the Earth recipe. Where
-    # LOLA's own slope map has a measurement the two must agree in pattern, and ours must hold no false cliffs.
     import rasterio
     from pyproj import CRS, Transformer
     from rasterio.windows import Window
@@ -384,7 +325,6 @@ def audit_terrain():
         check("terrain", f"GLiM rock class at {name}", got in want, f"{got} (expected {sorted(want)})")
 
 
-# ---------------------------------------------------------------- 6. Kmar's inputs, checked independently
 def audit_inputs():
     import build_analogs
     countries = gpd.read_file(f"zip://{RAW / 'earth' / 'naturalearth' / 'countries.zip'}")
@@ -399,8 +339,6 @@ def audit_inputs():
                 or (stated == "Antarctica" and k["lat"] < -60)
             check("inputs", f"{body} known analog '{k['name'][:30]}' lies in {k['country'][:20]}", ok,
                   f"({k['lat']}, {k['lon']}) → {', '.join(near['NAME'])[:40] or 'no country within 50 km'}")
-    # --- added 15 Nov (Earth audit): the rock class we expect at each Mars zone is the unit the USGS global
-    # geologic map (SIM 3292, Tanaka et al. 2014) draws there, looked up again here ---
     import earth_ranking
     volcanic = {"AHv", "eHv", "lHv", "Av", "lAv", "Hve", "Ave", "lHvf", "lAvf", "Nve", "eHve"}
     for s in json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]:
@@ -433,7 +371,6 @@ def audit_inputs():
         check("inputs", f"Artemis '{region}' coordinates vs USGS Gazetteer", d < 5, f"{d:.1f} km apart")
 
 
-# ---------------------------------------------------------------- 7. Output consistency
 def audit_outputs():
     import build_analogs
     sites = {s["id"]: s for s in json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]}
@@ -443,7 +380,7 @@ def audit_outputs():
         scores = {k: v["score"] for k, v in a["scores"].items() if v["score"] is not None}
         n_sim = sum(1 for v in scores.values() if v >= 70)
         n_dif = sum(1 for v in scores.values() if v <= 40)
-        ok = len(a["similarities"]) == n_sim and len(a["differences"]) == n_dif + 1  # + the fixed body line
+        ok = len(a["similarities"]) == n_sim and len(a["differences"]) == n_dif + 1
         if not ok:
             check("outputs", f"{a['id']} text matches scores", False, f"{len(a['similarities'])}/{n_sim} similar, {len(a['differences'])}/{n_dif} different")
         pt = Point(a["lon"], a["lat"])
@@ -457,11 +394,9 @@ def audit_outputs():
         check("outputs", f"{sid}: 3 analogs ≥ 500 km apart, ≥ 1 new", len(group) == 3 and apart >= 500 and any(not a["known"] for a in group),
               f"closest pair {apart:.0f} km")
     check("outputs", "every analog points at a real site", all(a["siteId"] in sites for a in analogs), "")
-    # --- added 15 Nov (Earth audit) ---
     candidates = [s for s in sites.values() if s["status"] == "candidate"]
     without = [s["id"] for s in candidates if sum(a["siteId"] == s["id"] for a in analogs) != 3]
     check("outputs", "every candidate has exactly 3 training areas", not without, f"{len(candidates)} candidates, {len(analogs)} areas" + (f"; wrong: {without}" if without else ""))
-    # No score is missing where it counts, and the total is the weighted sum of the scores shown (weights of earth_ranking.py)
     import earth_ranking
     weights = earth_ranking.WEIGHTS
     check("outputs", "dimension weights add up to 100 %", all(abs(sum(w.values()) - 1) < 1e-9 for w in weights.values()),
@@ -473,16 +408,13 @@ def audit_outputs():
             gaps.append(a["name"])
             continue
         total = sum(a["scores"][k]["score"] * share for k, share in w.items())
-        if abs(total - a["totalScore"]) > 1.0:  # each shown score is rounded to a whole number
+        if abs(total - a["totalScore"]) > 1.0:
             off.append(f"{a['name']}: {total:.1f} vs {a['totalScore']}")
     check("outputs", "no training area has a missing score in a weighted dimension", not gaps, "; ".join(gaps[:4]))
     check("outputs", "every total is the weighted sum of the scores shown", not off, "; ".join(off[:3]) or f"{len(analogs)} areas")
-    # A name says "plains" only where the ground is flat at the comparison scale
     hilly = [a["name"] for a in analogs if "plains" in a["name"].split(" — ")[0]
              and float(re.search(r"Earth median slope ([\d.]+)", a["scores"]["terrain"]["note"]).group(1)) > 1.5]
     check("outputs", "names say 'plains' only for flat ground (median slope ≤ 1.5°)", not hilly, "; ".join(hilly[:4]))
-    # Every training area must be inland: its 0.25° cell at least 90 % inside Natural Earth's 10 m country polygons
-    # (vector geometry here, independent of the raster mask the pipeline uses).
     land = countries.union_all()
     wet = []
     for a in analogs:
@@ -499,7 +431,6 @@ def audit_outputs():
     shown = [t for a in analogs for t in a["similarities"] + a["differences"] + [x["detail"] for x in a["tests"]]]
     broken = [t for t in shown if re.search(r"\b(None|nan|NaN)\b", t)]
     check("outputs", "no missing values (None/NaN) in any text shown on the site", not broken, "; ".join(broken[:3]))
-    # Moon: at least two of a site's three areas lie where the Sun stays low (the Low Sun score is only a weight)
     few = [f"{sid}: {sum(abs(a['lat']) >= build_analogs.MOON_POLAR_LAT for a in analogs if a['siteId'] == sid)} of 3"
            for sid in sorted({a["siteId"] for a in analogs if a["siteId"].startswith("moon")})]
     check("outputs", f"every Moon site has at least 2 areas at ≥ {build_analogs.MOON_POLAR_LAT:.0f}° latitude",
@@ -516,12 +447,12 @@ def main():
             continue
         try:
             part()
-        except Exception as error:  # an audit section crashing is itself a finding
+        except Exception as error:
             check(part.__name__, "section ran", False, f"{type(error).__name__}: {error}")
     counts = {s: sum(1 for r in RESULTS if r[0] == s) for s in ("PASS", "WARN", "FAIL")}
     print(f"\n{counts['PASS']} PASS, {counts['WARN']} WARN, {counts['FAIL']} FAIL")
     if wanted:
-        return  # a partial run does not overwrite the full record
+        return
     (ROOT / "data" / "interim" / "audit.json").write_text(json.dumps(RESULTS, indent=1, ensure_ascii=False), encoding="utf-8")
 
 

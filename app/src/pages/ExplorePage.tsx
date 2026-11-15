@@ -11,16 +11,6 @@ import type { Body } from '../types/data'
 
 const BODIES: Body[] = ['moon', 'mars']
 
-/**
- * Explore page ("/explore/moon" or "/explore/mars").
- * The planet itself is drawn by <SpaceScene> behind this page; the URL decides which body is in focus,
- * and everything after that (site → Earth training areas) lives in the shared state.
- *   browse  SiteDock: introduction + the sites as cards
- *   site    SiteDetail: one site in the side panel
- *   earth   AnalogReport: one of its training areas, the globe now shows Earth
- * "?site=<id>" opens straight on a site (links from the landing page and the Earth page).
- * Empty areas let pointer events through so the user can drag the globe.
- */
 export default function ExplorePage() {
   const { body } = useParams()
   const [params] = useSearchParams()
@@ -30,18 +20,15 @@ export default function ExplorePage() {
   const { site, analogs, analog, dimensions } = useSelection()
   const data = useData()
 
-  // Keep the shared state in sync with the URL.
   useEffect(() => {
     if (isValid && stateBody !== body) setBody(body as Body)
   }, [isValid, body, stateBody, setBody])
 
-  // A linked site is selected once the data knows it (and belongs to this body).
   const linked = data.status === 'ready' ? (data.sites.sites.find((s) => s.id === linkedSite && s.body === body) ?? null) : null
   useEffect(() => {
     if (linked) selectSite(linked.id, linked.body)
   }, [linked, selectSite])
 
-  // Leaving the page clears the selection, so coming back starts fresh.
   useEffect(() => reset, [reset])
 
   if (!isValid) return <Navigate to="/" replace />

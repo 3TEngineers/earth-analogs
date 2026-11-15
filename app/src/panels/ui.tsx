@@ -2,23 +2,10 @@ import { ChevronUp } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useIsDesktop, useSceneInset } from '../globe/sceneStore'
 
-/**
- * Small building blocks shared by the explore and Earth panels.
- */
-
-/**
- * The panel that holds a site, a training area or a list.
- * - Desktop (768 px and up): a glass card docked to the right, 46 % of the window up to 42rem wide, so the content
- *   reads as a page, not a ribbon. The 3D scene centres the planet in the space to its left (useSceneInset).
- * - Phones: a bottom sheet over the lower 42 % of the screen; the handle or "More" lifts it to 86 %.
- * `viewKey` names what is shown: a new key replays the entrance and puts a lifted sheet back down.
- * `footer` stays visible under the scrolling content (the main action of the view).
- */
 export function SidePanel({ label, viewKey, children, footer }: { label: string; viewKey: string; children: ReactNode; footer?: ReactNode }) {
   const desktop = useIsDesktop()
   const [liftedView, setLiftedView] = useState<string | null>(null)
   const lifted = liftedView === viewKey
-  // A lifted sheet keeps the planet where it was: the scene only hears about the resting height.
   const ref = useSceneInset<HTMLElement>('panel', desktop ? 'right' : 'bottom', { hold: !desktop && lifted })
 
   return (
@@ -47,7 +34,6 @@ export function SidePanel({ label, viewKey, children, footer }: { label: string;
   )
 }
 
-/** Tabs inside a panel: they keep a long report short. The active tab carries the accent bar. */
 export function Tabs<T extends string>({ tabs, value, onChange }: { tabs: { id: T; label: string; count?: string }[]; value: T; onChange: (id: T) => void }) {
   return (
     <div role="tablist" className="flex gap-1 border-b border-line">
@@ -72,7 +58,6 @@ export function Tabs<T extends string>({ tabs, value, onChange }: { tabs: { id: 
   )
 }
 
-/** "5 / 5 rules passed" in green, "3 / 5" in amber. */
 export function PassBadge({ passed, total }: { passed: number; total: number }) {
   const all = passed === total
   return (
@@ -86,7 +71,6 @@ export function PassBadge({ passed, total }: { passed: number; total: number }) 
   )
 }
 
-/** One tick per rule: green passed, amber failed, grey no data. */
 export function RuleTicks({ passes }: { passes: (boolean | null)[] }) {
   return (
     <span className="flex gap-0.5" aria-hidden="true">
@@ -97,7 +81,6 @@ export function RuleTicks({ passes }: { passes: (boolean | null)[] }) {
   )
 }
 
-/** Group label inside a panel. */
 export function GroupTitle({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
