@@ -19,6 +19,8 @@ class Criterion(BaseModel):
     rule: str
     pass_: bool | None = Field(alias="pass")  # "pass" is a keyword; dump with by_alias=True
     source: str
+    # Past landings only: why a rule the site fails did not matter for that mission. null otherwise.
+    why: str | None = None
 
 
 class Selection(BaseModel):
@@ -26,6 +28,8 @@ class Selection(BaseModel):
     role: Literal["candidate", "validation"]
     criteria: list[Criterion]
     note: str
+    # Past landings only: the limits the mission's own team set (elevation, latitude), checked with our data.
+    missionRules: list[Criterion] = []
 
 
 class Purpose(BaseModel):

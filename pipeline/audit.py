@@ -3,7 +3,10 @@
 Each check compares our pipeline against an independent reference (a published value, a known
 place, a synthetic case or the raw data recomputed) and prints PASS / FAIL / WARN.
 Results are written up in docs/AUDIT.md. Run from the repo root after the whole pipeline:
-    pipeline/.venv/Scripts/python pipeline/audit.py
+    pipeline/.venv/Scripts/python pipeline/audit.py            # everything
+    pipeline/.venv/Scripts/python pipeline/audit.py mars moon  # only these sections (math, inputs, outputs,
+                                                               # terrain, earth, mars, moon); the Earth sections
+                                                               # need B3's files in data/interim
 """
 
 import json
@@ -17,8 +20,8 @@ from shapely.geometry import Point, box
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_analogs  # noqa: E402
-import earth_ranking  # noqa: E402
+# build_analogs and earth_ranking read B3's files when imported, so they are imported inside the sections
+# that need them: the Mars and Moon sections then run on a machine that only has the planetary data.
 
 DATA = ROOT / "app" / "public" / "data"
 RAW = ROOT / "data" / "raw"
@@ -33,11 +36,14 @@ def check(group: str, name: str, ok: bool | None, detail: str) -> None:
 
 # ---------------------------------------------------------------- helpers we test against
 def great_circle_km(lat1, lon1, lat2, lon2, r=6371.0):
-    return build_analogs.great_circle_km(lat1, lon1, lat2, lon2) * r / 6371.0
+    lat1, lon1, lat2, lon2 = map(np.radians, (lat1, lon1, lat2, lon2))
+    a = np.sin((lat2 - lat1) / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin((lon2 - lon1) / 2) ** 2
+    return 2 * r * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
 
 
 # ---------------------------------------------------------------- 1. math units
 def audit_math():
+    import earth_ranking
     # slope on a synthetic plane with a known 10 deg tilt, 100 m pixels
     x = np.arange(50) * 100.0
     plane = np.tile(x * np.tan(np.radians(10)), (50, 1))
@@ -82,8 +88,53 @@ def audit_mars():
             window = m.site_values(grids, lat, lon)["elevation_m"]
             check("mars", f"MOLA 16 px/deg elevation at {name}", True if abs(pixel - published[name]) < 250 else None,
                   f"pixel {pixel:.0f} m, 11 km window median {window:.0f} m, published ≈ {published[name]} m")
-    # every candidate's criteria reproduce from the raw grids
+    # --- added 15 Nov, after the thermal inertia map turned out to be 180 deg of longitude off ---
+    # 1. The grid is where its label says. Compare a 6 x 6 deg window around Gale crater with the USGS 463 m
+    #    GeoTIFF averaged to the same pixels, for the label position and for one pixel off in every direction.
+    lat1, lon0, n = -2.0, 134.0, 96
+    with rasterio.open(m.MOLA_463_URL) as dem:
+        r0, c0 = dem.index(*to_xy.transform(lon0, lat1))
+        fine = dem.read(1, window=Window(c0, r0, n * 8, n * 8)).astype("float64")
+    coarse = fine.reshape(n, 8, n, 8).mean(axis=(1, 3))
+    row0, col0 = int(np.argmin(np.abs(grids.lat - (lat1 - 0.03125)))), int(np.argmin(np.abs(grids.lon - (lon0 + 0.03125))))
+    rms = {(dr, dc): float(np.sqrt(np.mean((grids.elevation[row0 + dr:row0 + dr + n, col0 + dc:col0 + dc + n] - coarse) ** 2)))
+           for dr in (-1, 0, 1) for dc in (-1, 0, 1)}
+    best = min(rms, key=rms.get)
+    check("mars", "16 px/deg grid is registered where the label says (vs USGS 463 m, Gale)", best == (0, 0),
+          f"RMS {rms[(0, 0)]:.0f} m in place, {min(v for k, v in rms.items() if k != (0, 0)):.0f} m at best one pixel off")
+    # 2. Thermal inertia and albedo are on the same longitudes as the elevation: textbook dusty and dark regions.
+    #    (Mellon et al. 2000; Christensen et al. 2001: Tharsis, Arabia and Amazonis are bright and low-inertia,
+    #    Syrtis Major is the darkest large region.) A 180 deg shift swaps Tharsis with Syrtis.
+    for name, lat, lon, dusty in [("Tharsis", 5.0, -110.0, True), ("Arabia Terra", 20.0, 20.0, True),
+                                  ("Amazonis Planitia", 25.0, -179.0, True), ("Syrtis Major", 9.2, 67.1, False)]:
+        v = m.site_values(grids, lat, lon)
+        ok = (v["thermal_inertia"] < 100 and v["albedo"] > 0.25) if dusty else (v["thermal_inertia"] > 150 and v["albedo"] < 0.15)
+        check("mars", f"{name} is {'bright, low-inertia dust' if dusty else 'dark and firm'}", ok,
+              f"thermal inertia {v['thermal_inertia']:.0f}, albedo {v['albedo']:.2f}")
+    # 3. Each landing passes the elevation and latitude limits its own mission published
+    for name, lat, lon, _ in m.LANDINGS:
+        rules = m.own_rules(name, lat, m.site_values(grids, lat, lon)["elevation_m"])
+        if rules:
+            check("mars", f"{name} passes its own mission's limits", all(r["pass"] for r in rules),
+                  "; ".join(f"{r['value']} {r['unit']} ({r['rule']})" for r in rules))
+    # 4. The candidates do not depend on where the map is cut: turn the planet a third of the way round, pick again
+    safe = m.screen(grids, m.MAX_SLOPE_DEG, m.MAX_RELIEF_M)
+    turn = safe.shape[1] // 3
+    turned = m.Grids(grids.lat, np.roll(grids.lon, turn), *(np.roll(a, turn, axis=1) for a in
+                     (grids.elevation, grids.thermal_inertia, grids.albedo, grids.slope, grids.relief)))
+    a = {(p["lat"], p["lon"]) for p in m.pick_candidates(grids, safe)}
+    b = {(p["lat"], p["lon"]) for p in m.pick_candidates(turned, np.roll(safe, turn, axis=1))}
+    check("mars", "candidates are the same when the map is cut at another meridian", a == b, f"{len(a)} candidates")
+    # 5. No candidate is on dusty ground by the published rule, read straight from the two TES maps
     sites = json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]
+    for s in sites:
+        if s["body"] == "mars" and s["status"] == "candidate":
+            v = m.site_values(grids, s["lat"], s["lon"])
+            check("mars", f"{s['id']} is not in the dust mode (thermal inertia < 100 with albedo > 0.25)",
+                  not (v["thermal_inertia"] < 100 and v["albedo"] > 0.25),
+                  f"thermal inertia {v['thermal_inertia']:.0f}, albedo {v['albedo']:.2f}")
+
+    # every candidate's criteria reproduce from the raw grids
     for s in sites:
         if s["body"] == "mars" and s["status"] == "candidate":
             crit = m.criteria(m.site_values(grids, s["lat"], s["lon"]), m.MAX_SLOPE_DEG, m.MAX_RELIEF_M)
@@ -121,7 +172,29 @@ def audit_moon():
     grid_psr_km2 = float((np.nan_to_num(layers["psr"]) > 0.5).sum() * 0.0576)
     check("moon", "PSR inflation from 240 m max-resampling (whole 75° S grid)", None,
           f"{grid_psr_km2:,.0f} km² on our grid — only used for 'distance to shadow', which it can shorten by ≤ 0.24 km")
+    # --- added 15 Nov ---
+    # Slope map vs a real event: NASA's orbiter found the IM-1 lander on a 12 deg slope (80.13 S, 1.44 E)
+    r, c = mo.to_pixel(crs, transform, -80.13, 1.44)
+    im1 = float(np.nanmedian(layers["slope"][r - 1:r + 2, c - 1:c + 2]))
+    check("moon", "slope where IM-1 Odysseus tipped over vs NASA's 12°", abs(im1 - 12) <= 3, f"ours {im1:.1f}° at 240 m")
+    # The brightest ground on the map is on the rims and ridges next to Shackleton crater, as every published
+    # study finds (Mazarico et al. 2011; Gläser et al. 2014)
+    best = np.unravel_index(np.nanargmax(layers["sunlit"]), layers["sunlit"].shape)
+    blon, blat = (float(v[best]) for v in mo.lonlat_grid(crs, transform, size))
+    d = float(great_circle_km(blat, blon, -89.67, 129.78, r=1737.4))
+    check("moon", "best-lit pixel lies on the rim or ridges next to Shackleton crater", d <= 30,
+          f"{100 * float(layers['sunlit'][best]):.0f} % at {blat:.2f}, {blon:.2f}: {d:.0f} km from the crater centre")
+    # "Distance to shadow" only counts shadowed areas of >= 1 km2: recompute it for every candidate
+    useful = mo.useful_shadow(np.nan_to_num(layers["psr"]) > 0.5, mo.PIXEL_M)
+    from scipy import ndimage
+    shadow_km = ndimage.distance_transform_edt(~useful) * mo.PIXEL_M / 1000.0
     sites = json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]
+    for s in sites:
+        if s["body"] == "moon" and s["status"] == "candidate":
+            r, c = mo.to_pixel(crs, transform, s["lat"], s["lon"])
+            km = round(float(np.nanmin(shadow_km[r - 1:r + 2, c - 1:c + 2])), 1)
+            shown = next(x["value"] for x in s["selection"]["criteria"] if x["id"] == "ice_distance")
+            check("moon", f"{s['id']} distance to a shadowed area >= 1 km² recomputed", km == shown, f"recomputed {km} km, JSON {shown} km")
     for s in sites:
         if s["body"] == "moon" and s["status"] == "candidate":
             r, c = mo.to_pixel(crs, transform, s["lat"], s["lon"])
@@ -177,6 +250,7 @@ def audit_terrain():
 
 # ---------------------------------------------------------------- 6. Kmar's inputs, checked independently
 def audit_inputs():
+    import build_analogs
     countries = gpd.read_file(f"zip://{RAW / 'earth' / 'naturalearth' / 'countries.zip'}")
     aliases = {"USA": "United States of America", "UK": "United Kingdom", "Türkiye": "Turkey"}
     for body, items in build_analogs.known_analogs().items():
@@ -207,6 +281,7 @@ def audit_inputs():
 
 # ---------------------------------------------------------------- 7. Output consistency
 def audit_outputs():
+    import build_analogs
     sites = {s["id"]: s for s in json.loads((DATA / "sites.json").read_text(encoding="utf-8"))["sites"]}
     analogs = json.loads((DATA / "analogs.json").read_text(encoding="utf-8"))["analogs"]
     countries = gpd.read_file(f"zip://{RAW / 'earth' / 'naturalearth' / 'countries.zip'}")
@@ -249,13 +324,19 @@ def audit_outputs():
 
 
 def main():
-    for part in (audit_math, audit_inputs, audit_outputs, audit_terrain, audit_earth, audit_mars, audit_moon):
+    parts = (audit_math, audit_inputs, audit_outputs, audit_terrain, audit_earth, audit_mars, audit_moon)
+    wanted = {f"audit_{name}" for name in sys.argv[1:]}
+    for part in parts:
+        if wanted and part.__name__ not in wanted:
+            continue
         try:
             part()
         except Exception as error:  # an audit section crashing is itself a finding
             check(part.__name__, "section ran", False, f"{type(error).__name__}: {error}")
     counts = {s: sum(1 for r in RESULTS if r[0] == s) for s in ("PASS", "WARN", "FAIL")}
     print(f"\n{counts['PASS']} PASS, {counts['WARN']} WARN, {counts['FAIL']} FAIL")
+    if wanted:
+        return  # a partial run does not overwrite the full record
     (ROOT / "data" / "interim" / "audit.json").write_text(json.dumps(RESULTS, indent=1, ensure_ascii=False), encoding="utf-8")
 
 

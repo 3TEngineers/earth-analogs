@@ -13,6 +13,8 @@ export interface Criterion {
   rule: string;
   pass: boolean | null;
   source: string;
+  /** Past landings only: why a rule the site fails did not matter for that mission. */
+  why?: string | null;
 }
 
 /**
@@ -24,6 +26,8 @@ export interface Selection {
   role: 'candidate' | 'validation';
   criteria: Criterion[];
   note: string;
+  /** Past landings only: the limits the mission's own team set, checked with our data. */
+  missionRules?: Criterion[];
 }
 
 export interface Site {
@@ -41,7 +45,7 @@ export interface Site {
   limits: string[];
   image: string | null;
   selection: Selection;
-  /** Why a mission would go there (candidates only), with its sources. null until written. */
+  /** Candidates: why a mission would go there. Past landings: why the mission went there. With sources; null until written. */
   purpose: Purpose | null;
 }
 

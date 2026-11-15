@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "mock": false,
   "sites": [
     {
@@ -34,7 +34,8 @@
             "unit": "%",
             "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
             "pass": true,
-            "source": "LOLA average illumination (NASA PGDA)"
+            "source": "LOLA average illumination (NASA PGDA)",
+            "why": null
           },
           {
             "id": "earth_visibility",
@@ -43,28 +44,32 @@
             "unit": "%",
             "rule": ">= 50 % (ours)",
             "pass": true,
-            "source": "LOLA Earth visibility (NASA PGDA)"
+            "source": "LOLA Earth visibility (NASA PGDA)",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope",
             "value": 5.7,
             "unit": "deg",
-            "rule": "<= 10 deg (ours)",
+            "rule": "<= 10 deg (ours; Chandrayaan-3's lander was built for <= 12 deg)",
             "pass": true,
-            "source": "LOLA slope map, 240 m"
+            "source": "LOLA slope map, 240 m",
+            "why": null
           },
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
-            "value": 3.9,
+            "value": 5.5,
             "unit": "km",
-            "rule": "<= 10 km (ours)",
+            "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
-            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+            "source": "LOLA permanently shadowed regions (NASA PGDA)",
+            "why": null
           }
         ],
-        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (16.1 km from its named feature), which cross-checks our method against NASA's own choice."
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (16.1 km from its named feature), which cross-checks our method against NASA's own choice.",
+        "missionRules": []
       },
       "purpose": null
     },
@@ -100,7 +105,8 @@
             "unit": "%",
             "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
             "pass": true,
-            "source": "LOLA average illumination (NASA PGDA)"
+            "source": "LOLA average illumination (NASA PGDA)",
+            "why": null
           },
           {
             "id": "earth_visibility",
@@ -109,28 +115,32 @@
             "unit": "%",
             "rule": ">= 50 % (ours)",
             "pass": true,
-            "source": "LOLA Earth visibility (NASA PGDA)"
+            "source": "LOLA Earth visibility (NASA PGDA)",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope",
             "value": 5.6,
             "unit": "deg",
-            "rule": "<= 10 deg (ours)",
+            "rule": "<= 10 deg (ours; Chandrayaan-3's lander was built for <= 12 deg)",
             "pass": true,
-            "source": "LOLA slope map, 240 m"
+            "source": "LOLA slope map, 240 m",
+            "why": null
           },
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
-            "value": 0.3,
+            "value": 2.2,
             "unit": "km",
-            "rule": "<= 10 km (ours)",
+            "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
-            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+            "source": "LOLA permanently shadowed regions (NASA PGDA)",
+            "why": null
           }
         ],
-        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (37.6 km from its named feature), which cross-checks our method against NASA's own choice."
+        "note": "Passes all four criteria; among the best-lit spots at the pole. It sits next to NASA's de Gerlache Rim 2 region (37.6 km from its named feature), which cross-checks our method against NASA's own choice.",
+        "missionRules": []
       },
       "purpose": null
     },
@@ -166,7 +176,8 @@
             "unit": "%",
             "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
             "pass": true,
-            "source": "LOLA average illumination (NASA PGDA)"
+            "source": "LOLA average illumination (NASA PGDA)",
+            "why": null
           },
           {
             "id": "earth_visibility",
@@ -175,28 +186,32 @@
             "unit": "%",
             "rule": ">= 50 % (ours)",
             "pass": true,
-            "source": "LOLA Earth visibility (NASA PGDA)"
+            "source": "LOLA Earth visibility (NASA PGDA)",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope",
             "value": 4.3,
             "unit": "deg",
-            "rule": "<= 10 deg (ours)",
+            "rule": "<= 10 deg (ours; Chandrayaan-3's lander was built for <= 12 deg)",
             "pass": true,
-            "source": "LOLA slope map, 240 m"
+            "source": "LOLA slope map, 240 m",
+            "why": null
           },
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
             "value": 2.6,
             "unit": "km",
-            "rule": "<= 10 km (ours)",
+            "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours)",
             "pass": true,
-            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+            "source": "LOLA permanently shadowed regions (NASA PGDA)",
+            "why": null
           }
         ],
-        "note": "Passes all four criteria, 42 km from the nearest NASA Artemis feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and at least as well lit as our candidates next to NASA's regions."
+        "note": "Passes all four criteria, 42 km from the nearest NASA Artemis feature: a proposal outside NASA's regions, inside the polar lighting zone (south of 84 S) and at least as well lit as our candidates next to NASA's regions.",
+        "missionRules": []
       },
       "purpose": null
     },
@@ -232,7 +247,8 @@
             "unit": "%",
             "rule": ">= 50 % at the surface (ours; published 85-95 % is 2-10 m above ground)",
             "pass": false,
-            "source": "LOLA average illumination (NASA PGDA)"
+            "source": "LOLA average illumination (NASA PGDA)",
+            "why": "It was built to work for one lunar day, so it needed daylight for two weeks, not light all year. At 69° S the Sun rises and sets as it does on most of the Moon."
           },
           {
             "id": "earth_visibility",
@@ -241,42 +257,143 @@
             "unit": "%",
             "rule": ">= 50 % (ours)",
             "pass": true,
-            "source": "LOLA Earth visibility (NASA PGDA)"
+            "source": "LOLA Earth visibility (NASA PGDA)",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope",
             "value": 0.8,
             "unit": "deg",
-            "rule": "<= 10 deg (ours)",
+            "rule": "<= 10 deg (ours; Chandrayaan-3's lander was built for <= 12 deg)",
             "pass": true,
-            "source": "LOLA slope map, 240 m"
+            "source": "LOLA slope map, 240 m",
+            "why": null
           },
           {
             "id": "ice_distance",
             "label": "Distance to permanent shadow",
             "value": null,
             "unit": "km",
-            "rule": "<= 10 km (ours) — no permanent shadow found within ~29 km",
+            "rule": "<= 10 km to a shadowed area of >= 1 km2 (ours) — none found within 30 km",
             "pass": false,
-            "source": "LOLA permanently shadowed regions (NASA PGDA)"
+            "source": "LOLA permanently shadowed regions (NASA PGDA)",
+            "why": "It did not go to look for ice. No permanently shadowed area of 1 km² or more lies within 30 km."
           }
         ],
-        "note": "A good landing site — flat and always in view of Earth — but a normal day/night cycle and no permanent shadow nearby: fine for a short mission, not for a permanent base."
+        "note": "Fails sunlit time and distance to permanent shadow. That is not a fault of the site: the mission was built for a different job than the one our rules describe. The rule check gives the reason for each.",
+        "missionRules": []
       },
-      "purpose": null
+      "purpose": {
+        "text": "Chandrayaan-3 set out to show a safe, soft landing and a rover drive, and to run experiments on the surface, for one lunar day (about 14 Earth days). ISRO chose the site for gentle slopes, few boulders and craters, enough light for power and a clear line to Earth, in high southern latitudes that had hardly been explored.",
+        "sources": [
+          "https://www.isro.gov.in/Chandrayaan3_Details.html",
+          "https://www.unoosa.org/documents/pdf/copuos/stsc/2024/ListTechnicalPresentations/2024_STSC_technical_presentations_slides/9_26_--_4_INDIA_Chandrayaan3.pdf"
+        ]
+      }
     },
     {
       "id": "mars-candidate-a",
       "body": "mars",
-      "name": "Southern Elysium Planitia",
+      "name": "Southern Utopia Planitia",
       "mission": "Our candidate: safe landing zone",
       "agency": "3TE",
       "year": null,
       "status": "candidate",
-      "lat": 0.031,
-      "lon": 167.719,
-      "summary": "A wide, low, flat plain in southern Elysium Planitia, about 220 km from Avernus Colles. The most interior point of the largest safe area on Mars.",
+      "lat": 27.719,
+      "lon": 126.719,
+      "summary": "Smooth lowland plains in the south of Utopia Planitia, about 900 km east of where China's Zhurong rover landed. The point deepest inside the largest safe area on Mars.",
+      "processes": [
+        "Lowland plains deposits",
+        "Wind erosion"
+      ],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Safe landing zone",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 889,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 37.1,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 163,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (MSL, Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.19,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.09,
+            "unit": "deg",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 18,
+            "unit": "m",
+            "rule": "<= 500 m (ours)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          }
+        ],
+        "note": "Passes every criterion inside a 4163 thousand km2 safe area, 108 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.31 deg, relief 37 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m).",
+        "missionRules": []
+      },
+      "purpose": null
+    },
+    {
+      "id": "mars-candidate-b",
+      "body": "mars",
+      "name": "Northern Elysium Planitia",
+      "mission": "Our candidate: safe landing zone",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": 14.094,
+      "lon": 159.094,
+      "summary": "Lava plains in the north of Elysium Planitia, west of the Cerberus Fossae fractures and about 1,500 km from InSight's landing site.",
       "processes": [
         "Volcanic plains",
         "Wind erosion"
@@ -294,55 +411,162 @@
           {
             "id": "pressure",
             "label": "Air to slow down (est. surface pressure)",
-            "value": 799,
+            "value": 734,
             "unit": "Pa",
             "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "winter_sun",
             "label": "Winter noon Sun elevation",
-            "value": 64.8,
+            "value": 50.7,
             "unit": "deg",
             "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
             "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
           },
           {
             "id": "thermal_inertia",
             "label": "Thermal inertia (not dust-covered)",
-            "value": 327,
+            "value": 273,
             "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
+            "rule": ">= 100 (MSL, Mars 2020)",
             "pass": true,
-            "source": "MGS TES thermal inertia"
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.19,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope at ~4 km scale",
-            "value": 0.02,
+            "value": 0.18,
             "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "relief",
             "label": "Relief over ~18 km",
-            "value": 35,
+            "value": 62,
             "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "rule": "<= 500 m (ours)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           }
         ],
-        "note": "Passes every criterion inside a 4330 thousand km2 safe area, 220 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.05 deg, relief 50 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
+        "note": "Passes every criterion inside a 4163 thousand km2 safe area, 103 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.81 deg, relief 99 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m).",
+        "missionRules": []
       },
       "purpose": null
     },
     {
-      "id": "mars-candidate-b",
+      "id": "mars-candidate-c",
+      "body": "mars",
+      "name": "Western Isidis Planitia",
+      "mission": "Our candidate: safe landing zone",
+      "agency": "3TE",
+      "year": null,
+      "status": "candidate",
+      "lat": 10.719,
+      "lon": 81.844,
+      "summary": "The flat floor of the Isidis impact basin, in its western part: about 500 km from Jezero crater, where Perseverance landed, and from the place where Beagle 2 came down in 2003.",
+      "processes": [
+        "Impact basin fill",
+        "Wind erosion"
+      ],
+      "limits": [
+        "Earth's gravity is about 2.6 times Mars gravity",
+        "Mars air is about 100 times thinner and mostly CO2",
+        "Surface radiation on Mars is far higher"
+      ],
+      "image": null,
+      "selection": {
+        "goal": "Safe landing zone",
+        "role": "candidate",
+        "criteria": [
+          {
+            "id": "pressure",
+            "label": "Air to slow down (est. surface pressure)",
+            "value": 864,
+            "unit": "Pa",
+            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          },
+          {
+            "id": "winter_sun",
+            "label": "Winter noon Sun elevation",
+            "value": 54.1,
+            "unit": "deg",
+            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
+            "pass": true,
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
+          },
+          {
+            "id": "thermal_inertia",
+            "label": "Thermal inertia (not dust-covered)",
+            "value": 307,
+            "unit": "J m-2 K-1 s-1/2",
+            "rule": ">= 100 (MSL, Mars 2020)",
+            "pass": true,
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.2,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
+          },
+          {
+            "id": "slope",
+            "label": "Slope at ~4 km scale",
+            "value": 0.23,
+            "unit": "deg",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          },
+          {
+            "id": "relief",
+            "label": "Relief over ~18 km",
+            "value": 74,
+            "unit": "m",
+            "rule": "<= 500 m (ours)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
+          }
+        ],
+        "note": "Passes every criterion inside a 4163 thousand km2 safe area, 99 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 2.31 deg, relief 202 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m).",
+        "missionRules": []
+      },
+      "purpose": null
+    },
+    {
+      "id": "mars-candidate-d",
       "body": "mars",
       "name": "Chryse-Acidalia plains",
       "mission": "Our candidate: safe landing zone",
@@ -350,7 +574,7 @@
       "year": null,
       "status": "candidate",
       "lat": 28.344,
-      "lon": -24.406,
+      "lon": -24.344,
       "summary": "Low plains on the boundary between Chryse and Acidalia Planitia, on the same meridian as ESA's Oxia Planum landing site about 600 km to the south.",
       "processes": [
         "Outflow-channel deposits",
@@ -369,11 +593,12 @@
           {
             "id": "pressure",
             "label": "Air to slow down (est. surface pressure)",
-            "value": 861,
+            "value": 862,
             "unit": "Pa",
             "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "winter_sun",
@@ -382,128 +607,68 @@
             "unit": "deg",
             "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
             "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
           },
           {
             "id": "thermal_inertia",
             "label": "Thermal inertia (not dust-covered)",
-            "value": 206,
+            "value": 301,
             "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
+            "rule": ">= 100 (MSL, Mars 2020)",
             "pass": true,
-            "source": "MGS TES thermal inertia"
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.14,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope at ~4 km scale",
-            "value": 0.13,
+            "value": 0.14,
             "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "relief",
             "label": "Relief over ~18 km",
-            "value": 39,
+            "value": 42,
             "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "rule": "<= 500 m (ours)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           }
         ],
-        "note": "Passes every criterion inside a 209 thousand km2 safe area, 85 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.4 deg, relief 62 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
+        "note": "Passes every criterion inside a 984 thousand km2 safe area, 76 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 0.5 deg, relief 74 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m).",
+        "missionRules": []
       },
       "purpose": null
     },
     {
-      "id": "mars-candidate-c",
+      "id": "mars-candidate-e",
       "body": "mars",
-      "name": "Margaritifer Terra lowland",
+      "name": "Eastern Meridiani Planum",
       "mission": "Our candidate: safe landing zone",
       "agency": "3TE",
       "year": null,
       "status": "candidate",
-      "lat": -18.594,
-      "lon": -30.969,
-      "summary": "A low, smooth patch in Margaritifer Terra about 130 km from Arda Valles — the only large safe area in the southern hemisphere, and rougher than the other candidates at fine scale.",
+      "lat": 0.344,
+      "lon": 3.031,
+      "summary": "The eastern part of Meridiani Planum, a little over 500 km east of where Opportunity landed and drove across the same plain.",
       "processes": [
-        "Outflow channels",
-        "Impact cratering"
-      ],
-      "limits": [
-        "Earth's gravity is about 2.6 times Mars gravity",
-        "Mars air is about 100 times thinner and mostly CO2",
-        "Surface radiation on Mars is far higher"
-      ],
-      "image": null,
-      "selection": {
-        "goal": "Safe landing zone",
-        "role": "candidate",
-        "criteria": [
-          {
-            "id": "pressure",
-            "label": "Air to slow down (est. surface pressure)",
-            "value": 730,
-            "unit": "Pa",
-            "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
-            "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
-          },
-          {
-            "id": "winter_sun",
-            "label": "Winter noon Sun elevation",
-            "value": 46.2,
-            "unit": "deg",
-            "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
-            "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
-          },
-          {
-            "id": "thermal_inertia",
-            "label": "Thermal inertia (not dust-covered)",
-            "value": 190,
-            "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
-            "pass": true,
-            "source": "MGS TES thermal inertia"
-          },
-          {
-            "id": "slope",
-            "label": "Slope at ~4 km scale",
-            "value": 0.28,
-            "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
-            "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
-          },
-          {
-            "id": "relief",
-            "label": "Relief over ~18 km",
-            "value": 69,
-            "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
-            "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
-          }
-        ],
-        "note": "Passes every criterion inside a 50 thousand km2 safe area, 41 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 3.82 deg, relief 298 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
-      },
-      "purpose": null
-    },
-    {
-      "id": "mars-candidate-d",
-      "body": "mars",
-      "name": "Western Amazonis Planitia",
-      "mission": "Our candidate: safe landing zone",
-      "agency": "3TE",
-      "year": null,
-      "status": "candidate",
-      "lat": 25.281,
-      "lon": -178.906,
-      "summary": "Smooth lowland plains in western Amazonis Planitia near Phlegra Dorsa, far from every past landing.",
-      "processes": [
-        "Volcanic plains",
+        "Layered sedimentary rock",
         "Wind erosion"
       ],
       "limits": [
@@ -519,50 +684,66 @@
           {
             "id": "pressure",
             "label": "Air to slow down (est. surface pressure)",
-            "value": 836,
+            "value": 687,
             "unit": "Pa",
             "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "winter_sun",
             "label": "Winter noon Sun elevation",
-            "value": 39.5,
+            "value": 64.5,
             "unit": "deg",
             "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
             "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
           },
           {
             "id": "thermal_inertia",
             "label": "Thermal inertia (not dust-covered)",
-            "value": 122,
+            "value": 447,
             "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
+            "rule": ">= 100 (MSL, Mars 2020)",
             "pass": true,
-            "source": "MGS TES thermal inertia"
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.2,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope at ~4 km scale",
-            "value": 0.13,
+            "value": 0.41,
             "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "relief",
             "label": "Relief over ~18 km",
-            "value": 53,
+            "value": 90,
             "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "rule": "<= 500 m (ours)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           }
         ],
-        "note": "Passes every criterion inside a 46 thousand km2 safe area, 57 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.07 deg, relief 84 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m)."
+        "note": "Passes every criterion inside a 322 thousand km2 safe area, 55 km from its edge, and more than 500 km from any past landing. Second look at 463 m: 95 % of slopes below 1.36 deg, relief 148 m over 25 km (landings for comparison: InSight 0.53 deg / 90 m, Viking 1 0.94 deg / 72 m, Spirit 1.49 deg / 297 m).",
+        "missionRules": []
       },
       "purpose": null
     },
@@ -594,11 +775,12 @@
           {
             "id": "pressure",
             "label": "Air to slow down (est. surface pressure)",
-            "value": 882,
+            "value": 914,
             "unit": "Pa",
             "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "winter_sun",
@@ -607,39 +789,81 @@
             "unit": "deg",
             "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
             "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
           },
           {
             "id": "thermal_inertia",
             "label": "Thermal inertia (not dust-covered)",
-            "value": 319,
+            "value": 415,
             "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
+            "rule": ">= 100 (MSL, Mars 2020)",
             "pass": true,
-            "source": "MGS TES thermal inertia"
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.23,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope at ~4 km scale",
-            "value": 9.77,
+            "value": 2.03,
             "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
-            "pass": false,
-            "source": "MOLA MEGDR 16 px/deg"
+            "rule": "<= 3 deg over 2-5 km (MSL)",
+            "pass": true,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "relief",
             "label": "Relief over ~18 km",
-            "value": 2743,
+            "value": 1406,
             "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
+            "rule": "<= 500 m (ours)",
             "pass": false,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": "The mountain it came to study stands inside our 18 km window. Curiosity's guided entry was built to land within 10 km of its target, so the flat crater floor beside the mountain was enough."
           }
         ],
-        "note": "Fails slope at ~4 km scale, relief over ~18 km at our ~4 km scale: the landing ellipse fit between Gale's wall and Mount Sharp thanks to precision-guided entry, which km-scale maps can't see."
+        "note": "Fails relief over ~18 km. That is not a fault of the site: the mission was built for a different job than the one our rules describe. The rule check gives the reason for each. Against the limits its own team set, it passes.",
+        "missionRules": [
+          {
+            "id": "own_elevation",
+            "label": "Elevation (the mission's own limit)",
+            "value": -4.49,
+            "unit": "km",
+            "rule": "below -1 km",
+            "pass": true,
+            "source": "Golombek et al. 2012 (MSL); our MOLA elevation",
+            "why": null
+          },
+          {
+            "id": "own_latitude",
+            "label": "Latitude (the mission's own band)",
+            "value": -4.59,
+            "unit": "deg",
+            "rule": "30 deg S to 30 deg N",
+            "pass": true,
+            "source": "Golombek et al. 2012 (MSL)",
+            "why": null
+          }
+        ]
       },
-      "purpose": null
+      "purpose": {
+        "text": "Curiosity explores whether Mars could once have supported life. Gale crater was chosen for its potential as a former habitat: the rover climbs the layered mountain in its centre.",
+        "sources": [
+          "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2011-070A",
+          "https://marsoweb.nas.nasa.gov/landingsites/msl/memoranda/MSL_Eng_User_Guide_v2.pdf"
+        ]
+      }
     },
     {
       "id": "perseverance",
@@ -669,11 +893,12 @@
           {
             "id": "pressure",
             "label": "Air to slow down (est. surface pressure)",
-            "value": 772,
+            "value": 768,
             "unit": "Pa",
             "rule": ">= 668 Pa (elevation <= -1 km, MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "winter_sun",
@@ -682,39 +907,82 @@
             "unit": "deg",
             "rule": ">= 34.8 deg (|lat| <= 30 deg, MSL / Mars 2020)",
             "pass": true,
-            "source": "Latitude, obliquity 25.19 deg"
+            "source": "Latitude, obliquity 25.19 deg",
+            "why": null
           },
           {
             "id": "thermal_inertia",
             "label": "Thermal inertia (not dust-covered)",
-            "value": 105,
+            "value": 343,
             "unit": "J m-2 K-1 s-1/2",
-            "rule": ">= 100 (Mars 2020)",
+            "rule": ">= 100 (MSL, Mars 2020)",
             "pass": true,
-            "source": "MGS TES thermal inertia"
+            "source": "MGS TES thermal inertia",
+            "why": null
+          },
+          {
+            "id": "albedo",
+            "label": "Albedo (second dust check)",
+            "value": 0.17,
+            "unit": "",
+            "rule": "<= 0.25 where thermal inertia is below 150 (MSL, Mars 2020: bright and low-inertia = dusty)",
+            "pass": true,
+            "source": "MGS TES bolometric albedo",
+            "why": null
           },
           {
             "id": "slope",
             "label": "Slope at ~4 km scale",
-            "value": 0.58,
+            "value": 0.71,
             "unit": "deg",
-            "rule": "<= 2.0 deg (ours, ~3x the past landings except Curiosity)",
+            "rule": "<= 3 deg over 2-5 km (MSL)",
             "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": null
           },
           {
             "id": "relief",
             "label": "Relief over ~18 km",
-            "value": 252,
+            "value": 517,
             "unit": "m",
-            "rule": "<= 500 m (ours, ~2x the past landings except Curiosity)",
-            "pass": true,
-            "source": "MOLA MEGDR 16 px/deg"
+            "rule": "<= 500 m (ours)",
+            "pass": false,
+            "source": "MOLA MEGDR 16 px/deg",
+            "why": "The delta cliffs and the crater rim it came to study are inside our 18 km window (517 m against our limit of 500 m). The mission flew a new system that steers away from hazards during descent, so it could accept rougher ground."
           }
         ],
-        "note": "Passes our criteria, as a past landing should."
+        "note": "Fails relief over ~18 km. That is not a fault of the site: the mission was built for a different job than the one our rules describe. The rule check gives the reason for each. Against the limits its own team set, it passes.",
+        "missionRules": [
+          {
+            "id": "own_elevation",
+            "label": "Elevation (the mission's own limit)",
+            "value": -2.56,
+            "unit": "km",
+            "rule": "below -0.5 km",
+            "pass": true,
+            "source": "Fergason et al. 2017 (Mars 2020); our MOLA elevation",
+            "why": null
+          },
+          {
+            "id": "own_latitude",
+            "label": "Latitude (the mission's own band)",
+            "value": 18.44,
+            "unit": "deg",
+            "rule": "30 deg S to 30 deg N",
+            "pass": true,
+            "source": "Fergason et al. 2017 (Mars 2020)",
+            "why": null
+          }
+        ]
       },
-      "purpose": null
+      "purpose": {
+        "text": "Perseverance seeks signs of ancient life and collects rock samples for a possible return to Earth. Jezero crater was chosen because it once held a lake fed by a river, whose delta is still there.",
+        "sources": [
+          "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2020-052A",
+          "https://science.nasa.gov/mission/mars-2020-perseverance/",
+          "https://www.hou.usra.edu/meetings/lpsc2017/pdf/2163.pdf"
+        ]
+      }
     }
   ]
 }

@@ -6,7 +6,7 @@ import type { Site } from '../types/data'
 import { candidateLetter, formatLatLon, placeOf, pretty } from './format'
 import { orbitalImage } from './orbitalImage'
 import { OrbitalView } from './OrbitalView'
-import { SelectionChecklist } from './SelectionChecklist'
+import { RuleList, SelectionChecklist } from './SelectionChecklist'
 import { GroupTitle, PassBadge, SidePanel, Tabs } from './ui'
 
 type Tab = 'overview' | 'rules' | 'earth'
@@ -23,6 +23,7 @@ export function SiteDetail({ site }: { site: Site }) {
   const passed = site.selection.criteria.filter((c) => c.pass === true).length
   const total = site.selection.criteria.length
   const bodyName = site.body === 'mars' ? 'Mars' : 'Moon'
+  const missionRules = site.selection.missionRules ?? []
   const step = (i: number) => ({ '--i': i }) as CSSProperties
 
   // Step through the body's sites without going back to the list.
@@ -96,8 +97,21 @@ export function SiteDetail({ site }: { site: Site }) {
             <div className="space-y-6">
               <OrbitalView key={site.id} image={orbitalImage(site.body, site.lat, site.lon, site.image)} alt={`View from orbit around ${site.name}`} />
               {site.purpose && (
-                <Block title="Why go there">
+                <Block title={candidate ? 'Why go there' : 'Why the mission went there'}>
                   <p className="leading-relaxed text-ink/90">{site.purpose.text}</p>
+                  {site.purpose.sources.length > 0 && (
+                    <p className="mt-2 text-[0.8rem] text-ink-muted">
+                      Sources:{' '}
+                      {site.purpose.sources.map((url, i) => (
+                        <span key={url}>
+                          {i > 0 && ', '}
+                          <a href={url} target="_blank" rel="noreferrer" className="underline decoration-white/30 underline-offset-2 hover:text-ink">
+                            {sourceName(url)}
+                          </a>
+                        </span>
+                      ))}
+                    </p>
+                  )}
                 </Block>
               )}
               {site.selection.note && (
@@ -127,6 +141,15 @@ export function SiteDetail({ site }: { site: Site }) {
                   : 'The same limits we used to find our own sites, run on a place where a spacecraft really landed.'}
               </p>
               <SelectionChecklist selection={site.selection} />
+              {missionRules.length > 0 && (
+                <Block title="The limits its own mission set">
+                  <p className="mb-4 text-[0.95rem] leading-relaxed text-ink-muted">
+                    Every mission writes its own limits for its own spacecraft and goal. These are the ones this mission&apos;s team
+                    published, checked with the same elevation map we use.
+                  </p>
+                  <RuleList criteria={missionRules} />
+                </Block>
+              )}
             </div>
           )}
 
@@ -172,6 +195,21 @@ export function SiteDetail({ site }: { site: Site }) {
       </div>
     </SidePanel>
   )
+}
+
+/** A short, readable name for a source link: the site it is on. */
+function sourceName(url: string): string {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '')
+    if (host.endsWith('nasa.gov')) return host.startsWith('nssdc') ? 'NASA NSSDCA' : 'NASA'
+    if (host.endsWith('isro.gov.in')) return 'ISRO'
+    if (host.endsWith('unoosa.org')) return 'UN COPUOS'
+    if (host.endsWith('nature.com')) return 'Nature Astronomy'
+    if (host.endsWith('usra.edu')) return 'LPSC abstract'
+    return host
+  } catch {
+    return url
+  }
 }
 
 function Block({ title, children }: { title: string; children: ReactNode }) {
