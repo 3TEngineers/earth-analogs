@@ -58,7 +58,7 @@ One three.js scene sits behind every page and never unmounts, so page changes ar
 - `space/story.ts` — the poses of the scroll story, in screen fractions (sizes keep the real Earth : Mars : Moon ratio).
 - `space/planets.ts` — per-planet textures, colors, spin.
 - Motion rules (from Emil Kowalski's animation skill): ease-out `cubic-bezier(0.23, 1, 0.32, 1)` for entrances, ease-in-out for on-screen moves, buttons press to `scale(0.97)` in 160 ms (`.press`), hover effects only on fine pointers. `prefers-reduced-motion` turns flights into cuts and keeps only fades. Tokens live in `src/index.css`.
-- Textures (`public/textures/`, public domain): Moon — NASA SVS CGI Moon Kit (LRO); Mars — USGS Viking color mosaic + MOLA elevation; Earth — NASA Blue Marble (via three-globe examples). Credited on the About page.
+- Textures (`public/textures/`, public domain): Moon — NASA SVS CGI Moon Kit (LRO); Mars — USGS Viking color mosaic + MOLA elevation; Earth — NASA Blue Marble (via three-globe examples). Credited on the About page. Desktop swaps in 8192 × 4096 versions (`*-8k.jpg`, NASA GIBS / USGS / NASA SVS, built by `pipeline/fetch_textures.py`) after the intro.
 
 ## Structure
 
