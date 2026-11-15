@@ -41,13 +41,14 @@ export function AboutPage() {
         <div className="stagger" style={step(4)}>
           <Section title="The team">
             <ul className="grid gap-4 md:grid-cols-3">
-              <Person name="Sadık Bora Erteni" role="Data science and engineering" href="https://www.linkedin.com/in/sadik-bora-erteni/">
-                Designed and built the analysis pipeline: the screening of Mars and the lunar south pole, the global Earth
-                matching and the scoring model. Led the data-accuracy audits and shaped the structure and content of the site.
+              <Person name="Sadık Bora Erteni" role="Data analysis and 3D visualisation" href="https://www.linkedin.com/in/sadik-bora-erteni/">
+                Built the analysis pipeline with Deniz: the screening of Mars and the lunar south pole, the global Earth
+                matching and the scoring model. Led the data-accuracy audits and worked on the 3D globes, the pages and their
+                content.
               </Person>
-              <Person name="Deniz Aslan" role="Software engineering and validation" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
-                Designed and built the interactive 3D experience of the Moon, Earth and Mars and the interface around it. Led
-                the full re-validation of the Mars and Moon screening that selected the final landing zones.
+              <Person name="Deniz Aslan" role="3D visualisation and data analysis" href="https://www.linkedin.com/in/deniz-aslan-358839274/">
+                Built the interactive 3D experience of the Moon, Earth and Mars with Sadık, and the interface around it. Led the
+                full re-validation of the Mars and Moon screening and worked on the data that selected the final landing zones.
               </Person>
               <Person name="Kamar Abid" role="Research and concept" href="https://www.linkedin.com/in/kamar-abid-679337374/">
                 Helped shape the initial project concept. Researched the published landing constraints, NASA&apos;s Artemis III
